@@ -1,0 +1,207 @@
+namespace Et {
+
+
+	public class Connection : GLib.Object {
+		
+		private Telepathy.Connection connection;
+		private Telepathy.ConnectionInterfaceRequests? _dbus_requests;
+		private Telepathy.ConnectionInterfaceContacts? _dbus_contacts;
+
+		public Telepathy.Connection dbus { get { return connection; } }
+		public Telepathy.ConnectionInterfaceRequests? dbus_request { get { return _dbus_requests; } }
+		public Telepathy.ConnectionInterfaceContacts? dbus_contacts { get { return _dbus_contacts; } }
+		
+		public string path {get; private set;}
+		public string connection_manager {get; private set;}
+		public bool is_valid {get; private set; default=false;}
+		
+		
+		public HashTable<string,Channel> channels;
+		public HashTable<uint,Contact> contacts;
+		
+		public Connection(string path, string connection_manager) {
+			
+			this.path = path;
+			this.connection_manager = connection_manager;
+			
+			channels = new HashTable<string,Channel>(str_hash, str_equal);
+			contacts = new HashTable<uint,Contact>(direct_hash, direct_equal);
+			
+			stderr.printf("Connection: creating new connection with path=%s and connection_manager=%s\n", path, connection_manager);
+			
+			if(path=="/") {
+				stderr.printf("Connection(): Incorrect path \"/\"\n");
+				return;
+			}
+		
+			try {
+				connection = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
+			} catch ( IOError err ) {	
+				stderr.printf("Connection(): Could not create Connection with path %s and connection manager %s: %s\n", path, connection_manager, err.message);
+				this.connection = null;
+				return;
+			}
+			
+			try {
+				_dbus_requests = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
+				_dbus_requests.new_channels.connect(sig_new_channels);
+			} catch ( IOError err ) {	
+				stderr.printf("Connection(): Could not create ConnectionInterfaceRequests with path %s and connection manager %s: %s\n", path, connection_manager, err.message);
+				this._dbus_requests = null;
+				return;
+			}
+			
+			try {
+				_dbus_contacts = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
+			} catch ( IOError err ) {	
+				stderr.printf("Connection(): Could not create ConnectionInterfaceContacts with path %s and connection manager %s: %s\n", path, connection_manager, err.message);
+				this._dbus_contacts = null;
+				return;
+			}
+			
+			this.ensure_channel_contact_list();
+			this.update_channels();
+			this.update_contacts();
+			
+			this.is_valid=true;
+		}
+		
+		public void add_contact(owned Contact c) {
+				this.contacts.insert(c.handle, (owned) c);
+		}
+		
+		public void create_contacts(uint[] handles) {
+			
+							foreach(var handle in handles) { stderr.printf("Handle: %u\n", handle); }
+			
+				string[] interfaces = {};
+				interfaces += "org.freedesktop.Telepathy.Connection";
+				interfaces += "org.freedesktop.Telepathy.Connection.Interface.SimplePresence";
+				interfaces += "org.freedesktop.Telepathy.Connection.Interface.Aliasing";
+			
+				HashTable<uint, HashTable<string, Variant> > hash_info_all;
+					
+				try {
+					hash_info_all = this._dbus_contacts.get_contact_attributes(handles, interfaces, true);
+				} catch (Error err) {
+					stderr.printf("Connection: get_contact_attributes() error on Contacts interface: %s\n", err.message);
+					return;
+				}
+				
+				foreach(var handle in handles) {
+					
+					unowned HashTable<string,Variant> hash_info_one = hash_info_all.lookup(handle);
+					unowned Contact c = this.get_contact(handle);
+					
+					if(hash_info_one==null) continue;
+					
+					c.update_properties(hash_info_one);
+					ui.mui.add_elem_to_ui(c);
+				}
+		}
+		
+		//returns null if not exists , otherwise the contact reference if exists
+		public unowned Contact? has_contact(uint handle) {
+			return contacts.lookup(handle);
+		}
+		
+		
+		//if not exists, creates a new one and returns its reference
+		public unowned Contact get_contact(uint handle) {
+			unowned Contact c = this.has_contact(handle);
+			
+			if(c!=null) return c;
+			
+			Contact cnew = new Contact(handle, this);	
+			contacts.insert(handle, (owned) cnew);
+			return contacts.lookup(handle);
+			
+		}
+		
+		
+		public void ensure_channel(HashTable<string, GLib.Variant> params, out GLib.ObjectPath channel, out HashTable<string, GLib.Variant> properties) {
+			bool yours;
+			try { //TODO: make it async:
+				_dbus_requests.ensure_channel(params, out yours, out channel, out properties);
+			} catch (Error err) {
+				stderr.printf("Connection: ensure_channel(): %s\n", err.message);
+			} 
+		}
+		
+		
+		public GLib.ObjectPath ensure_channel_contact_list() {
+		
+			HashTable<string, GLib.Variant> params = new HashTable<string, GLib.Variant>(null, null);
+			params.insert(Telepathy.PROP_CHANNEL_CHANNEL_TYPE, Telepathy.IFACE_CHANNEL_TYPE_CONTACT_LIST);
+			params.insert(Telepathy.PROP_CHANNEL_TARGET_HANDLE_TYPE, Telepathy.TpHandleType.LIST);
+			//params.insert(PROP_CHANNEL_TARGET_ID, "stored");
+			params.insert(Telepathy.PROP_CHANNEL_TARGET_ID, "subscribe");
+			bool yours;
+			GLib.ObjectPath channel;
+			HashTable<string, GLib.Variant> properties;	
+			
+			this.ensure_channel(params, out channel, out properties);
+			return channel; 
+			
+		}
+		
+		
+		public async void update_contacts() {
+			stderr.printf("Connection: Updating contacts info (connection.path=%s)...\n", path);
+			if(contacts!=null) {
+				
+				foreach(var chan in channels.get_values()) {
+					update_contacts_channel(chan);
+				}	
+					
+			} else {
+				stderr.printf("Connection: Updating contacts info error: No Contacts interface on connection %s!\n", path);
+				
+			}
+		}
+		
+		private async void update_contacts_channel(Channel chan) {
+			uint[] handless = chan.get_contact_handles();
+			this.create_contacts(handless);
+		}
+		
+		
+		public async void update_channels() {
+			
+			foreach(Telepathy.ChannelInfo chinfo in this.dbus_request.channels) {
+				
+				var ret = channels.lookup(chinfo.path);
+				if(ret!=null) continue;
+				stderr.printf("Connection: update_channels(): adding channel %s to hash table\n", chinfo.path);
+				Channel ch = Channel.new_from_type(chinfo.path, this.connection_manager, this, (string) chinfo.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType"));
+				channels.insert(chinfo.path, (owned) ch);
+				
+				
+			}
+			
+			
+		}
+
+		/* TODO: connect to signals */
+
+
+		/* SIGNALS */
+		
+		private void sig_new_channels(Telepathy.ChannelInfo[] channel_list) {
+			/*Each dictionary MUST contain the keys org.freedesktop.Telepathy.Channel.ChannelType, org.freedesktop.Telepathy.Channel.TargetHandleType, org.freedesktop.Telepathy.Channel.TargetHandle, org.freedesktop.Telepathy.Channel.TargetID and org.freedesktop.Telepathy.Channel.Requested. 
+			 * */
+				foreach(var ch_info in channel_list) {
+					stderr.printf("Connection: Signal sig_new_channels: new channel %s created\n", ch_info.path);
+					string ch_type = (string) ch_info.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType");
+					Channel ch = Channel.new_from_type(ch_info.path, this.connection_manager, this, ch_type);
+				
+					channels.insert(ch_info.path, (owned) ch);
+					this.update_contacts_channel(channels.lookup(ch_info.path));
+				}
+		}
+
+
+	}
+
+
+}
