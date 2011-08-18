@@ -28,7 +28,9 @@ namespace Et {
 			contacts = new HashTable<uint,Contact>(direct_hash, direct_equal);
 			
 			stderr.printf("Connection: creating new connection with path=%s and connection_manager=%s\n", path, connection_manager);
-			
+		}
+
+		public void init() {
 			if(path=="/") {
 				stderr.printf("Connection(): Incorrect path \"/\"\n");
 				return;
@@ -64,9 +66,23 @@ namespace Et {
 			this.update_contacts();
 			
 			this.is_valid=true;
+
+		}
+
+		~Connection() {
+
+			stderr.printf("Connection: Destrcutor for %s called\n", this.path);
+			if(this.is_valid) this.invalidate();
+		}
+
+
+		public void invalidate() {
+			this.is_valid=false;
+
+			this.remove_contacts();
 		}
 		
-		public void add_contact(owned Contact c) {
+		private void add_contact(owned Contact c) {
 				this.contacts.insert(c.handle, (owned) c);
 		}
 		
@@ -98,6 +114,13 @@ namespace Et {
 					c.update_properties(hash_info_one);
 					ui.mui.add_elem_to_ui(c);
 				}
+		}
+
+		public void remove_contacts_subset(uint[] handles) {
+			foreach(var handle in handles) {
+					contacts.remove(handle);
+					ui.mui.remove_elem_from_ui(handle);
+			}
 		}
 		
 		//returns null if not exists , otherwise the contact reference if exists
@@ -156,13 +179,38 @@ namespace Et {
 					
 			} else {
 				stderr.printf("Connection: Updating contacts info error: No Contacts interface on connection %s!\n", path);
-				
 			}
 		}
 		
 		private async void update_contacts_channel(Channel chan) {
-			uint[] handless = chan.get_contact_handles();
-			this.create_contacts(handless);
+			uint[]? handless = chan.get_contact_handles();
+			if(handless==null)
+				warning("Connection.update_contacts_channel(): handless == NULL!!!\n");
+			else
+				this.create_contacts(handless);
+		}
+		
+		
+		public async void remove_contacts() {
+			stderr.printf("Connection: Remving contacts (connection.path=%s)...\n", path);
+			if(contacts!=null) {
+				
+				foreach(var chan in channels.get_values()) {
+					remove_contacts_channel(chan);
+				}	
+					
+			} else {
+				stderr.printf("Connection: Removing contacts info error: No Contacts interface on connection %s!\n", path);
+			}	
+		}
+		
+		private async void remove_contacts_channel(Channel chan) {
+			uint[]? handless = chan.get_contact_handles();
+			if(handless==null)
+				warning("Connection.remove_contacts_channel(): handless == NULL!!!\n");
+			else
+				this.remove_contacts_subset(handless);
+			
 		}
 		
 		

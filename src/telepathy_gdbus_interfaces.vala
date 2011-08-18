@@ -1,4 +1,5 @@
 using GLib;
+using GLib;
 
 namespace Telepathy {
 
@@ -131,6 +132,7 @@ namespace Telepathy {
 		[DBus (name = "CallMembersChanged")]
 		public signal void call_members_changed(GLib.HashTable<uint, uint> Flags_Changed, uint[] Removed);
 	}
+	
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Handler", timeout = 120000)]
 	public interface ClientHandler : GLib.Object {
@@ -401,6 +403,26 @@ namespace Telepathy {
 
 		[DBus (name = "MembersChanged")]
 		public signal void members_changed(string message, uint[] added, uint[] removed, uint[] local_pending, uint[] remote_pending, uint actor, uint reason);
+	}
+	
+	
+	
+	[DBus (name = "org.freedesktop.Telepathy.Channel.Interface.Messages")]
+	public interface ChannelInterfaceMessages : GLib.Object {
+		[DBus (name = "PendingMessages")]
+		public abstract Message[] pending_messages {owned get;}
+		
+		[DBus (name = "SendMessage")]
+		public abstract string send_message(Message message, uint flags) throws DBusError, IOError;
+
+		[DBus (name = "MessageSent")]
+		public signal void message_sent(Message content, uint flags, string message_token);
+
+		[DBus (name = "PendingMessagesRemoved")]
+		public signal void pending_messages_removed(uint[] message_ids);
+		
+		[DBus (name = "MessageReceived")]
+		public signal void message_received(Message content);
 	}
 	
 	

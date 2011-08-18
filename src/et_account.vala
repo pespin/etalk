@@ -48,10 +48,12 @@ namespace Et {
 		
 		private void open_connection(GLib.ObjectPath conn) {
 			this.connection = new Connection(conn, this.connection_manager);
+			this.connection.init();
 		}
 		
 		private void close_connection() {
-				this.connection=null;
+			stderr.printf("Account: closing connection\n");
+			this.connection.invalidate();
 		}
 		
 		

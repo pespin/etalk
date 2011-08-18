@@ -112,13 +112,13 @@ public class MainUI : Page {
 		elem_ui_list.insert(contact.handle, (owned) opener);
 		this.li.go();
 	}
-	/*
-	public void remove_rdevice_from_ui(string path) {
 
-		message("Removing rdevice " + path + " from ui-list\n");
-		rdevices_ui_list.remove(path);
+	public void remove_elem_from_ui(uint handle) {
+
+		message("Removing elem " + handle.to_string() + " from ui-list\n");
+		elem_ui_list.remove(handle);
 		this.li.go();
-	}*/
+	}
 	
 	
 	private void cb_bt_settings_clicked() {

@@ -179,6 +179,14 @@ namespace Telepathy {
 		string[] field_value;	
 	}
 	
+	
+	/* Used in ConnectionInterfaceMessages */
+	public struct Message {
+		GLib.HashTable<string, Variant>[] parts;	
+	}
+	
+	
+	
 	public struct Simple_Presence {
 		uint type; /* = enum ConnectionPresenceType */
 		string status;
