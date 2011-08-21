@@ -48,14 +48,18 @@ namespace Et {
 		public void sig_account_removed(GLib.ObjectPath acc_path) {
 			stderr.printf("AccountManager: sig_account_removed (%s)\n", acc_path);
 			accounts.remove(acc_path);
+			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
+			
 		}
 
 		public void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
-			stderr.printf("AccountManager: sig_account_validity_changed [valid=%b] (%s)\n", valid, acc_path);			
+			stderr.printf("AccountManager: sig_account_validity_changed (valid = %s) (%s)\n", valid.to_string(), acc_path);			
 			if(accounts.lookup(acc_path)==null) {
 				Account acc = new Account(acc_path);
 				accounts.insert(acc_path, (owned) acc);
 			}
+			
+			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
 		}
 		
 	}

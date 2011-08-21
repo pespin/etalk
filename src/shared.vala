@@ -29,23 +29,15 @@ public FSOusaged fso;
 const string ETALK_CLIENT_SERVICE_NAME = "org.freedesktop.Telepathy.Client.Etalk";
 const string ETALK_CLIENT_AGENT_PATH = "/org/freedesktop/Telepathy/Client/Etalk";
 const string TELEPATHY_CLIENT_INTERFACE = "org.freedesktop.Telepathy.Client";
-/*const string ETALK_BLUEZ_AGENT_IFACE = "org.bluez.Agent";
-const string ETALK_OBEX_AGENT_PATH = "/org/etalk/openobex/agent";
-const string ETALK_OBEX_AGENT_IFACE = "org.openobex.Agent";
-*/
+
 extern const string IMAGESDIR;
-
-
-//Pager:
-const string PAGE_SID_SETTINGS	= "settings";
-const string PAGE_SID_MAIN		= "main";
-/*const string PAGE_SID_KNOWN		= "known"; */
 
 
 public enum PageID {
 	MAIN,
 	LIST_ACCOUNT,
-	SETTINGS_ACCOUNT
+	SETTINGS_ACCOUNT,
+	NEW_ACCOUNT
 }
 
 

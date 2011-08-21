@@ -6,9 +6,11 @@ public class ListAccountUI : Page {
 		private unowned Elm.Win win;
 			
 		private Elm.Box hbox;
+		private Elm.Box hbox_top;
 		private Elm.Frame fr;
 		private Elm.Box hbox1;
 		private Elm.Button bt_back;
+		private Elm.Button bt_new;
 
 		public HashTable<string,ListItemHandlerAccount> elem_ui_list; 
 		
@@ -43,10 +45,27 @@ public class ListAccountUI : Page {
 		hbox.pack_end(fr);
 		fr.show();
 		
+		hbox_top = new Elm.Box(win);
+		hbox.horizontal_set(true);	
+		hbox.size_hint_weight_set( 1.0, 0.0 );
+		hbox.size_hint_align_set( -1.0, 0.0 );
+		fr.content_set(hbox_top);
+		hbox.show();
+		
+		bt_back = new Elm.Button(win);
+		bt_back.text_set("Back");
+		bt_back.size_hint_weight_set(1.0, 1.0);
+		bt_back.size_hint_align_set(-1.0, -1.0);
+		hbox_top.pack_end(bt_back);
+		bt_back.show();
+		bt_back.smart_callback_add( "clicked", this.close );
+		
 		// add a label
 		header = new Elm.Label(win);
 		header.text_set("Accounts");
-		fr.content_set(header);
+		header.size_hint_weight_set(1.0, 1.0);
+		header.size_hint_align_set(-1.0, -1.0);
+		hbox_top.pack_end(header);
 		header.show();
 
 		//add list
@@ -54,8 +73,7 @@ public class ListAccountUI : Page {
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
-		vbox.pack_end(li);
-		//li.smart_callback_add( "clicked", cb_device_list_selected );
+		vbox.pack_end(li);;
 		li.show();
 	
 		//add button hbox1
@@ -66,13 +84,13 @@ public class ListAccountUI : Page {
 		vbox.pack_end(hbox1);
 		hbox1.show();
 
-		bt_back = new Elm.Button(win);
-		bt_back.text_set("Close");
-		bt_back.size_hint_weight_set(1.0, 1.0);
-		bt_back.size_hint_align_set(-1.0, -1.0);
-		hbox1.pack_end(bt_back);
-		bt_back.show();
-		bt_back.smart_callback_add( "clicked", this.close );
+		bt_new = new Elm.Button(win);
+		bt_new.text_set("New Account");
+		bt_new.size_hint_weight_set(1.0, 1.0);
+		bt_new.size_hint_align_set(-1.0, -1.0);
+		hbox1.pack_end(bt_new);
+		bt_new.show();
+		bt_new.smart_callback_add( "clicked", cb_bt_new_clicked);
 	
 		this.populate_list();
 	
@@ -81,6 +99,7 @@ public class ListAccountUI : Page {
 	
 	
 	private void populate_list() {
+			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
 			ACM.show_accounts(this);
 	}
 	
@@ -118,17 +137,23 @@ public class ListAccountUI : Page {
 	
 	public async override void refresh_content() {
 			
-		HashTableIter<string,ListItemHandlerAccount> it = HashTableIter<string,ListItemHandlerAccount>(elem_ui_list);
-		
-		unowned string? path;
-		unowned ListItemHandlerAccount? handler;
-		while(it.next(out path, out handler)) {
-			handler.refresh_content();
-		}
-		
-		li.go();
+		this.populate_list();
 		
 	}
+	
+	
+	
+	
+	private void cb_bt_new_clicked() {
+		stdout.printf("New Account button pressed.\n");
+		
+		var accui = new NewAccountUI();
+		accui.create(ui.win);
+		ui.push_page(accui);
+		
+	}
+	
+	
 }
 
 

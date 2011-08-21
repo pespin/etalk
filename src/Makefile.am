@@ -19,6 +19,7 @@ etalk_SOURCES = \
 	gui.vala \
 	gui_list_account.vala \
 	gui_main.vala \
+	gui_new_account.vala \
 	gui_settings_account.vala \
 	telepathy_gdbus_interfaces.vala \
 	telepathy_gdbus_aux.vala
