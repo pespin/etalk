@@ -1,5 +1,5 @@
 using GLib;
-using GLib;
+
 
 namespace Telepathy {
 
@@ -135,7 +135,7 @@ namespace Telepathy {
 	
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Handler", timeout = 120000)]
-	public interface ClientHandler : Client {
+	public interface ClientHandler : GLib.Object {
 
 		[DBus (name = "HandleChannels")]
 		public abstract void handle_channels(GLib.ObjectPath account, GLib.ObjectPath connection, ChannelInfo[] channels, GLib.ObjectPath[] requests_satisfied, uint64 user_action_time, GLib.HashTable<string, GLib.Variant> handler_info) throws DBusError, IOError;
@@ -212,7 +212,7 @@ namespace Telepathy {
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Approver", timeout = 120000)]
-	public interface ClientApprover : Client {
+	public interface ClientApprover : GLib.Object {
 
 		[DBus (name = "AddDispatchOperation")]
 		public abstract void add_dispatch_operation(ChannelInfo[] channels, GLib.ObjectPath dispatch_operation, GLib.HashTable<string, GLib.Variant> properties) throws DBusError, IOError;

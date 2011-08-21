@@ -55,7 +55,8 @@ void bus_session_name_error() {
 void on_bus_session_acquired (DBusConnection conn) {
 	
 	SESCONN = conn;
-
+	CH = new Et.ClientHandler();
+	CH.register();
 }
 
 

@@ -12,6 +12,7 @@ etalk_SOURCES = \
 	et_account_manager.vala \
 	et_account.vala \
 	et_channel.vala \
+	et_clients.vala \
 	et_connection.vala \
 	et_contact.vala \
 	fso.vala \
