@@ -116,6 +116,8 @@ public class MainUI : Page {
 	public void remove_elem_from_ui(uint handle) {
 
 		message("Removing elem " + handle.to_string() + " from ui-list\n");
+		//Little hack to not hang the UI while removing lots of stuff... :P
+		Ecore.MainLoop.iterate();
 		elem_ui_list.remove(handle);
 		this.li.go();
 	}

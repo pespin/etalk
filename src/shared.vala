@@ -25,9 +25,9 @@ public FSOusaged fso;
  *
  */
  
-const string ETALK_SERVICE_NAME = "org.etalk";
-/*const string ETALK_BLUEZ_AGENT_PATH = "/org/etalk/bluez/agent";
-const string ETALK_BLUEZ_AGENT_IFACE = "org.bluez.Agent";
+const string ETALK_CLIENT_SERVICE_NAME = "org.freedesktop.Telepathy.Client.Etalk";
+const string ETALK_CLIENT_AGENT_PATH = "/org/freedesktop/Telepathy/Client/Etalk";
+/*const string ETALK_BLUEZ_AGENT_IFACE = "org.bluez.Agent";
 const string ETALK_OBEX_AGENT_PATH = "/org/etalk/openobex/agent";
 const string ETALK_OBEX_AGENT_IFACE = "org.openobex.Agent";
 */

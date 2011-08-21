@@ -46,6 +46,12 @@ async void etalk_init() {
 }
 
 
+void bus_session_name_error() {
+	stderr.printf ("Could not acquire session bus name\n");
+	Elm.shutdown();
+	Process.exit(0);
+}
+
 void on_bus_session_acquired (DBusConnection conn) {
 	
 	SESCONN = conn;
@@ -83,10 +89,10 @@ int main(string[] args) {
 		}
 #endif
 
-   Bus.own_name (BusType.SESSION, ETALK_SERVICE_NAME, BusNameOwnerFlags.NONE,
+   Bus.own_name (BusType.SESSION, ETALK_CLIENT_SERVICE_NAME, BusNameOwnerFlags.NONE,
 			  on_bus_session_acquired,
 			  () => stderr.printf ("Session Bus name acquired\n"),
-			  () => stderr.printf ("Could not acquire session bus name\n"));
+			  bus_session_name_error);
 
 
 	/* Start ui */

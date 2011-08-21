@@ -135,10 +135,10 @@ namespace Telepathy {
 	
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Handler", timeout = 120000)]
-	public interface ClientHandler : GLib.Object {
+	public interface ClientHandler : Client {
 
-		//[DBus (name = "HandleChannels")]
-		//public abstract void handle_channels(GLib.ObjectPath Account, GLib.ObjectPath Connection, ClientHandlerChannelStruct[] Channels, GLib.ObjectPath[] Requests_Satisfied, uint64 User_Action_Time, GLib.HashTable<string, GLib.Variant> Handler_Info) throws DBusError, IOError;
+		[DBus (name = "HandleChannels")]
+		public abstract void handle_channels(GLib.ObjectPath account, GLib.ObjectPath connection, ChannelInfo[] channels, GLib.ObjectPath[] requests_satisfied, uint64 user_action_time, GLib.HashTable<string, GLib.Variant> handler_info) throws DBusError, IOError;
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Connection.Interface.Addressing.DRAFT", timeout = 120000)]
@@ -212,10 +212,10 @@ namespace Telepathy {
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Approver", timeout = 120000)]
-	public interface ClientApprover : GLib.Object {
+	public interface ClientApprover : Client {
 
-		//[DBus (name = "AddDispatchOperation")]
-		//public abstract void add_dispatch_operation(ClientApproverChannelStruct[] Channels, GLib.ObjectPath DispatchOperation, GLib.HashTable<string, GLib.Variant> Properties) throws DBusError, IOError;
+		[DBus (name = "AddDispatchOperation")]
+		public abstract void add_dispatch_operation(ChannelInfo[] channels, GLib.ObjectPath dispatch_operation, GLib.HashTable<string, GLib.Variant> properties) throws DBusError, IOError;
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Client.Handler.FUTURE", timeout = 120000)]
@@ -278,6 +278,8 @@ namespace Telepathy {
 
 	[DBus (name = "org.freedesktop.Telepathy.Client", timeout = 120000)]
 	public interface Client : GLib.Object {
+		[DBus (name = "Interfaces")]
+		public abstract string[] interfaces { owned get; } 
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Account.Interface.Storage", timeout = 120000)]
@@ -332,8 +334,8 @@ namespace Telepathy {
 	[DBus (name = "org.freedesktop.Telepathy.Client.Observer", timeout = 120000)]
 	public interface ClientObserver : GLib.Object {
 
-		//[DBus (name = "ObserveChannels")]
-		//public abstract void observe_channels(GLib.ObjectPath Account, GLib.ObjectPath Connection, ClientObserverChannelStruct[] Channels, GLib.ObjectPath Dispatch_Operation, GLib.ObjectPath[] Requests_Satisfied, GLib.HashTable<string, GLib.Variant> Observer_Info) throws DBusError, IOError;
+		[DBus (name = "ObserveChannels")]
+		public abstract void observe_channels(GLib.ObjectPath account, GLib.ObjectPath connection, ChannelInfo[] channels, GLib.ObjectPath dispatch_operation, GLib.ObjectPath[] requests_satisfied, GLib.HashTable<string, GLib.Variant> observer_info) throws DBusError, IOError;
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.ChannelDispatcher.Interface.OperationList", timeout = 120000)]
