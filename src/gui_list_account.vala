@@ -13,7 +13,7 @@ public class ListAccountUI : Page {
 		public HashTable<string,ListItemHandlerAccount> elem_ui_list; 
 		
 		public ListAccountUI() {
-				//super();
+				base();
 				elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
 		}
 		
@@ -108,8 +108,8 @@ public class ListAccountUI : Page {
 	}
 	
 
-	public override string get_page_sid() {
-		return PAGE_SID_MAIN; //TODO: change this
+	public override PageID get_page_id() {
+		return PageID.LIST_ACCOUNT;
 	}
 	
 	public override string? get_page_title() {

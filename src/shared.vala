@@ -42,6 +42,12 @@ const string PAGE_SID_MAIN		= "main";
 /*const string PAGE_SID_KNOWN		= "known"; */
 
 
+public enum PageID {
+	MAIN,
+	LIST_ACCOUNT,
+	SETTINGS_ACCOUNT
+}
+
 
 
 

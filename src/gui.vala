@@ -78,9 +78,9 @@ public class EtalkUI {
 	}
 	
 	
-	public void refresh_page_with_sid(string sid) {
+	public void refresh_page_with_id(PageID id) {
 		
-		List<Page> l = get_page_by_sid(sid);
+		List<Page> l = get_page_by_id(id);
 		
 		foreach(var p in l) {
 		
@@ -89,14 +89,14 @@ public class EtalkUI {
 		}
 	}
 	
-	private List<Page> get_page_by_sid(string sid) {
+	private List<Page> get_page_by_id(PageID id) {
 		
 		unowned List<Page> l = page_stack;
 		List<Page> ret = new List<Page>();
 		
 		while(l!=null) {
-			//stderr.printf("iterating over page: "+l.data.get_page_sid()+"\n");
-			if( sid == l.data.get_page_sid() )
+			//stderr.printf("iterating over page: "+l.data.get_page_id()+"\n");
+			if( id == l.data.get_page_id() )
 				ret.prepend(l.data);
 			l = l.next;
 		} 
@@ -140,7 +140,7 @@ public abstract class Page : Object {
 	
 	public async abstract void refresh_content();
 	
-	public abstract string get_page_sid();
+	public abstract PageID get_page_id();
 	
 	public abstract string? get_page_title();
 	

@@ -18,7 +18,7 @@ public class MainUI : Page {
 		public HashTable<uint,ListItemHandlerContact> elem_ui_list; 
 		
 		public MainUI() {
-				//super();
+				base();
 				elem_ui_list = new HashTable<uint,ListItemHandlerContact>(direct_hash, direct_equal);
 		}
 		
@@ -133,8 +133,8 @@ public class MainUI : Page {
 	}
 	
 
-	public override string get_page_sid() {
-		return PAGE_SID_MAIN; 
+	public override PageID get_page_id() {
+		return PageID.MAIN;
 	}
 	
 	public override string? get_page_title() {

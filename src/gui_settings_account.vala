@@ -23,12 +23,13 @@ public class SettingsAccountUI : Page {
 		private Elm.Button bt_close;
 		
 	public SettingsAccountUI(Et.Account account) {
+		base();
 		this.account = account;
 	}
 		
 		
-	public override string get_page_sid() {
-			return PAGE_SID_MAIN; 
+	public override PageID get_page_id() {
+		return PageID.SETTINGS_ACCOUNT;
 	}
 	
 	public override string? get_page_title() {
