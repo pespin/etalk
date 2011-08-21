@@ -326,36 +326,29 @@ public class FrameBox {
 }
 
 
-public class ListItemHandler : Object {
+public abstract class ListItemHandler : Object {
 	
-	public Et.Contact contact;
 	public Elm.ListItem item;
 	public Elm.Icon icon;
 	public static unowned Elm.Win win;
 	
 	
-	public ListItemHandler(Elm.Win win, Et.Contact contact) {
-		this.contact = contact;
+	public ListItemHandler(Elm.Win win) {
 		this.win = win;
-		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
 	
 	public void go () { 
-		stderr.printf ("GUI: pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id+"\n"); 
 		this.item.selected_set(false);
 		open_rdevice_page(); 
 	}
 	
-	public void refresh_content() {
+	public abstract void refresh_content();
 		/*item.label_set(format_item_label(rdevice));
 		icon = gen_icon(rdevice.online ? "online" : "offline" );
 		item.icon_set(icon);*/
-	}
 	
-	public string format_item_label() {
-		return "[" + contact.handle.to_string() + "] " + contact.id;
-	}
+	public abstract string format_item_label();
 	/*
 	private static Elm.Icon gen_icon(string name) {
 		
@@ -367,21 +360,7 @@ public class ListItemHandler : Object {
 		return ic;
 	}
 */
-	private void open_rdevice_page() {
-		
-		//if true, this means probably that contact.ref_count==0
-		if(this.contact==null) { 
-			warning("contact is null!!!\n");
-			return;
-		}
-		
-		message("Opening win for contact "+contact.id+"...\n");
-		
-		/*BluezRemoteDeviceUI device_ui = new BluezRemoteDeviceUI(rdevice);
-		device_ui.create(ui.win);
-		ui.push_page(device_ui);*/
-
-	}
+	protected abstract void open_rdevice_page();
 	
 }
 

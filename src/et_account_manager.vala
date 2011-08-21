@@ -36,6 +36,15 @@ namespace Et {
 		}
 		
 		
+		public void show_accounts(ListAccountUI laui) {
+		
+				foreach(var acc in accounts.get_values()) {
+						laui.add_elem_to_ui(acc);
+				}
+			
+		}
+		
+		
 		public void sig_account_removed(GLib.ObjectPath acc_path) {
 			stderr.printf("AccountManager: sig_account_removed (%s)\n", acc_path);
 			accounts.remove(acc_path);
