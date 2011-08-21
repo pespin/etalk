@@ -14,6 +14,8 @@ namespace Et {
 		
 			try {
 				acm = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, Telepathy.ACCOUNT_MANAGER_OBJECT_PATH);
+				acm.account_removed.connect(sig_account_removed);
+				acm.account_validity_changed.connect(sig_account_validity_changed);
 			} catch ( IOError err ) {	
 				stderr.printf("AccountManager(): Could not create AccountManager with path %s: %s\n", Telepathy.ACCOUNT_MANAGER_OBJECT_PATH, err.message);
 			}
@@ -32,10 +34,21 @@ namespace Et {
 			}
 			
 		}
+		
+		
+		public void sig_account_removed(GLib.ObjectPath acc_path) {
+			stderr.printf("AccountManager: sig_account_removed (%s)\n", acc_path);
+			accounts.remove(acc_path);
+		}
 
-
-		/* TODO: connect to signals remove and validitychanged */
-
+		public void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
+			stderr.printf("AccountManager: sig_account_validity_changed [valid=%b] (%s)\n", valid, acc_path);			
+			if(accounts.lookup(acc_path)==null) {
+				Account acc = new Account(acc_path);
+				accounts.insert(acc_path, (owned) acc);
+			}
+		}
+		
 	}
 
 
