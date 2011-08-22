@@ -52,6 +52,17 @@ namespace Et {
 
 	public class Logger : GLib.Object {
 		public LogLevel level { get; set; default=LogLevel.DEBUG; }
+		
+		
+		public Logger() {
+			string? loglevel = Environment.get_variable("ET_LOG_LEVEL");
+			if(loglevel!=null) {
+				uint ulevel = int.parse(loglevel);
+				if( LogLevel.SILENT <= ulevel <= LogLevel.DEBUG )
+					this.level = (LogLevel) ulevel;
+			}
+			
+		}
 
 		public void error(string area, string message) {
 			if(this.level >= LogLevel.ERROR)

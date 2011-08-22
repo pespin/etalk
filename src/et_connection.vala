@@ -220,7 +220,7 @@ namespace Et {
 				
 				var ret = channels.lookup(chinfo.path);
 				if(ret!=null) continue;
-				logger.error("Connection",  "update_channels(): adding channel "+chinfo.path.to_string()+" to hash table");
+				logger.debug("Connection",  "update_channels(): adding channel "+chinfo.path.to_string()+" to hash table");
 				Channel ch = Channel.new_from_type(chinfo.path, this.connection_manager, this, (string) chinfo.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType"));
 				channels.insert(chinfo.path, (owned) ch);
 				

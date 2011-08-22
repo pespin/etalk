@@ -33,12 +33,11 @@ int main(string[] args) {
 
 	Elm.init(args);
 	
-	    /* start logger */
+	/* start logger */
 	logger = new Et.Logger();
 	
-	
 	logger.info("Main", "Etalk started!");
-		
+	logger.info("Main", "Logger started with level " + logger.level.to_string() + " ["+ ((uint) logger.level).to_string() + "]");	
 	/* create a glib mainloop */
     gmain = new GLib.MainLoop( null, false );
 
