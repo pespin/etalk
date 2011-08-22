@@ -74,7 +74,7 @@ public class EtalkUI {
 				win.title_set(title);
 		
 		} else 
-			stderr.printf("push_page(): pager.content_push(NULL)!!!\n");
+			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
 	}
 	
 	
@@ -200,7 +200,7 @@ public class DialogUI : Object {
 	}
 	
 	public void close() {
-		stdout.printf("Closing Dialog window\n");
+		logger.debug("DialogUI", "Closing Dialog window");
 		//win.del();
 		this.unref();
 	}

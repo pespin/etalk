@@ -6,7 +6,7 @@
 		[DBus (name = "Interfaces")]
 		public string[] interfaces { 
 				owned get {
-					stderr.printf("Client: Interfaces property requested.\n");
+					logger.debug("Client", "Interfaces property requested.");
 					return _interfaces;
 				}
 			 }
@@ -24,7 +24,7 @@
 		[DBus (name = "BypassApproval")]
 		public bool bypass_approval { 
 				get {
-					stderr.printf("ClientHandler: BypassApproval property requested.\n");
+					logger.debug("ClientHandler",  "BypassApproval property requested");
 					return _bypass_approval;
 				}
 		}
@@ -33,7 +33,7 @@
 		[DBus (name = "Capabilities")]
 		public HashTable<string, Variant> capabilities { 
 				owned get {
-					stderr.printf("ClientHandler: Capabilities property requested.\n");
+					logger.debug("ClientHandler", "Capabilities property requested.");
 					return _capabilities;
 				}
 		}
@@ -42,7 +42,7 @@
 		[DBus (name = "HandledChannels")]
 		public GLib.ObjectPath[] handled_channels { 
 				owned get {
-					stderr.printf("ClientHandler: HandledChannels property requested.\n");
+					logger.debug("ClientHandler", "HandledChannels property requested.");
 					return _handled_channels;
 				}
 			 }
@@ -59,13 +59,13 @@
 											throws DBusError, IOError {
 											
 											
-			stderr.printf("ClientHandler:\n" + "\taccount: " + account.to_string() + "\n" + "\tconnection: " + connection.to_string() + "\n");
+			logger.debug("ClientHandler", "account: " + account.to_string() + " \tconnection: " + connection.to_string());
 						
 			foreach(var chan in channels) {
-				stderr.printf("channel: "+chan.path.to_string()+"\n");
+				logger.debug("ClientHandler", "channel: "+chan.path.to_string());
 			}
 			foreach(var req in requests_satisfied) {
-				stderr.printf("requests_satisfied: "+req.to_string()+"\n");
+				logger.debug("ClientHandler", "requests_satisfied: "+req.to_string());
 			}
 			
 			throw new DBusError.FAILED("not implemented!");
@@ -86,7 +86,7 @@ namespace Et {
 			try {
 				SESCONN.register_object(ETALK_CLIENT_AGENT_PATH, client);
 			} catch ( IOError err ) {	
-				stderr.printf("Client: Could not create Client with path %s and connection manager %s: %s\n", ETALK_CLIENT_AGENT_PATH, ETALK_CLIENT_SERVICE_NAME, err.message);
+				logger.error("Client", "Could not create Client with path "+ETALK_CLIENT_AGENT_PATH+" and connection manager "+ETALK_CLIENT_SERVICE_NAME+" --> "+err.message);
 				return;
 			}
 			
@@ -114,7 +114,7 @@ namespace Et {
 			try {
 				SESCONN.register_object(ETALK_CLIENT_AGENT_PATH, client_handler);
 			} catch ( IOError err ) {
-				stderr.printf("ClientHandler: Could not create ClientHandler with path %s and connection manager %s: %s\n", ETALK_CLIENT_AGENT_PATH, ETALK_CLIENT_SERVICE_NAME, err.message);
+				logger.error("ClientHandler", "Could not create ClientHandler with path "+ETALK_CLIENT_AGENT_PATH+" and connection manager "+ETALK_CLIENT_SERVICE_NAME+" --> "+err.message);
 				return;
 			}
 			

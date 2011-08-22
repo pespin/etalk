@@ -6,48 +6,17 @@ async void etalk_init() {
 	
 		ACM = new Et.AccountManager();
 	
-		foreach(var acc_path in ACM.accounts.get_keys()) {
+		/*foreach(var acc_path in ACM.accounts.get_keys()) {
 		
 			stderr.printf("init: %s\n", acc_path);
 			
-		}
-	
-		/*ACM.accounts.@foreach( (acc_path, acc) => {
-		
-			stderr.printf("init: Requesting info on account %s ...\n", acc_path);
-
-			if(!acc.connection.is_valid || acc.connection.dbus.status!=Telepathy.ConnectionStatus.CONNECTED) {
-				stderr.printf("\tThis connection is not connected, jumping to next connection...\n");
-				return;
-			}
-			//stderr.printf("connection has status=%u\n", acc.connection.dbus.status);
-			stderr.printf("\tEnsuring contact list channel %s ...\n", acc.connection.ensure_channel_contact_list());
-			*/
-			/*
-			acc.connection.channels.@foreach( (path, channel) => {
-				
-				stderr.printf("\tChannel: %s\n", path);
-			
-			} ); */
-			
-			
-			/*acc.connection.contacts.@foreach( (handle, contact) => {
-				
-				stderr.printf("\tContact: %s\n", contact.to_string());
-					
-			
-			
-			} );*/
-		
-		
-		//} );
-	
+		} */
 	
 }
 
 
 void bus_session_name_error() {
-	stderr.printf ("Could not acquire session bus name\n");
+	logger.error("DBus", "Could not acquire session bus name\n");
 	Elm.shutdown();
 	Process.exit(0);
 }
@@ -78,23 +47,24 @@ int main(string[] args) {
         warning( "could not integrate glib mainloop. did you compile glib mainloop support into ecore?" );
     }
     
+    /* start logger */
+	logger = new Et.Logger();
     
 #if _FSO_
     /* Get CPU resource if fso is running */
     try {
-			stderr.printf ("Requesting \"CPU\" resource to org.freesmartphone.ousaged...\n");
+			logger.info("FSO", "Requesting \"CPU\" resource to org.freesmartphone.ousaged...\n");
 			fso = Bus.get_proxy_sync (BusType.SYSTEM, "org.freesmartphone.ousaged", "/org/freesmartphone/Usage");
 			fso.request_resource("CPU");
 		} catch (IOError e) {
-			stderr.printf ("ERR: Could not get access to org.freesmartphone.ousaged: %s\n", e.message);
+			logger.error("FSO", "Could not get access to org.freesmartphone.ousaged: "+e.message);
 		}
 #endif
 
    Bus.own_name (BusType.SESSION, ETALK_CLIENT_SERVICE_NAME, BusNameOwnerFlags.NONE,
 			  on_bus_session_acquired,
-			  () => stderr.printf ("Session Bus name acquired\n"),
+			  () => logger.info("DBus", "Session Bus name acquired"),
 			  bus_session_name_error);
-
 
 	/* Start ui */
 	ui = new EtalkUI();
@@ -109,10 +79,10 @@ int main(string[] args) {
     
 #if _FSO_    
 	try {
-		stderr.printf ("Releasing \"CPU\" resource...\n");
+		logger.info("FSO", "Releasing \"CPU\" resource...\n");
 		fso.release_resource("CPU");
 	} catch (IOError e) {
-		stderr.printf ("Could not get access to org.freesmartphone.ousaged: %s\n", e.message);
+		logger.error("FSO", "Could not get access to org.freesmartphone.ousaged: "+e.message);
 	}
 #endif   
     

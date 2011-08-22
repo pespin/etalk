@@ -17,12 +17,12 @@ namespace Et {
 			this.connection_manager = connection_manager;
 			this.connection = connection;
 			
-			stderr.printf("Channel: creating new channel with path=%s and connection_manager=%s\n", path, connection_manager);
+			logger.info("Channel", "Creating new channel with path="+path+" and connection_manager="+connection_manager);
 		
 			try {
 				channel = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
 			} catch ( IOError err ) {	
-				stderr.printf("Channel(): Could not create Channel with path %s and connection manager %s: %s\n", path, connection_manager, err.message);
+				logger.error("Channel",  "Could not create Channel with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
 				return;
 			}
 		}
@@ -58,13 +58,13 @@ namespace Et {
 				
 			base(path,connection_manager, connection);
 			
-			stderr.printf("ChannelExt: creating new channel with path=%s and connection_manager=%s\n", path, connection_manager);
+			logger.info("ChannelGroup", "Creating new channel with path="+path+" and connection_manager="+connection_manager);
 		
 			try {
 				channelext = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
 				channelext.members_changed.connect(sig_members_changed);
 			} catch ( IOError err ) {	
-				stderr.printf("ChannelExt(): Could not create ChannelExt with path %s and connection manager %s: %s\n", path, connection_manager, err.message);
+				logger.error("ChannelGroup",  "Could not create ChannelGroup with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
 				return;
 			}
 			
@@ -77,11 +77,11 @@ namespace Et {
 			
 		public void sig_members_changed(string message, uint[] added, uint[] removed, uint[] local_pending, uint[] remote_pending, uint actor, uint reason) {
 					
-			stderr.printf("ChannelExt: sig_members_changed:\n");
+			logger.debug("ChannelGroup", "sig_members_changed");
 			
-			foreach(uint add in added) stderr.printf("\tAdded: %u\n", add);
+			foreach(uint add in added) logger.debug("ChannelGroup", "\tAdded: "+add.to_string());
 			connection.create_contacts(added);
-			foreach(uint rm in removed) stderr.printf("\tRemoved: %u\n", rm);
+			foreach(uint rm in removed) logger.debug("ChannelGroup", "\tRemoved: "+rm.to_string());
 			//TODO: remove contacts
 		}
 		

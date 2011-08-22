@@ -20,7 +20,7 @@ namespace Et {
 			presence.status="";
 			presence.status_message="";
 		
-			stderr.printf("Contact: creating new contact with handle=%u an connection.path=%s\n", handle, connection.path);
+			logger.debug("Contact", "Creating new contact with handle="+handle.to_string()+" and connection.path="+connection.path);
 		
 		}
 		

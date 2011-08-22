@@ -25,15 +25,15 @@ namespace Et {
 			try {
 				account = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, path);
 			} catch ( IOError err ) {	
-				stderr.printf("Account(): Could not create Account with path %s: %s\n", path, err.message);
+				logger.error("Account", "Could not create Account with path "+path+": "+err.message);
 			}
 
-			stderr.printf("Account: Debug -> connection_manager = %s\n", this.connection_manager);
+			logger.debug("Account", "connection_manager = "+this.connection_manager);
 			
 			
 			//autoconnect if the account is configured this way:
 			if(this.dbus.enabled) {
-				stderr.printf("Account: autoconnecting %s...\n", path);
+				logger.debug("Account", "autoconnecting "+path);
 				this.dbus.requested_presence = this.dbus.automatic_presence;
 			}
 			
@@ -52,7 +52,7 @@ namespace Et {
 		}
 		
 		private void close_connection() {
-			stderr.printf("Account: closing connection\n");
+			logger.debug("Account",  "closing connection");
 			this.connection.invalidate();
 		}
 		
@@ -65,7 +65,7 @@ namespace Et {
 		private void sig_account_property_changed(GLib.HashTable<string, GLib.Variant> properties) {
 			
 			properties.@foreach( (key, val) => {
-				stderr.printf("Account: \t{ key: %s, value:  %s }\n", key, val.print(true));
+				logger.debug("Account", "\t{ key: "+key+", value:  "+val.print(true)+" }");
 			});
 			
 			unowned Variant? e = properties.lookup("Enabled");

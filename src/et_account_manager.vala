@@ -17,7 +17,7 @@ namespace Et {
 				acm.account_removed.connect(sig_account_removed);
 				acm.account_validity_changed.connect(sig_account_validity_changed);
 			} catch ( IOError err ) {	
-				stderr.printf("AccountManager(): Could not create AccountManager with path %s: %s\n", Telepathy.ACCOUNT_MANAGER_OBJECT_PATH, err.message);
+				logger.error("AccountManager", "Could not create AccountManager with path "+Telepathy.ACCOUNT_MANAGER_OBJECT_PATH+": "+err.message);
 			}
 			
 			//fill the accounts hash table
@@ -28,7 +28,7 @@ namespace Et {
 		
 		public void update_accounts() {
 			foreach(var acc_path in acm.valid_accounts) {
-				stderr.printf("AccountManager: Account %s requested\n", acc_path);
+				logger.debug("AccountManager", "Account "+acc_path.to_string()+" requested");
 				Account acc = new Account(acc_path);
 				accounts.insert(acc_path, (owned) acc);
 			}
@@ -46,14 +46,14 @@ namespace Et {
 		
 		
 		public void sig_account_removed(GLib.ObjectPath acc_path) {
-			stderr.printf("AccountManager: sig_account_removed (%s)\n", acc_path);
+			logger.debug("AccountManager",  "sig_account_removed ("+acc_path.to_string()+")");
 			accounts.remove(acc_path);
 			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
 			
 		}
 
 		public void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
-			stderr.printf("AccountManager: sig_account_validity_changed (valid = %s) (%s)\n", valid.to_string(), acc_path);			
+			logger.debug("AccountManager", "sig_account_validity_changed (valid = "+valid.to_string()+") ("+acc_path.to_string()+")");			
 			if(accounts.lookup(acc_path)==null) {
 				Account acc = new Account(acc_path);
 				accounts.insert(acc_path, (owned) acc);

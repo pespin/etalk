@@ -4,6 +4,7 @@
  *
  */
 public GLib.MainLoop gmain;
+public Et.Logger logger;
 public Et.AccountManager ACM;
 //public Telepathy.ConnectionManager CNM;
 public Et.ClientHandler CH;
@@ -40,39 +41,31 @@ public enum PageID {
 	NEW_ACCOUNT
 }
 
-
-
-
-/*
- * 
- * MISC FUNCS
- * 
- * 
- */
-
-public string[]? get_dbus_array(Variant? bar) {
-	//stdout.printf("CREATING GLIST FROM DBUS...\n"); 
-	if(bar==null || bar.is_container()==false) return null;
-	
-	string[] list;
-
-	size_t max = bar.n_children();
-	list = new string[max];
-	
-	for(size_t i=0; i<max; i++) {
-		var item = (string) bar.get_child_value(i);
-				list[i] = item;
-				stdout.printf("ListAdded: %s;\n",(string) item);
+namespace Et {
+	public enum LogLevel {
+			SILENT,
+			ERROR,
+			INFO,
+			DEBUG
 	}
-	
-	return list;
-	
-}
 
 
-public string? variant_to_string(Variant? v) {
-	if(v!=null && ( v.is_of_type(VariantType.OBJECT_PATH) || v.is_of_type(VariantType.STRING) || v.is_of_type(VariantType.SIGNATURE)) )
-		return v.print(true);
-	return null;
-	
+	public class Logger : GLib.Object {
+		public LogLevel level { get; set; default=LogLevel.DEBUG; }
+
+		public void error(string area, string message) {
+			if(this.level >= LogLevel.ERROR)
+				stderr.printf("ERROR[%s]: %s\n", area, message);
+		}
+		
+		public void info(string area, string message) {
+			if(this.level >= LogLevel.INFO)
+				stderr.printf("INFO[%s]: %s\n", area, message);
+		}
+		
+		public void debug(string area, string message) {
+			if(this.level >= LogLevel.DEBUG)
+				stderr.printf("DEBUG[%s]: %s\n", area, message);
+		}
+	}
 }

@@ -102,7 +102,7 @@ public class MainUI : Page {
 	public void add_elem_to_ui(Et.Contact contact) {
 		
 		
-		message("Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
+		logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 		
 		//Little hack to not hang the UI while adding lots of stuff... :P
 		Ecore.MainLoop.iterate();
@@ -115,7 +115,7 @@ public class MainUI : Page {
 
 	public void remove_elem_from_ui(uint handle) {
 
-		message("Removing elem " + handle.to_string() + " from ui-list\n");
+		logger.debug("MainUI", "Removing elem " + handle.to_string() + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
 		elem_ui_list.remove(handle);
@@ -124,7 +124,7 @@ public class MainUI : Page {
 	
 	
 	private void cb_bt_accounts_clicked() {
-		stdout.printf("Accounts button pressed.\n");
+		logger.debug("MainUI", "Accounts button pressed.\n");
 		
 		var accounts_list = new ListAccountUI();
 		accounts_list.create(ui.win);
@@ -173,7 +173,7 @@ public class ListItemHandlerContact : ListItemHandler {
 	
 	
 	public new void go () { 
-		stderr.printf ("GUI: pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id+"\n"); 
+		logger.debug("ListItemHandlerContact", "pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id+"\n"); 
 		base.go(); 
 	}
 	
@@ -201,11 +201,11 @@ public class ListItemHandlerContact : ListItemHandler {
 		
 		//if true, this means probably that contact.ref_count==0
 		if(this.contact==null) { 
-			warning("contact is null!!!\n");
+			logger.error("ListItemHandlerContact", "contact is null!!!");
 			return;
 		}
 		
-		message("Opening win for contact "+contact.id+"...\n");
+		logger.debug("ListItemHandlerContact", "Opening win for contact "+contact.id+"...\n");
 		
 		/*BluezRemoteDeviceUI device_ui = new BluezRemoteDeviceUI(rdevice);
 		device_ui.create(ui.win);

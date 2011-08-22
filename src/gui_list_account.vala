@@ -106,7 +106,7 @@ public class ListAccountUI : Page {
 	public void add_elem_to_ui(Et.Account account) {
 		
 		
-		message("Adding element " + account.path + " to ui-list");
+		logger.debug("ListAccountUI", "Adding element " + account.path + " to ui-list");
 		
 		//Little hack to not hang the UI while adding lots of stuff... :P
 		Ecore.MainLoop.iterate();
@@ -119,7 +119,7 @@ public class ListAccountUI : Page {
 
 	public void remove_elem_from_ui(string path) {
 
-		message("Removing elem " + path + " from ui-list\n");
+		logger.debug("ListAccountUI", "Removing elem " + path + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
 		elem_ui_list.remove(path);
@@ -145,7 +145,7 @@ public class ListAccountUI : Page {
 	
 	
 	private void cb_bt_new_clicked() {
-		stdout.printf("New Account button pressed.\n");
+		logger.debug("ListAccountUI", "New Account button pressed.");
 		
 		var accui = new NewAccountUI();
 		accui.create(ui.win);
@@ -171,7 +171,7 @@ public class ListItemHandlerAccount : ListItemHandler {
 	
 	
 	public new void go () { 
-		stderr.printf ("GUI: pressed... path=" + this.account.path + "\n"); 
+		logger.debug("ListItemHandlerAccount", "pressed... path=" + this.account.path); 
 		base.go(); 
 	}
 	
@@ -199,11 +199,11 @@ public class ListItemHandlerAccount : ListItemHandler {
 		
 		//if true, this means probably that account.ref_count==0
 		if(this.account==null) { 
-			warning("account is null!!!\n");
+			logger.error("ListItemHandlerAccount", "account is null!!!");
 			return;
 		}
 		
-		message("Opening win for account "+account.path+"...\n");
+		logger.debug("ListItemHandlerAccount", "Opening win for account "+account.path+"...");
 		
 		var accui = new SettingsAccountUI(account);
 		accui.create(ui.win);
