@@ -35,7 +35,7 @@ public class NewAccountUI : Page {
 	}
 	
 	public async override void refresh_content() {
-			stderr.printf("NOT IMPLEMENTED: refresh_content() on NewAccountUI\n");
+			logger.error("NewAccountUI", "NOT IMPLEMENTED: refresh_content() on NewAccountUI");
 	}
 	
 	
@@ -148,7 +148,7 @@ public class NewAccountUI : Page {
 		try {
 			ACM.dbus.create_account(cmanager.val_get(), protocol.val_get(), display_name.val_get(), parameters, properties);
 		} catch (Error err) {
-			stderr.printf("NewAccountUI: CreateAccount() failed: %s\n", err.message);
+			logger.error("NewAccountUI", "CreateAccount() failed: "+err.message);
 		}
 	}
 	

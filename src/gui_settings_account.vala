@@ -37,7 +37,7 @@ public class SettingsAccountUI : Page {
 	}
 	
 	public async override void refresh_content() {
-			stderr.printf("NOT IMPLEMENTED: refresh_content() on SettingsAccountUI\n");
+			logger.error("SettingsAccountUI", "NOT IMPLEMENTED: refresh_content() on SettingsAccountUI");
 	}
 	
 	

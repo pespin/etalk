@@ -124,7 +124,7 @@ public class MainUI : Page {
 	
 	
 	private void cb_bt_accounts_clicked() {
-		logger.debug("MainUI", "Accounts button pressed.\n");
+		logger.debug("MainUI", "Accounts button pressed.");
 		
 		var accounts_list = new ListAccountUI();
 		accounts_list.create(ui.win);
@@ -142,9 +142,7 @@ public class MainUI : Page {
 	}
 	
 	public async override void refresh_content() {
-			//stderr.printf("NOT IMPLEMENTED: refresh_content() on MainUI\n");
-			
-			
+
 		HashTableIter<uint,ListItemHandlerContact> it = HashTableIter<uint,ListItemHandlerContact>(elem_ui_list);
 		
 		unowned uint? handle;
@@ -173,7 +171,7 @@ public class ListItemHandlerContact : ListItemHandler {
 	
 	
 	public new void go () { 
-		logger.debug("ListItemHandlerContact", "pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id+"\n"); 
+		logger.debug("ListItemHandlerContact", "pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id); 
 		base.go(); 
 	}
 	
@@ -205,7 +203,7 @@ public class ListItemHandlerContact : ListItemHandler {
 			return;
 		}
 		
-		logger.debug("ListItemHandlerContact", "Opening win for contact "+contact.id+"...\n");
+		logger.debug("ListItemHandlerContact", "Opening win for contact "+contact.id+"...");
 		
 		/*BluezRemoteDeviceUI device_ui = new BluezRemoteDeviceUI(rdevice);
 		device_ui.create(ui.win);

@@ -16,7 +16,7 @@ async void etalk_init() {
 
 
 void bus_session_name_error() {
-	logger.error("DBus", "Could not acquire session bus name\n");
+	logger.error("DBus", "Could not acquire session bus name");
 	Elm.shutdown();
 	Process.exit(0);
 }
@@ -32,28 +32,28 @@ void on_bus_session_acquired (DBusConnection conn) {
 int main(string[] args) {
 
 	Elm.init(args);
-	stdout.printf("Etalk started!\n");
+	
+	    /* start logger */
+	logger = new Et.Logger();
+	
+	
+	logger.info("Main", "Etalk started!");
 		
 	/* create a glib mainloop */
     gmain = new GLib.MainLoop( null, false );
 
     /* integrate glib mainloop into ecore mainloop */
-    if ( Ecore.MainLoop.glib_integrate() )
-    {
-        message( "glib mainloop integration successfully completed" );
+    if ( Ecore.MainLoop.glib_integrate() ) {
+        logger.info("Main", "glib mainloop integration successfully completed");
+    } else {
+        logger.error("Main", "could not integrate glib mainloop. did you compile glib mainloop support into ecore?" );
+		return 1;
     }
-    else
-    {
-        warning( "could not integrate glib mainloop. did you compile glib mainloop support into ecore?" );
-    }
-    
-    /* start logger */
-	logger = new Et.Logger();
     
 #if _FSO_
     /* Get CPU resource if fso is running */
     try {
-			logger.info("FSO", "Requesting \"CPU\" resource to org.freesmartphone.ousaged...\n");
+			logger.info("FSO", "Requesting \"CPU\" resource to org.freesmartphone.ousaged...");
 			fso = Bus.get_proxy_sync (BusType.SYSTEM, "org.freesmartphone.ousaged", "/org/freesmartphone/Usage");
 			fso.request_resource("CPU");
 		} catch (IOError e) {
@@ -79,7 +79,7 @@ int main(string[] args) {
     
 #if _FSO_    
 	try {
-		logger.info("FSO", "Releasing \"CPU\" resource...\n");
+		logger.info("FSO", "Releasing \"CPU\" resource...");
 		fso.release_resource("CPU");
 	} catch (IOError e) {
 		logger.error("FSO", "Could not get access to org.freesmartphone.ousaged: "+e.message);
