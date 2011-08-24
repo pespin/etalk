@@ -5,7 +5,7 @@ async void etalk_init() {
 		/* INITIALIZE GLOBALS */
 	
 		ACM = new Et.AccountManager();
-	
+		ACM.update_accounts();
 		/*foreach(var acc_path in ACM.accounts.get_keys()) {
 		
 			stderr.printf("init: %s\n", acc_path);

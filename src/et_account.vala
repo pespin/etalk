@@ -23,7 +23,7 @@ namespace Et {
 			this.connection_manager = Telepathy.CONNECTION_MANAGER_BUS_NAME + "." + parts[5];
 		
 			try {
-				account = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, path);
+				account = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 			} catch ( IOError err ) {	
 				logger.error("Account", "Could not create Account with path "+path+": "+err.message);
 			}
@@ -50,6 +50,7 @@ namespace Et {
 		}
 		
 		public void disable() {
+			this.connection.invalidate();
 			this.dbus.enabled = false;
 		}
 		
@@ -93,6 +94,7 @@ namespace Et {
 				this.close_connection();
 			}
 			
+			ui.refresh_page_with_id(PageID.SETTINGS_ACCOUNT);
 			
 		}
 

@@ -12,7 +12,7 @@ namespace Et {
 		public unowned Connection connection {get; private set;}
 		
 		public Channel(string path, string connection_manager, Connection connection) {
-			
+			assert(path!=null);
 			this.path = path;
 			this.connection_manager = connection_manager;
 			this.connection = connection;
@@ -20,7 +20,7 @@ namespace Et {
 			logger.info("Channel", "Creating new channel with path="+path+" and connection_manager="+connection_manager);
 		
 			try {
-				channel = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
+				channel = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 			} catch ( IOError err ) {	
 				logger.error("Channel",  "Could not create Channel with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
 				return;
@@ -35,9 +35,13 @@ namespace Et {
 		public static Channel? new_from_type(string path, string connection_manager, Connection connection, string type) {
 			
 			/*TODO: parse and return depending on type */
-			
-			return new ChannelGroup(path, connection_manager, connection) as Channel;
-			
+			logger.debug("Channel", "new_from_type: type="+type);
+			switch(type) {
+				case Telepathy.IFACE_CHANNEL_TYPE_CONTACT_LIST:
+					return new ChannelGroup(path, connection_manager, connection) as Channel;
+				default:
+					return null;
+			}
 			
 		}
 
@@ -61,7 +65,7 @@ namespace Et {
 			logger.info("ChannelGroup", "Creating new channel with path="+path+" and connection_manager="+connection_manager);
 		
 			try {
-				channelext = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path);
+				channelext = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 				channelext.members_changed.connect(sig_members_changed);
 			} catch ( IOError err ) {	
 				logger.error("ChannelGroup",  "Could not create ChannelGroup with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);

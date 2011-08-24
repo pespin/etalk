@@ -13,15 +13,12 @@ namespace Et {
 			accounts = new HashTable<string,Account>(str_hash, str_equal);
 		
 			try {
-				acm = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, Telepathy.ACCOUNT_MANAGER_OBJECT_PATH);
+				acm = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, Telepathy.ACCOUNT_MANAGER_OBJECT_PATH, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 				acm.account_removed.connect(sig_account_removed);
 				acm.account_validity_changed.connect(sig_account_validity_changed);
 			} catch ( IOError err ) {	
 				logger.error("AccountManager", "Could not create AccountManager with path "+Telepathy.ACCOUNT_MANAGER_OBJECT_PATH+": "+err.message);
 			}
-			
-			//fill the accounts hash table
-			this.update_accounts();
 			
 		}
 		
@@ -40,6 +37,13 @@ namespace Et {
 		
 				foreach(var acc in accounts.get_values()) {
 						laui.add_elem_to_ui(acc);
+				}
+				
+				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
+				unowned string? path;
+				unowned Account? acc;
+				while(it.next(out path, out acc)) {
+					laui.add_elem_to_ui(acc);
 				}
 			
 		}

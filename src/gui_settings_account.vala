@@ -36,7 +36,12 @@ public class SettingsAccountUI : Page {
 	}
 	
 	public async override void refresh_content() {
-			logger.error("SettingsAccountUI", "NOT IMPLEMENTED: refresh_content() on SettingsAccountUI");
+		name.val_set(account.dbus.display_name);
+		nickname.val_set(account.dbus.nickname);
+		tg_valid.state_set(account.dbus.valid);
+		tg_enabled.state_set(account.dbus.enabled);
+		cstatus.val_set(((Telepathy.ConnectionStatus) account.dbus.connection_status).to_string());
+		service.val_set(account.dbus.service);
 	}
 	
 	
@@ -118,7 +123,7 @@ public class SettingsAccountUI : Page {
 		service = new EntryBox(win, fr_general.box, "Service", account.dbus.service);
 		service.show();
 		
-		name.val.smart_callback_add("changed", () => {
+		service.val.smart_callback_add("changed", () => {
 							account.dbus.service = service.val_get();
 													});
 
