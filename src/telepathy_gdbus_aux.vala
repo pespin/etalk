@@ -138,7 +138,7 @@ namespace Telepathy {
 
 	/* ENUMS */
 	
-	enum ConnectionPresenceType {
+	public enum ConnectionPresenceType {
 		UNSET,
 		OFFLINE,
 		AVAILABLE,
@@ -150,13 +150,29 @@ namespace Telepathy {
 		ERROR
 	}
 	
-	enum ConnectionStatus {
+	public enum ConnectionStatus {
 		CONNECTED,
 		CONNECTING,
-		DISCONNECTED
+		DISCONNECTED;
+		
+		public string to_string() {
+			switch (this) {
+				case CONNECTED:
+					return "Connected";
+
+				case CONNECTING:
+					return "Connecting";
+
+				case DISCONNECTED:
+					return "Disconnected";
+
+				default:
+					assert_not_reached();
+			}
+		}
 	}
 
-	enum TpHandleType {
+	public enum TpHandleType {
 		NONE,
 		CONTACT,
 		ROOM,

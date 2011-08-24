@@ -44,6 +44,14 @@ namespace Et {
 
 		}
 		
+		public void enable() {
+			this.dbus.enabled = true;
+			this.dbus.requested_presence = this.dbus.automatic_presence;
+		}
+		
+		public void disable() {
+			this.dbus.enabled = false;
+		}
 		
 		
 		private void open_connection(GLib.ObjectPath conn) {
@@ -76,10 +84,16 @@ namespace Et {
 					this.open_connection((GLib.ObjectPath) c.get_string());
 			}
 			
+			if(e!=null && e.get_boolean()==true && this.connection!=null) {
+				this.connection.init();
+			}
+			
 			//account disabled, remove connection:
 			if((e!=null && e.get_boolean()==false) || (c!=null && c.get_string()=="/")	) {
 				this.close_connection();
 			}
+			
+			
 		}
 
 	}

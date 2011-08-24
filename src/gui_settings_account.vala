@@ -5,19 +5,18 @@ public class SettingsAccountUI : Page {
 		private Et.Account account;
 		
 		private FrameBox fr_general;
-		private FrameBox fr_disc;
-		private FrameBox fr_pair;
 		
-		private LabelBox address;
 		private EntryBox name;
-		private EntryBox discoverable_timeout;
+		private EntryBox nickname;
+		private LabelBox cstatus;
+		private EntryBox service;
 		private EntryBox pairable_timeout;
 			
 		private Elm.Scroller sc;
 		private Elm.Box vbox_in;
 		private Elm.Box hbox;
-		private Elm.Toggle tg_disc;
-		private Elm.Toggle tg_pair;
+		private Elm.Toggle tg_valid;
+		private Elm.Toggle tg_enabled;
 		private Elm.Button bt_k;
 		
 		private Elm.Button bt_close;
@@ -71,29 +70,59 @@ public class SettingsAccountUI : Page {
 		//address.show();
 		
 		// NAME:
-		name = new EntryBox(win, fr_general.box, "Name", account.dbus.display_name);
+		name = new EntryBox(win, fr_general.box, "Account Name", account.dbus.display_name);
 		name.show();
 		
-		/*name.val.smart_callback_add("changed", () => {Variant val = name.val_get();
-													ADAPTER.set_property_("Name", val);
+		name.val.smart_callback_add("changed", () => {
+							account.dbus.display_name = name.val_get();
 													});
+
+		nickname = new EntryBox(win, fr_general.box, "Nickname", account.dbus.nickname);
+		nickname.show();
 		
-		// DISCOVERABLE TOGGLE + TIMEOUT:
+		nickname.val.smart_callback_add("changed", () => {
+							account.dbus.nickname = nickname.val_get();
+													});
+													
+		tg_valid = new Elm.Toggle(win);
+		tg_valid.text_set("Valid:");
+		tg_valid.states_labels_set("Yes", "No");
+		tg_valid.state_set(account.dbus.valid);
+		tg_valid.disabled_set(true);
+		tg_valid.size_hint_align_set(-1.0, 0.0);
+		fr_general.box.pack_end(tg_valid);
+		tg_valid.show();
 		
-		fr_disc = new FrameBox(win, vbox_in, "Discovery settings");
-		fr_disc.show();
+		tg_enabled = new Elm.Toggle(win);
+		tg_enabled.text_set("Enabled:");
+		tg_enabled.states_labels_set("Yes", "No");
+		tg_enabled.state_set(account.dbus.enabled);
+		tg_enabled.size_hint_align_set(-1.0, 0.0);
+		fr_general.box.pack_end(tg_enabled);
+		tg_enabled.show();
 		
-		tg_disc = new Elm.Toggle(win);
-		tg_disc.text_set("Discoverable:");
-		tg_disc.states_labels_set("On", "Off");
-		tg_disc.state_set(ADAPTER.discoverable);
-		tg_disc.size_hint_align_set(-1.0, 0.0);
-		fr_disc.box.pack_end(tg_disc);
-		tg_disc.show();
 		
-		tg_disc.smart_callback_add("changed", () => {Variant val = tg_disc.state_get();
-											ADAPTER.set_property_("Discoverable", val); });
-		//endl
+		tg_enabled.smart_callback_add("changed", () => {
+							if(tg_enabled.state_get()==true)
+								account.enable();
+							else
+								account.disable();
+														});
+
+		
+		cstatus = new LabelBox(win, fr_general.box, "Connection status",
+					((Telepathy.ConnectionStatus) account.dbus.connection_status).to_string());
+		cstatus.show();
+		
+		
+		service = new EntryBox(win, fr_general.box, "Service", account.dbus.service);
+		service.show();
+		
+		name.val.smart_callback_add("changed", () => {
+							account.dbus.service = service.val_get();
+													});
+
+		/*
 		
 		discoverable_timeout = new EntryBox(win, fr_disc.box, "Discoverable timeout", ADAPTER.discoverable_timeout.to_string());
 		discoverable_timeout.show();
