@@ -1,6 +1,5 @@
 using GLib;
 
-
 namespace Telepathy {
 
 	[DBus (name = "org.freedesktop.Telepathy.AccountManager", timeout = 120000)]
@@ -280,6 +279,16 @@ namespace Telepathy {
 	public interface Client : GLib.Object {
 		[DBus (name = "Interfaces")]
 		public abstract string[] interfaces { owned get; } 
+	}
+	
+	[DBus (name = "org.freedesktop.Telepathy.Client.Interface.Requests", timeout = 120000)]
+	public interface ClientInterfaceRequests : GLib.Object {
+		[DBus (name = "AddRequest")]
+		public abstract void add_request(GLib.ObjectPath request, GLib.HashTable<string, GLib.Variant> properties) throws DBusError, IOError;
+
+		[DBus (name = "RemoveRequest")]
+		public abstract void remove_request(GLib.ObjectPath request, string error, string message) throws DBusError, IOError;
+
 	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Account.Interface.Storage", timeout = 120000)]
