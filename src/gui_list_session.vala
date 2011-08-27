@@ -1,22 +1,23 @@
-public class ListAccountUI : Page {
+public class ListSessionUI : Page {
 	
 		public Elm.Label header;
 		public Elm.List li;
 		
 		private unowned Elm.Win win;
-
+			
 		private Elm.Box hbox;
 		private Elm.Box hbox_top;
 		private Elm.Frame fr;
 		private Elm.Box hbox1;
 		private Elm.Button bt_back;
-		private Elm.Button bt_new;
 
-		public HashTable<string,ListItemHandlerAccount> elem_ui_list; 
+		public HashTable<string,ListItemHandlerSession> elem_ui_list; 
 		
-		public ListAccountUI() {
+		
+		
+		public ListSessionUI() {
 				base();
-				elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
+				elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
 		}
 		
 
@@ -62,7 +63,7 @@ public class ListAccountUI : Page {
 		
 		// add a label
 		header = new Elm.Label(win);
-		header.text_set("Accounts");
+		header.text_set("Sessions");
 		header.size_hint_weight_set(1.0, 1.0);
 		header.size_hint_align_set(-1.0, -1.0);
 		hbox_top.pack_end(header);
@@ -84,13 +85,13 @@ public class ListAccountUI : Page {
 		vbox.pack_end(hbox1);
 		hbox1.show();
 
-		bt_new = new Elm.Button(win);
+		/*bt_new = new Elm.Button(win);
 		bt_new.text_set("New Account");
 		bt_new.size_hint_weight_set(1.0, 1.0);
 		bt_new.size_hint_align_set(-1.0, -1.0);
 		hbox1.pack_end(bt_new);
 		bt_new.show();
-		bt_new.smart_callback_add( "clicked", cb_bt_new_clicked);
+		bt_new.smart_callback_add( "clicked", cb_bt_new_clicked);*/
 	
 		this.populate_list();
 	
@@ -99,27 +100,27 @@ public class ListAccountUI : Page {
 	
 	
 	private void populate_list() {
-			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
-			ACM.show_accounts(this);
+			elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
+			SM.show_sessions(this);
 	}
 	
-	public void add_elem_to_ui(Et.Account account) {
+	public void add_elem_to_ui(Et.ChannelMessages elem) {
 		
 		
-		logger.debug("ListAccountUI", "Adding element " + account.path + " to ui-list");
+		logger.debug("ListSessionUI", "Adding element " + elem.path + " to ui-list");
 		
 		//Little hack to not hang the UI while adding lots of stuff... :P
 		Ecore.MainLoop.iterate();
 		
-		var opener = new ListItemHandlerAccount(win, account);
+		var opener = new ListItemHandlerSession(win, elem);
 		opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		elem_ui_list.insert(account.path, (owned) opener);
+		elem_ui_list.insert(elem.path, (owned) opener);
 		this.li.go();
 	}
 
 	public void remove_elem_from_ui(string path) {
 
-		logger.debug("ListAccountUI", "Removing elem " + path + " from ui-list");
+		logger.debug("ListSessionUI", "Removing elem " + path + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
 		elem_ui_list.remove(path);
@@ -128,11 +129,11 @@ public class ListAccountUI : Page {
 	
 
 	public override PageID get_page_id() {
-		return PageID.LIST_ACCOUNT;
+		return PageID.LIST_SESSION;
 	}
 	
 	public override string? get_page_title() {
-		return "Etalk - Accounts List"; 
+		return "Sessions List"; 
 	}
 	
 	public async override void refresh_content() {
@@ -142,36 +143,24 @@ public class ListAccountUI : Page {
 	}
 	
 	
-	
-	
-	private void cb_bt_new_clicked() {
-		logger.debug("ListAccountUI", "New Account button pressed.");
-		
-		var accui = new NewAccountUI();
-		accui.create(ui.win);
-		ui.push_page(accui);
-		
-	}
-	
-	
 }
 
 
 
-public class ListItemHandlerAccount : ListItemHandler {
+public class ListItemHandlerSession : ListItemHandler {
 	
-	public Et.Account account;
+	public Et.ChannelMessages elem;
 	
 	
-	public ListItemHandlerAccount(Elm.Win win, Et.Account account) {
+	public ListItemHandlerSession(Elm.Win win, Et.ChannelMessages elem) {
 		base(win);
-		this.account = account;
+		this.elem = elem;
 		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
 	
 	public new void go () { 
-		logger.debug("ListItemHandlerAccount", "pressed... path=" + this.account.path); 
+		logger.debug("ListItemHandlerSession", "pressed... path=" + this.elem.path); 
 		base.go(); 
 	}
 	
@@ -182,7 +171,7 @@ public class ListItemHandlerAccount : ListItemHandler {
 	}
 	
 	public override string format_item_label() {
-		return "[" + account.dbus.display_name + "]";
+		return "[" + elem.dbus.target_handle.to_string() + "] "+elem.dbus.target_id;
 	}
 	/*
 	private static Elm.Icon gen_icon(string name) {
@@ -197,17 +186,17 @@ public class ListItemHandlerAccount : ListItemHandler {
 */
 	protected override void open_rdevice_page() {
 		
-		//if true, this means probably that account.ref_count==0
-		if(this.account==null) { 
-			logger.error("ListItemHandlerAccount", "account is null!!!");
+		//if true, this means probably that elem.ref_count==0
+		if(this.elem==null) { 
+			logger.error("ListItemHandlerSession", "elem is null!!!");
 			return;
 		}
 		
-		logger.debug("ListItemHandlerAccount", "Opening win for account "+account.path+"...");
+		logger.debug("ListItemHandlerSession", "Opening win for elem "+elem.path+"...");
 		
-		var accui = new SettingsAccountUI(account);
-		accui.create(ui.win);
-		ui.push_page(accui);
+		var gui = new SessionUI(elem);
+		gui.create(ui.win);
+		ui.push_page(gui);
 
 	}
 }

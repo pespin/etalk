@@ -200,9 +200,9 @@ namespace Telepathy {
 	public struct Message {
 		GLib.HashTable<string, Variant>[] parts;	
 	}
-	
-	
-	
+
+
+
 	public struct Simple_Presence {
 		uint type; /* = enum ConnectionPresenceType */
 		string status;

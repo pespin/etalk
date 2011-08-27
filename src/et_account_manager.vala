@@ -34,10 +34,6 @@ namespace Et {
 		
 		
 		public void show_accounts(ListAccountUI laui) {
-		
-				foreach(var acc in accounts.get_values()) {
-						laui.add_elem_to_ui(acc);
-				}
 				
 				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
 				unowned string? path;

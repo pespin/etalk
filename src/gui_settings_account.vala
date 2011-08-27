@@ -10,14 +10,12 @@ public class SettingsAccountUI : Page {
 		private EntryBox nickname;
 		private LabelBox cstatus;
 		private EntryBox service;
-		private EntryBox pairable_timeout;
-			
+
 		private Elm.Scroller sc;
 		private Elm.Box vbox_in;
 		private Elm.Box hbox;
 		private Elm.Toggle tg_valid;
 		private Elm.Toggle tg_enabled;
-		private Elm.Button bt_k;
 		
 		private Elm.Button bt_close;
 		

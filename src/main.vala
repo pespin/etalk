@@ -3,7 +3,7 @@
 async void etalk_init() {
 	
 		/* INITIALIZE GLOBALS */
-	
+		SM = new Et.SessionManager();
 		ACM = new Et.AccountManager();
 		ACM.update_accounts();
 		/*foreach(var acc_path in ACM.accounts.get_keys()) {

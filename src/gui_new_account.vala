@@ -31,7 +31,7 @@ public class NewAccountUI : Page {
 	}
 	
 	public override string? get_page_title() {
-			return "Emtooth - New Account"; 
+			return "New Account"; 
 	}
 	
 	public async override void refresh_content() {

@@ -1,6 +1,3 @@
-
-
-
 public class MainUI : Page {
 	
 		public Elm.Label header;
@@ -11,9 +8,8 @@ public class MainUI : Page {
 		private Elm.Box hbox;
 		private Elm.Frame fr;
 		private Elm.Box hbox1;
-		//private Elm.Button bt_start;
-		//private Elm.Button bt_stop;
 		private Elm.Button bt_accounts;
+		private Elm.Button bt_sessions;
 
 		public HashTable<uint,ListItemHandlerContact> elem_ui_list; 
 		
@@ -96,6 +92,14 @@ public class MainUI : Page {
 		bt_accounts.show();
 		bt_accounts.smart_callback_add( "clicked", cb_bt_accounts_clicked );
 	
+		bt_sessions = new Elm.Button(win);
+		bt_sessions.text_set("Sessions");
+		bt_sessions.size_hint_weight_set( 1.0, 1.0 );
+		bt_sessions.size_hint_align_set( -1.0, -1.0 );
+		hbox1.pack_end(bt_sessions);
+		bt_sessions.show();
+		bt_sessions.smart_callback_add( "clicked", cb_bt_sessions_clicked );
+	
 		return vbox;
 	}
 	
@@ -129,6 +133,15 @@ public class MainUI : Page {
 		var accounts_list = new ListAccountUI();
 		accounts_list.create(ui.win);
 		ui.push_page(accounts_list);
+		
+	}
+	
+	private void cb_bt_sessions_clicked() {
+		logger.debug("MainUI", "Sessions button pressed.");
+
+		var session_list = new ListSessionUI();
+		session_list.create(ui.win);
+		ui.push_page(session_list);
 		
 	}
 	

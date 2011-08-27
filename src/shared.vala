@@ -6,7 +6,7 @@
 public GLib.MainLoop gmain;
 public Et.Logger logger;
 public Et.AccountManager ACM;
-//public Telepathy.ConnectionManager CNM;
+public Et.SessionManager SM;
 public Et.ClientHandler CH;
 public EtalkUI ui;
 
@@ -38,7 +38,9 @@ public enum PageID {
 	MAIN,
 	LIST_ACCOUNT,
 	SETTINGS_ACCOUNT,
-	NEW_ACCOUNT
+	NEW_ACCOUNT,
+	SESSION,
+	LIST_SESSION
 }
 
 namespace Et {

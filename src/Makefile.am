@@ -15,11 +15,14 @@ etalk_SOURCES = \
 	et_clients.vala \
 	et_connection.vala \
 	et_contact.vala \
+	et_session_manager.vala \
 	fso.vala \
 	gui.vala \
 	gui_list_account.vala \
+	gui_list_session.vala \
 	gui_main.vala \
 	gui_new_account.vala \
+	gui_session.vala \
 	gui_settings_account.vala \
 	telepathy_gdbus_interfaces.vala \
 	telepathy_gdbus_aux.vala

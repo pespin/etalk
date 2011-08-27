@@ -386,9 +386,15 @@ namespace Telepathy {
 	[DBus (name = "org.freedesktop.Telepathy.Channel", timeout = 120000)]
 	public interface Channel : GLib.Object {
 
-		//THIS PRPERTY IS NOT WORKING ON tp-gabble atm:
+		//THIS PROPERTY IS NOT WORKING ON tp-gabble atm:
 		[DBus (name = "ChannelType")]
 		public abstract string channel_type_ { owned get; private set;}
+
+		[DBus (name = "TargetHandle ")]
+		public abstract uint target_handle { owned get; private set;}
+		
+		[DBus (name = "TargetID")]
+		public abstract string target_id { owned get; private set;}
 
 		[DBus (name = "Close")]
 		public abstract void close() throws DBusError, IOError;

@@ -111,7 +111,13 @@ namespace Et {
 				logger.error("ChannelMessages",  "Could not create ChannelMessages with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
 				return;
 			}
+			
+			SM.add_session(this);
 
+		}
+		
+		~ChannelMessages() {
+			SM.remove_session(this.path);
 		}
 
 
