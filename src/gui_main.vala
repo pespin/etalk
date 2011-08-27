@@ -139,9 +139,7 @@ public class MainUI : Page {
 	private void cb_bt_sessions_clicked() {
 		logger.debug("MainUI", "Sessions button pressed.");
 
-		var session_list = new ListSessionUI();
-		session_list.create(ui.win);
-		ui.push_page(session_list);
+		ui.push_page(ui.sui);
 		
 	}
 	
@@ -195,7 +193,7 @@ public class ListItemHandlerContact : ListItemHandler {
 	}
 	
 	public override string format_item_label() {
-		return "[" + contact.handle.to_string() + "] " + contact.id;
+		return "[" + contact.presence.status + "] " + contact.id;
 	}
 	/*
 	private static Elm.Icon gen_icon(string name) {

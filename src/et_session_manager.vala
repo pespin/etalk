@@ -12,8 +12,8 @@ namespace Et {
 		}
 
 		
-		public void add_session(owned ChannelMessages session) {
-				sessions.insert(session.path, (owned) session);
+		public void add_session(ChannelMessages session) {
+				sessions.insert(session.path, session);
 				ui.refresh_page_with_id(PageID.LIST_SESSION);
 		}
 

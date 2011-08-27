@@ -148,7 +148,7 @@ namespace Et {
 				});
 				logger.debug("ChannelMessages", "---");
 			}
-
+			this.new_message(content);
 		}
 
 		private void sig_pending_messages_removed(uint[] message_ids) {
@@ -159,6 +159,8 @@ namespace Et {
 			}
 
 		}
+		
+		public signal void new_message(GLib.HashTable<string, Variant>[] message);
 
 	}
 

@@ -8,13 +8,14 @@ public class EtalkUI {
 			
 		private Elm.Bg	bg;
 		public MainUI  mui;
-		
+		public ListSessionUI sui;
 		public List<Page> page_stack;
 		
 		
 		public EtalkUI() {
 				page_stack = new List<Page>();
 				mui = new MainUI();
+				sui = new ListSessionUI();
 		}
 		
 
@@ -39,6 +40,8 @@ public class EtalkUI {
 			unowned Elm.Object page;
 			page = mui.create(win);
 			pager.content_push(page);
+			
+			sui.create(win);
 			
 			win.show();
 	

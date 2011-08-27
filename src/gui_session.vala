@@ -2,6 +2,7 @@ public class SessionUI : Page {
 
 		private Et.ChannelMessages channel;
 		
+		Elm.Object[] gui_container;
 		private Elm.Frame fr;
 		private Elm.Label header;
 		private LabelBox path;
@@ -17,6 +18,7 @@ public class SessionUI : Page {
 	public SessionUI(Et.ChannelMessages channel) {
 		base();
 		this.channel = channel;
+		channel.new_message.connect(sig_new_message);
 	}
 		
 		
@@ -25,11 +27,20 @@ public class SessionUI : Page {
 	}
 	
 	public override string? get_page_title() {
-			return "Session"; 
+		return "Session"; 
 	}
 	
 	public async override void refresh_content() {
 	
+	}
+	
+	public void sig_new_message(GLib.HashTable<string, Variant>[] message) {
+		string? sender = (string) message[0].lookup("message-sender-id");
+		string? content = (string) message[1].lookup("content");
+		if(sender==null || content==null)
+			logger.error("SessionUI", "sender or content is NULL!");
+		logger.debug("SessionUI", sender+": "+content+"\n");
+		
 	}
 	
 	
