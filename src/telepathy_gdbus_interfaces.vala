@@ -417,23 +417,22 @@ namespace Telepathy {
 	}
 	
 	
-	
 	[DBus (name = "org.freedesktop.Telepathy.Channel.Interface.Messages")]
 	public interface ChannelInterfaceMessages : GLib.Object {
 		[DBus (name = "PendingMessages")]
-		public abstract Message[] pending_messages {owned get;}
+		public abstract GLib.HashTable<string, Variant>[,] pending_messages {owned get;}
 		
 		[DBus (name = "SendMessage")]
-		public abstract string send_message(Message message, uint flags) throws DBusError, IOError;
+		public abstract string send_message(GLib.HashTable<string, Variant>[] message, uint flags) throws DBusError, IOError;
 
 		[DBus (name = "MessageSent")]
-		public signal void message_sent(Message content, uint flags, string message_token);
+		public signal void message_sent(GLib.HashTable<string, Variant>[] content, uint flags, string message_token);
 
 		[DBus (name = "PendingMessagesRemoved")]
 		public signal void pending_messages_removed(uint[] message_ids);
 		
 		[DBus (name = "MessageReceived")]
-		public signal void message_received(Message content);
+		public signal void message_received(GLib.HashTable<string, Variant>[] content);
 	}
 	
 	
