@@ -36,6 +36,7 @@ extern const string IMAGESDIR;
 
 public enum PageID {
 	MAIN,
+	SETTINGS_MAIN,
 	LIST_ACCOUNT,
 	SETTINGS_ACCOUNT,
 	NEW_ACCOUNT,

@@ -1,18 +1,7 @@
-public class SettingsAccountUI : Page {
-
-		private Et.Account account;
-		
-		private CbPresenceType[] hoversel_container;
+public class SettingsMainUI : Page {
 		
 		private EntryBox name;
-		private EntryBox nickname;
-		private LabelBox cstatus;
-		private EntryBox service;
-		private Elm.Toggle tg_valid;
-		private Elm.Toggle tg_enabled;
-		private Elm.Box hbox_presence;
-		private Elm.Label lb_presence;
-		private Elm.Hoversel presence;
+
 		private Elm.Scroller sc;
 		private Elm.Box vbox_in;
 		private Elm.Box hbox;
@@ -21,28 +10,16 @@ public class SettingsAccountUI : Page {
 		private Elm.Frame fr;
 		private Elm.Button bt_back;
 		
-	public SettingsAccountUI(Et.Account account) {
-		base();
-		this.account = account;
-	}
-		
 		
 	public override PageID get_page_id() {
-		return PageID.SETTINGS_ACCOUNT;
+		return PageID.SETTINGS_MAIN;
 	}
 	
 	public override string? get_page_title() {
-			return "Emtooth - Account settings"; 
+			return "General Settings"; 
 	}
 	
 	public async override void refresh_content() {
-		name.val_set(account.dbus.display_name);
-		nickname.val_set(account.dbus.nickname);
-		tg_valid.state_set(account.dbus.valid);
-		tg_enabled.state_set(account.dbus.enabled);
-		cstatus.val_set(account.connection_status);
-		presence.text_set(account.current_connection_presence);
-		service.val_set(account.dbus.service);
 	}
 	
 	
@@ -109,19 +86,11 @@ public class SettingsAccountUI : Page {
 		name = new EntryBox(win, vbox_in, "Account Name", "blabla");
 		name.show();
 		
-		//ADDRESS	
-		//address = new LabelBox(win, fr_general.box, "Address", ADAPTER.addr);
-		//address.show();
-		
-		// NAME:
-		name = new EntryBox(win, vbox_in, "Account Name", account.dbus.display_name);
-		name.show();
-		
-		name.val.smart_callback_add("changed", () => {
+		/*name.val.smart_callback_add("changed", () => {
 							account.dbus.display_name = name.val_get();
 													});
 
-		nickname = new EntryBox(win, vbox_in, "Nickname", account.dbus.nickname);
+		nickname = new EntryBox(win, fr_general.box, "Nickname", account.dbus.nickname);
 		nickname.show();
 		
 		nickname.val.smart_callback_add("changed", () => {
@@ -134,7 +103,7 @@ public class SettingsAccountUI : Page {
 		tg_valid.state_set(account.dbus.valid);
 		tg_valid.disabled_set(true);
 		tg_valid.size_hint_align_set(-1.0, 0.0);
-		vbox_in.pack_end(tg_valid);
+		fr_general.box.pack_end(tg_valid);
 		tg_valid.show();
 		
 		tg_enabled = new Elm.Toggle(win);
@@ -142,7 +111,7 @@ public class SettingsAccountUI : Page {
 		tg_enabled.states_labels_set("Yes", "No");
 		tg_enabled.state_set(account.dbus.enabled);
 		tg_enabled.size_hint_align_set(-1.0, 0.0);
-		vbox_in.pack_end(tg_enabled);
+		fr_general.box.pack_end(tg_enabled);
 		tg_enabled.show();
 		
 		
@@ -154,66 +123,25 @@ public class SettingsAccountUI : Page {
 														});
 
 		
-		cstatus = new LabelBox(win, vbox_in, "Connection status", account.connection_status);
+		cstatus = new LabelBox(win, fr_general.box, "Connection status",
+					((Telepathy.ConnectionStatus) account.dbus.connection_status).to_string());
 		cstatus.show();
 		
 		
-		hbox_presence = new Elm.Box(win);
-		hbox_presence.horizontal_set(true);	
-		hbox_presence.size_hint_align_set(0.0, 0.0);	
-		vbox_in.pack_end(hbox_presence);
-		hbox_presence.show();		
-		
-		lb_presence = new Elm.Label(win);
-		lb_presence.text_set("<b>Presence:</b>");
-		hbox_presence.pack_end(lb_presence);
-		lb_presence.show();
-		
-		presence = new Elm.Hoversel(win);
-		presence.hover_parent_set(win);
-		presence.size_hint_align_set(1.0, 0.0);
-		hbox_presence.pack_end(presence);
-		presence.text_set(account.current_connection_presence);
-		presence.show();
-		
-		
-		hoversel_container = { };
-		int i = 0;
-		foreach(var ptype in Telepathy.ConnectionPresenceType.get_usable()) {
-			var cbdata = new CbPresenceType(this.account, ptype);
-			hoversel_container += (owned) cbdata;
-			presence.item_add(hoversel_container[i].ptype.to_string(), null, Elm.IconType.NONE, hoversel_container[i].apply_presence);
-			i++;
-		}
-		
-		
-		service = new EntryBox(win, vbox_in, "Service", account.dbus.service);
+		service = new EntryBox(win, fr_general.box, "Service", account.dbus.service);
 		service.show();
 		
 		service.val.smart_callback_add("changed", () => {
 							account.dbus.service = service.val_get();
 													});
 
+		*/
 
 		return vbox;
 	}
 	
-}
 
-/* This object is needed to avoid delete of data when passed to hoversel callback */
-private class CbPresenceType : GLib.Object {
-	
-	public Telepathy.ConnectionPresenceType ptype;
-	private unowned Et.Account account;
-	
-	public CbPresenceType(Et.Account account, Telepathy.ConnectionPresenceType ptype) {
-		this.account = account;
-		this.ptype=ptype;
-	}
-	
-	public void apply_presence() {
-			logger.debug("CbPresenceType", "presence set to "+this.ptype.to_string());
-			account.simple_presence_set(ptype);
-	}
+
+
 }
 

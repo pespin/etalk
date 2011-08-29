@@ -9,10 +9,22 @@ namespace Et {
 		
 		public string path {get; private set;}
 		
+		public string connection_status {
+			owned get {
+				return ((Telepathy.ConnectionStatus) account.connection_status).to_string();
+			}
+		}
+		
+		public string current_connection_presence {
+			owned get {
+				return ((Telepathy.ConnectionPresenceType) account.current_presence.type).to_string();
+			}
+		}
 		
 		/* we have to parse it. Connection manager is always of type "/org/freedesktop/Telepathy/Account/cm/proto/acct"
 		 * see http://telepathy.freedesktop.org/spec/Account.html for more info */
 		public string connection_manager { get; private set; }
+		
 		public Connection? connection { get; private set; default=null; }
 		
 		public Account(string path) {
@@ -44,6 +56,15 @@ namespace Et {
 
 		}
 		
+		
+		public void simple_presence_set(Telepathy.ConnectionPresenceType ptype, string? status_message=null, string? status=null) {
+				var presence = Telepathy.Simple_Presence();
+				presence.type = ptype;
+				presence.status = ( status != null ? status : ptype.to_string() );
+				presence.status_message = ( status_message != null ? status_message : ptype.to_string() );
+				this.dbus.requested_presence = presence;
+		}
+		
 		public void enable() {
 			this.dbus.enabled = true;
 			this.dbus.requested_presence = this.dbus.automatic_presence;
@@ -64,8 +85,6 @@ namespace Et {
 			logger.debug("Account",  "closing connection");
 			this.connection.invalidate();
 		}
-		
-		
 		
 
 		/* TODO: connect to signals propertychanged */

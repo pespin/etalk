@@ -147,7 +147,44 @@ namespace Telepathy {
 		HIDDEN,
 		BUSY,
 		UNKNOWN,
-		ERROR
+		ERROR;
+		
+		public static ConnectionPresenceType[] get_usable() {
+			return { AVAILABLE, BUSY, AWAY, HIDDEN, OFFLINE };
+		}
+		
+		public string to_string() {
+			switch (this) {
+				case UNSET:
+					return "unset";
+
+				case OFFLINE:
+					return "offline";
+
+				case AVAILABLE:
+					return "available";
+				
+				case AWAY:
+				case EXTENDED_AWAY:
+					return "away";
+
+				case HIDDEN:
+					return "hidden";
+
+				case BUSY:
+					return "busy";	
+					
+				case UNKNOWN:
+					return "unknown";
+					
+				case ERROR:
+					return "error";
+								
+				default:
+					assert_not_reached();
+			}
+			
+		}
 	}
 	
 	public enum ConnectionStatus {

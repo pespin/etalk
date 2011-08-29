@@ -8,6 +8,7 @@ public class MainUI : Page {
 		private Elm.Box hbox;
 		private Elm.Frame fr;
 		private Elm.Box hbox1;
+		private Elm.Button bt_settings;
 		private Elm.Button bt_accounts;
 		private Elm.Button bt_sessions;
 
@@ -82,7 +83,15 @@ public class MainUI : Page {
 		//bt_stop.smart_callback_add( "clicked", cb_bt_stop_clicked );
 		hbox1.pack_end(bt_stop);
 		bt_stop.show(); */
-	
+
+
+		bt_settings = new Elm.Button(win);
+		bt_settings.text_set("settings");
+		bt_settings.size_hint_weight_set( 1.0, 1.0 );
+		bt_settings.size_hint_align_set( -1.0, -1.0 );
+		hbox1.pack_end(bt_settings);
+		bt_settings.show();
+		bt_settings.smart_callback_add( "clicked", cb_bt_settings_clicked );
 	
 		bt_accounts = new Elm.Button(win);
 		bt_accounts.text_set("Accounts");
@@ -126,7 +135,17 @@ public class MainUI : Page {
 		this.li.go();
 	}
 	
-	
+
+	private void cb_bt_settings_clicked() {
+		logger.debug("MainUI", "Accounts button pressed.");
+		
+		var settingsui = new SettingsMainUI();
+		settingsui.create(ui.win);
+		ui.push_page(settingsui);
+		
+	}
+
+
 	private void cb_bt_accounts_clicked() {
 		logger.debug("MainUI", "Accounts button pressed.");
 		

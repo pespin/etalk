@@ -28,7 +28,7 @@ public class ListSessionUI : Page {
 		//add vbox
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
-		vbox.show();
+		//vbox.show();
 		
 		//add button hbox
 		hbox = new Elm.Box(win);
