@@ -16,6 +16,7 @@ public class SettingsAccountUI : Page {
 		private Elm.Box hbox_presence;
 		private Elm.Label lb_presence;
 		private Elm.Hoversel presence;
+		private Elm.Button bt_rm;
 
 		
 	public SettingsAccountUI(Et.Account account) {
@@ -151,7 +152,18 @@ public class SettingsAccountUI : Page {
 		service.val.smart_callback_add("changed", () => {
 							account.dbus.service = service.val_get();
 													});
-
+		//RM BUTTON:
+		bt_rm = new Elm.Button(win);
+		bt_rm.text_set("Remove Account");
+		bt_rm.size_hint_weight_set(0, 0);
+		bt_rm.size_hint_align_set(-1.0, -1.0);
+		vbox_in.pack_end(bt_rm);
+		bt_rm.show();
+		
+		bt_rm.smart_callback_add( "clicked", () => {
+											account.dbus.remove();
+											this.close();
+											} );
 
 		return vbox;
 	}

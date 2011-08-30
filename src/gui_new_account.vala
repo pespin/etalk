@@ -118,14 +118,14 @@ public class NewAccountUI : Page {
 		bt_ok.size_hint_align_set(-1.0, -1.0);
 		hbox.pack_end(bt_ok);
 		bt_ok.show();
-		bt_ok.smart_callback_add( "clicked", this.create_account );
+		bt_ok.smart_callback_add( "clicked", this.cb_create_account );
 
 		return vbox;
 	}
 	
 	
 	
-	private void create_account() {
+	private void cb_create_account() {
 		var parameters = new GLib.HashTable<string, Variant>(str_hash, str_equal);
 		var properties = new GLib.HashTable<string, Variant>(str_hash, str_equal);
 		
@@ -141,6 +141,7 @@ public class NewAccountUI : Page {
 		} catch (Error err) {
 			logger.error("NewAccountUI", "CreateAccount() failed: "+err.message);
 		}
+		this.close();
 	}
 	
 

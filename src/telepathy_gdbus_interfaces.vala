@@ -67,7 +67,7 @@ namespace Telepathy {
 		public abstract string normalized_name { owned get; }
 
 		[DBus (name = "Remove")]
-		public abstract void remove() throws DBusError, IOError;
+		public abstract async void remove() throws DBusError, IOError;
 
 		[DBus (name = "Removed")]
 		public signal void removed();
