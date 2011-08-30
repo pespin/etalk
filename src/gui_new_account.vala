@@ -17,8 +17,7 @@ public class NewAccountUI : Page {
 		private Elm.Scroller sc;
 		private Elm.Box vbox_in;
 		private Elm.Box hbox;
-		
-		private Elm.Button bt_cancel;
+
 		private Elm.Button bt_ok;
 		
 	public NewAccountUI() {
@@ -112,14 +111,6 @@ public class NewAccountUI : Page {
 		hbox.size_hint_align_set(-1.0, 0.0);
 		vbox.pack_end(hbox);
 		hbox.show();
-		
-		bt_cancel = new Elm.Button(win);
-		bt_cancel.text_set("Close");
-		bt_cancel.size_hint_weight_set(1.0, 1.0);
-		bt_cancel.size_hint_align_set(-1.0, -1.0);
-		hbox.pack_end(bt_cancel);
-		bt_cancel.show();
-		bt_cancel.smart_callback_add( "clicked", this.close );
 		
 		bt_ok = new Elm.Button(win);
 		bt_ok.text_set("Create");

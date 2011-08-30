@@ -1,12 +1,8 @@
 public class MainUI : Page {
-	
-		public Elm.Label header;
-		public Elm.List li;
 		
 		private unowned Elm.Win win;
-			
-		private Elm.Box hbox;
-		private Elm.Frame fr;
+
+		public Elm.List li;
 		private Elm.Box hbox1;
 		private Elm.Button bt_settings;
 		private Elm.Button bt_accounts;
@@ -28,28 +24,6 @@ public class MainUI : Page {
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 		vbox.show();
-		
-		//add button hbox
-		hbox = new Elm.Box(win);
-		hbox.horizontal_set(true);	
-		hbox.size_hint_weight_set( 1.0, 0.0 );
-		hbox.size_hint_align_set( -1.0, 0.0 );
-		vbox.pack_end(hbox);
-		hbox.show();
-		
-		// add a frame
-		fr = new Elm.Frame(win);
-		fr.style_set("outdent_top");
-		fr.size_hint_weight_set(0.0, 0.0);
-		fr.size_hint_align_set(0.0, -1.0);
-		hbox.pack_end(fr);
-		fr.show();
-		
-		// add a label
-		header = new Elm.Label(win);
-		header.text_set("Contacts");
-		fr.content_set(header);
-		header.show();
 
 		//add list
 		li = new Elm.List(win);
@@ -57,7 +31,6 @@ public class MainUI : Page {
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
 		vbox.pack_end(li);
-		//li.smart_callback_add( "clicked", cb_device_list_selected );
 		li.show();
 	
 		//add button hbox1
@@ -67,26 +40,9 @@ public class MainUI : Page {
 		hbox1.size_hint_align_set( -1.0, 0.0 );
 		vbox.pack_end(hbox1);
 		hbox1.show();
-		/*
-		//add buttons to hbox1
-		bt_start = new Elm.Button(win);
-		bt_start.text_set("Start Discovery");
-		bt_start.size_hint_weight_set( 1.0, 1.0 );
-		bt_start.size_hint_align_set( -1.0, -1.0 );
-		//bt_start.smart_callback_add( "clicked", cb_bt_start_clicked );
-		
-		
-		bt_stop = new Elm.Button(win);
-		bt_stop.text_set("Stop Discovery");
-		bt_stop.size_hint_weight_set( 1.0, 1.0 );
-		bt_stop.size_hint_align_set( -1.0, -1.0 );
-		//bt_stop.smart_callback_add( "clicked", cb_bt_stop_clicked );
-		hbox1.pack_end(bt_stop);
-		bt_stop.show(); */
-
 
 		bt_settings = new Elm.Button(win);
-		bt_settings.text_set("settings");
+		bt_settings.text_set("Settings");
 		bt_settings.size_hint_weight_set( 1.0, 1.0 );
 		bt_settings.size_hint_align_set( -1.0, -1.0 );
 		hbox1.pack_end(bt_settings);
@@ -168,7 +124,7 @@ public class MainUI : Page {
 	}
 	
 	public override string? get_page_title() {
-		return "Etalk - settings"; 
+		return "Contact List"; 
 	}
 	
 	public async override void refresh_content() {

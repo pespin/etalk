@@ -4,6 +4,9 @@ public class SettingsAccountUI : Page {
 		
 		private CbPresenceType[] hoversel_container;
 		
+		private Elm.Scroller sc;
+		private Elm.Box vbox_in;
+		
 		private EntryBox name;
 		private EntryBox nickname;
 		private LabelBox cstatus;
@@ -13,13 +16,7 @@ public class SettingsAccountUI : Page {
 		private Elm.Box hbox_presence;
 		private Elm.Label lb_presence;
 		private Elm.Hoversel presence;
-		private Elm.Scroller sc;
-		private Elm.Box vbox_in;
-		private Elm.Box hbox;
-		private Elm.Box hbox_top;
-		private Elm.Label header;
-		private Elm.Frame fr;
-		private Elm.Button bt_back;
+
 		
 	public SettingsAccountUI(Et.Account account) {
 		base();
@@ -32,7 +29,7 @@ public class SettingsAccountUI : Page {
 	}
 	
 	public override string? get_page_title() {
-			return "Emtooth - Account settings"; 
+			return "Account settings"; 
 	}
 	
 	public async override void refresh_content() {
@@ -52,45 +49,6 @@ public class SettingsAccountUI : Page {
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set(1.0, 1.0);
 		vbox.show();
-
-		//add button hbox
-		hbox = new Elm.Box(win);
-		hbox.horizontal_set(true);	
-		hbox.size_hint_weight_set( 1.0, 0.0 );
-		hbox.size_hint_align_set( -1.0, 0.0 );
-		vbox.pack_end(hbox);
-		hbox.show();		
-		
-		// add a frame
-		fr = new Elm.Frame(win);
-		fr.style_set("outdent_top");
-		fr.size_hint_weight_set(0.0, 0.0);
-		fr.size_hint_align_set(0.0, -1.0);
-		hbox.pack_end(fr);
-		fr.show();
-		
-		hbox_top = new Elm.Box(win);
-		hbox_top.horizontal_set(true);	
-		hbox_top.size_hint_weight_set( 1.0, 0.0 );
-		hbox_top.size_hint_align_set( -1.0, 0.0 );
-		fr.content_set(hbox_top);
-		hbox_top.show();
-		
-		bt_back = new Elm.Button(win);
-		bt_back.text_set("Back");
-		bt_back.size_hint_weight_set(1.0, 1.0);
-		bt_back.size_hint_align_set(-1.0, -1.0);
-		hbox_top.pack_end(bt_back);
-		bt_back.show();
-		bt_back.smart_callback_add( "clicked", this.close );
-		
-		// add a label
-		header = new Elm.Label(win);
-		header.text_set("Settings");
-		header.size_hint_weight_set(1.0, 1.0);
-		header.size_hint_align_set(-1.0, -1.0);
-		hbox_top.pack_end(header);
-		header.show();
 		
 		sc = new Elm.Scroller(win);
 		sc.size_hint_weight_set(1.0, 1.0);
