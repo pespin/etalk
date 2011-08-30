@@ -4,7 +4,7 @@ public class EtalkUI {
 	
 		public Elm.Win win;
 		
-		private Elm.Pager pager;
+		public Elm.Naviframe pager;
 			
 		private Elm.Bg	bg;
 		public MainUI  mui;
@@ -14,8 +14,6 @@ public class EtalkUI {
 		
 		public EtalkUI() {
 				page_stack = new List<Page>();
-				mui = new MainUI();
-				sui = new ListSessionUI();
 		}
 		
 
@@ -32,15 +30,18 @@ public class EtalkUI {
 			
 			win.resize( DISPLAY_WIDTH, DISPLAY_HEIGHT );
 			
-			pager = new Elm.Pager( win );
+			pager = new Elm.Naviframe( win );
 			win.resize_object_add( pager );
 			pager.size_hint_weight_set( 1.0, 1.0 );
+			pager.content_preserve_on_pop_set(true);
 			pager.show();
 			
+			mui = new MainUI();
+			sui = new ListSessionUI();
 			unowned Elm.Object page;
 			page = mui.create(win);
-			pager.content_push(page);
-			
+			//pager.content_push(page);
+			pager.item_push(mui.get_page_title(), null, null, page, null);
 			sui.create(win);
 			
 			win.show();
@@ -50,7 +51,7 @@ public class EtalkUI {
 	public void pop_page(Page page) {
 		//stderr.printf("pop_page() started!\n");
 		//if( obj == pager.content_top_get() ) { //this segfaults...
-			pager.content_pop();
+			pager.item_pop();
 			page_stack.remove(page);
 			
 			string? last_title = get_last_title();
@@ -70,11 +71,11 @@ public class EtalkUI {
 		unowned Elm.Object? page = obj.get_page();
 		if(page!=null) {
 			
-			pager.content_push(page);
-			
 			string title = obj.get_page_title();
 			if(title!=null)
 				win.title_set(title);
+				
+			pager.item_push(title, obj.naviframe_back, null, page, null);
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
@@ -128,9 +129,16 @@ public class EtalkUI {
 public abstract class Page : Object {
 	
 	protected Elm.Box vbox;
+	public Elm.Button naviframe_back;
 	
 	public Page() {
 		vbox = null;
+		naviframe_back = new Elm.Button(ui.pager);
+		naviframe_back.text_set("Back");
+		naviframe_back.size_hint_weight_set(1.0, 1.0);
+		naviframe_back.size_hint_align_set(-1.0, -1.0);
+		//naviframe_back.show();
+		naviframe_back.smart_callback_add( "clicked", this.close );
 	}
 	
 	public unowned Elm.Object? get_page() {
