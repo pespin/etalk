@@ -40,8 +40,9 @@ public class EtalkUI {
 			sui = new ListSessionUI();
 			unowned Elm.Object page;
 			page = mui.create(win);
-			//pager.content_push(page);
+			win.title_set("Etalk - "+mui.get_page_title());
 			pager.item_push(mui.get_page_title(), null, null, page, null);
+
 			sui.create(win);
 			
 			win.show();
@@ -56,9 +57,9 @@ public class EtalkUI {
 			
 			string? last_title = get_last_title();
 			if(last_title != null)
-				win.title_set(last_title);
+				win.title_set("Etalk - "+last_title);
 			else
-				win.title_set(mui.get_page_title());
+				win.title_set("Etalk - "+mui.get_page_title());
 		//}
 		//stderr.printf("pop_page() finished!\n");
 	}
@@ -73,7 +74,7 @@ public class EtalkUI {
 			
 			string title = obj.get_page_title();
 			if(title!=null)
-				win.title_set(title);
+				win.title_set("Etalk - "+title);
 				
 			pager.item_push(title, obj.naviframe_back, null, page, null);
 		
