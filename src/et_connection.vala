@@ -295,10 +295,9 @@ namespace Et {
 		}
 		
 		private void sig_channel_closed(GLib.ObjectPath chremoved) {
-			 logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
-					
-				this.channels.remove(chremoved);
-				SM.remove_session(chremoved);
+			logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
+			if(this.is_valid==true) this.channels.remove(chremoved);
+			SM.remove_session(chremoved);
 		}		
 
 

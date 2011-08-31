@@ -80,7 +80,7 @@ public class EtalkUI {
 			if(title!=null)
 				win.title_set("Etalk - "+title);
 				
-			pager.item_push(title, obj.naviframe_back, null, page, null);
+			pager.item_push(title, (owned) obj.naviframe_back, null, page, null);
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
