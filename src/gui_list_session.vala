@@ -67,9 +67,28 @@ public class ListSessionUI : Page {
 		this.li.go();
 	}
 	
+	//returns true if the ui is already available, false if it can't
+	public bool show_session_ui(uint handle) {
+		unowned SessionUI? gui = get_session_ui_by_handle(handle);
+		if(gui==null) return false;
+		ui.push_page(gui);
+		return true;
+	}
+	
+	private unowned SessionUI? get_session_ui_by_handle(uint handle) {
+				var it = HashTableIter<string,ListItemHandlerSession>(elem_ui_list);
+				unowned string? key;
+				unowned ListItemHandlerSession? val;
+				while(it.next(out key, out val)) {
+					if(val.elem.dbus.target_handle==handle) return val.gui;
+				}
+			
+			return null;
+		}
+	
 	
 	private void sig_session_added(string path) {
-		unowned Et.ChannelMessages? session = SM.get_session(path);
+		unowned Et.ChannelMessages? session = SM.get_session_by_path(path);
 		if(session==null) return;
 		
 		this.add_elem_to_ui(session);

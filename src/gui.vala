@@ -65,9 +65,7 @@ public class EtalkUI {
 	}
 
 
-	public void push_page(Page obj) {
-		
-		page_stack.prepend(obj);
+	public void push_page(owned Page obj) {
 		
 		obj.naviframe_back = new Elm.Button(ui.pager);
 		obj.naviframe_back.text_set("Back");
@@ -86,6 +84,8 @@ public class EtalkUI {
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
+		
+		page_stack.prepend((owned) obj);
 	}
 	
 	
@@ -111,10 +111,10 @@ public class EtalkUI {
 		}
 	}
 	
-	private List<unowned Page> get_page_by_id(PageID id) {
+	private List<Page> get_page_by_id(PageID id) {
 		
 		unowned List<Page> l = page_stack;
-		List<unowned Page> ret = new List<Page>();
+		List<Page> ret = new List<Page>();
 		
 		while(l!=null) {
 			//stderr.printf("iterating over page: "+l.data.get_page_id()+"\n");

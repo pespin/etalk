@@ -295,8 +295,8 @@ namespace Et {
 		}
 		
 		private void sig_channel_closed(GLib.ObjectPath chremoved) {
-			/*Each dictionary MUST contain the keys org.freedesktop.Telepathy.Channel.ChannelType, org.freedesktop.Telepathy.Channel.TargetHandleType, org.freedesktop.Telepathy.Channel.TargetHandle, org.freedesktop.Telepathy.Channel.TargetID and org.freedesktop.Telepathy.Channel.Requested. 
-			 * */
+			 logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
+					
 				this.channels.remove(chremoved);
 				SM.remove_session(chremoved);
 		}		

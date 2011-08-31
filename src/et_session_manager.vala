@@ -19,14 +19,16 @@ namespace Et {
 		}
 
 		public void remove_session(string path) {
+				logger.debug("SessionManager", "Removing session "+path+" from list of sessions");
 				sessions.remove(path);
 				this.session_removed(path);
 		}
 		
 		//returns null if not exists , otherwise the contact reference if exists
-		public unowned ChannelMessages? get_session(string path) {
+		public unowned ChannelMessages? get_session_by_path(string path) {
 			return sessions.lookup(path);
 		}
+		
 		
 		public List<unowned ChannelMessages> get_sessions() {
 				return sessions.get_values();

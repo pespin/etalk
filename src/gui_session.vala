@@ -1,9 +1,11 @@
 public class SessionUI : Page {
 
 		private Et.ChannelMessages channel;
-			
+		
 		private Elm.Scroller sc;
 		private Elm.Box vbox_in;
+		
+		private LabelBox[] gui_container;
 
 		private LabelBox path;
 		private FrameBox fr_general;
@@ -27,19 +29,8 @@ public class SessionUI : Page {
 	
 	}
 	
-	public void sig_new_message(GLib.HashTable<string, Variant>[] message) {
-		string? sender = (string) message[0].lookup("message-sender-id");
-		string? content = (string) message[1].lookup("content");
-		if(sender==null || content==null)
-			logger.error("SessionUI", "sender or content is NULL!");
-		logger.debug("SessionUI", sender+": "+content+"\n");
-		
-	}
-	
-	
 	public unowned Elm.Object create(Elm.Win win) {
 		
-//add vbox
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 		vbox.show();
@@ -66,11 +57,35 @@ public class SessionUI : Page {
 		
 		path = new LabelBox(win, fr_general.box, "path", channel.path);
 		path.show();
+		
+		HashTable<string, Variant>[,] messages = channel.dbus_ext.pending_messages;
+		for(int i = 0; i< messages.length[0]; i++) {
+			string? sender = (string) messages[i,0].lookup("message-sender-id");
+			string? content = (string) messages[i,1].lookup("content");
+			if(sender==null || content==null) {
+				logger.error("SessionUI", "sender or content is NULL!");
+			} else{
+				var text = new LabelBox(win, fr_general.box, sender, content);
+				text.show();
+				gui_container += (owned) text;
+			}
+		}
 
 		return vbox;
 	}
 	
-
+	public void sig_new_message(GLib.HashTable<string, Variant>[] message) {
+		string? sender = (string) message[0].lookup("message-sender-id");
+		string? content = (string) message[1].lookup("content");
+		if(sender==null || content==null)
+			logger.error("SessionUI", "sender or content is NULL!");
+		else {
+			logger.debug("SessionUI", sender+": "+content+"\n");
+			var text = new LabelBox(ui.win, fr_general.box, sender, content);
+			text.show();
+			gui_container += (owned) text;
+		}
+	}
 
 
 }
