@@ -47,6 +47,10 @@ namespace Et {
 			
 		}
 
+		public bool started_by_local_handle() {
+			return (this.dbus.initiator_handle == this.connection.dbus.self_handle);
+		}
+
 		/* TODO: connect to signals */
 
 	}

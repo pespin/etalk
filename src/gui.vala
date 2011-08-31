@@ -69,6 +69,12 @@ public class EtalkUI {
 		
 		page_stack.prepend(obj);
 		
+		obj.naviframe_back = new Elm.Button(ui.pager);
+		obj.naviframe_back.text_set("Back");
+		obj.naviframe_back.size_hint_weight_set(1.0, 1.0);
+		obj.naviframe_back.size_hint_align_set(-1.0, -1.0);
+		obj.naviframe_back.smart_callback_add("clicked", obj.close);
+		
 		unowned Elm.Object? page = obj.get_page();
 		if(page!=null) {
 			
@@ -85,19 +91,30 @@ public class EtalkUI {
 	
 	public void refresh_page_with_id(PageID id) {
 		
-		List<Page> l = get_page_by_id(id);
-		
-		foreach(var p in l) {
-		
-			p.refresh_content();
-		
+		//first handle special cases: main and sessions UI are there,
+		// even if they are not in the stack
+		switch(id) {
+			case PageID.LIST_SESSION:
+				ui.sui.refresh_content();
+				break;
+			
+			case PageID.MAIN:
+				ui.sui.refresh_content();
+				break;
+			
+			default:
+				List<Page> l = get_page_by_id(id);
+				foreach(var p in l) {
+					p.refresh_content();
+				}
+				break;
 		}
 	}
 	
-	private List<Page> get_page_by_id(PageID id) {
+	private List<unowned Page> get_page_by_id(PageID id) {
 		
 		unowned List<Page> l = page_stack;
-		List<Page> ret = new List<Page>();
+		List<unowned Page> ret = new List<Page>();
 		
 		while(l!=null) {
 			//stderr.printf("iterating over page: "+l.data.get_page_id()+"\n");
@@ -134,12 +151,6 @@ public abstract class Page : Object {
 	
 	public Page() {
 		vbox = null;
-		naviframe_back = new Elm.Button(ui.pager);
-		naviframe_back.text_set("Back");
-		naviframe_back.size_hint_weight_set(1.0, 1.0);
-		naviframe_back.size_hint_align_set(-1.0, -1.0);
-		//naviframe_back.show();
-		naviframe_back.smart_callback_add( "clicked", this.close );
 	}
 	
 	public unowned Elm.Object? get_page() {

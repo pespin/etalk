@@ -1,10 +1,12 @@
 
 
 async void etalk_init() {
-	
+		/* Start ui */
+		ui = new EtalkUI();
 		/* INITIALIZE GLOBALS */
 		SM = new Et.SessionManager();
 		ACM = new Et.AccountManager();
+		ui.create();		
 		ACM.update_accounts();
 		/*foreach(var acc_path in ACM.accounts.get_keys()) {
 		
@@ -64,10 +66,6 @@ int main(string[] args) {
 			  on_bus_session_acquired,
 			  () => logger.info("DBus", "Session Bus name acquired"),
 			  bus_session_name_error);
-
-	/* Start ui */
-	ui = new EtalkUI();
-	ui.create();
 
 	etalk_init();
 

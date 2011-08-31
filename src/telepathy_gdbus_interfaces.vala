@@ -395,6 +395,9 @@ namespace Telepathy {
 		
 		[DBus (name = "TargetID")]
 		public abstract string target_id { owned get; private set;}
+		
+		[DBus (name = "InitiatorHandle ")]
+		public abstract uint initiator_handle { owned get; private set;}
 
 		[DBus (name = "Close")]
 		public abstract void close() throws DBusError, IOError;
@@ -520,6 +523,9 @@ namespace Telepathy {
 				[DBus (name = "Status")]
 		public abstract uint status { owned get; }
 
+		[DBus (name = "SelfHandle ")]
+		public abstract uint self_handle { owned get; private set;}
+
 		[DBus (name = "Connect")]
 		public abstract void connect() throws DBusError, IOError;
 
@@ -535,8 +541,8 @@ namespace Telepathy {
 		[DBus (name = "SelfHandleChanged")]
 		public signal void self_handle_changed(uint Self_Handle);
 
-		[DBus (name = "GetSelfHandle")]
-		public abstract uint get_self_handle() throws DBusError, IOError;
+		//[DBus (name = "GetSelfHandle")]
+		//public abstract uint get_self_handle() throws DBusError, IOError;
 
 		//[DBus (name = "GetStatus")]
 		//public abstract uint get_status() throws DBusError, IOError;

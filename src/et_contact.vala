@@ -46,13 +46,16 @@ namespace Et {
 				presence.status_message = (string) iter.next_value();
 			}
 		}
-		
+
+		public async void start_conversation() {
+				this.connection.ensure_channel_text(this.id);
+		}
+
 		/*  debugging purpouses */
 		public string to_string() {
 			Telepathy.ConnectionPresenceType cp = (Telepathy.ConnectionPresenceType) 	presence.type;
 			return "[#"+handle.to_string()+"]["+cp.to_string() +"]["+presence.status+"] "+alias+" ("+id+")";
 		}
-
 
 	}
 

@@ -48,6 +48,7 @@ namespace Et {
 			try {
 				_dbus_requests = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 				_dbus_requests.new_channels.connect(sig_new_channels);
+				_dbus_requests.channel_closed.connect(sig_channel_closed);
 			} catch ( IOError err ) {	
 				logger.error("Connection", "Could not create ConnectionInterfaceRequests with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this._dbus_requests = null;
@@ -146,6 +147,12 @@ namespace Et {
 		
 		
 		public void ensure_channel(HashTable<string, GLib.Variant> params, out GLib.ObjectPath channel, out HashTable<string, GLib.Variant> properties) {
+			
+			if(this.is_valid==false) {
+				logger.error("Connection", "ensure_channel() called in non valid connection");
+				return;
+			}
+			
 			bool yours;
 			try { //TODO: make it async:
 				_dbus_requests.ensure_channel(params, out yours, out channel, out properties);
@@ -162,6 +169,21 @@ namespace Et {
 			params.insert(Telepathy.PROP_CHANNEL_TARGET_HANDLE_TYPE, Telepathy.TpHandleType.LIST);
 			//params.insert(PROP_CHANNEL_TARGET_ID, "stored");
 			params.insert(Telepathy.PROP_CHANNEL_TARGET_ID, "subscribe");
+			bool yours;
+			GLib.ObjectPath channel;
+			HashTable<string, GLib.Variant> properties;	
+			
+			this.ensure_channel(params, out channel, out properties);
+			return channel; 
+			
+		}
+		
+		public GLib.ObjectPath ensure_channel_text(string id) {
+		
+			HashTable<string, GLib.Variant> params = new HashTable<string, GLib.Variant>(null, null);
+			params.insert(Telepathy.PROP_CHANNEL_CHANNEL_TYPE, Telepathy.IFACE_CHANNEL_TYPE_TEXT);
+			params.insert(Telepathy.PROP_CHANNEL_TARGET_HANDLE_TYPE, Telepathy.TpHandleType.CONTACT);
+			params.insert(Telepathy.PROP_CHANNEL_TARGET_ID, id);
 			bool yours;
 			GLib.ObjectPath channel;
 			HashTable<string, GLib.Variant> properties;	
@@ -271,6 +293,13 @@ namespace Et {
 					}
 				}
 		}
+		
+		private void sig_channel_closed(GLib.ObjectPath chremoved) {
+			/*Each dictionary MUST contain the keys org.freedesktop.Telepathy.Channel.ChannelType, org.freedesktop.Telepathy.Channel.TargetHandleType, org.freedesktop.Telepathy.Channel.TargetHandle, org.freedesktop.Telepathy.Channel.TargetID and org.freedesktop.Telepathy.Channel.Requested. 
+			 * */
+				this.channels.remove(chremoved);
+				SM.remove_session(chremoved);
+		}		
 
 
 	}

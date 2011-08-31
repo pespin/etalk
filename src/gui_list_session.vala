@@ -5,7 +5,7 @@ public class ListSessionUI : Page {
 		public Elm.List li;
 		
 		public HashTable<string,ListItemHandlerSession> elem_ui_list; 
-		
+
 		
 		public ListSessionUI() {
 				base();
@@ -31,6 +31,9 @@ public class ListSessionUI : Page {
 		li.show();
 	
 		this.populate_list();
+		
+		SM.session_added.connect(sig_session_added);
+		SM.session_removed.connect(sig_session_removed);
 	
 		return vbox;
 	}
@@ -64,6 +67,21 @@ public class ListSessionUI : Page {
 		this.li.go();
 	}
 	
+	
+	private void sig_session_added(string path) {
+		unowned Et.ChannelMessages? session = SM.get_session(path);
+		if(session==null) return;
+		
+		this.add_elem_to_ui(session);
+		if(session.started_by_local_handle()) {
+			unowned ListItemHandlerSession? item = elem_ui_list.lookup(path);
+			ui.push_page(item.gui);
+		}
+	}
+	
+	private void sig_session_removed(string path) {
+		this.remove_elem_from_ui(path);
+	}
 
 	public override PageID get_page_id() {
 		return PageID.LIST_SESSION;
@@ -74,7 +92,7 @@ public class ListSessionUI : Page {
 	}
 	
 	public async override void refresh_content() {
-			
+		logger.debug("ListSessionUI", "refresh_content() called");			
 		this.populate_list();
 		
 	}
@@ -87,11 +105,13 @@ public class ListSessionUI : Page {
 public class ListItemHandlerSession : ListItemHandler {
 	
 	public Et.ChannelMessages elem;
-	
+	public SessionUI gui;
 	
 	public ListItemHandlerSession(Elm.Win win, Et.ChannelMessages elem) {
 		base(win);
 		this.elem = elem;
+		this.gui = new SessionUI(elem);
+		gui.create(ui.win);
 		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
@@ -130,9 +150,7 @@ public class ListItemHandlerSession : ListItemHandler {
 		}
 		
 		logger.debug("ListItemHandlerSession", "Opening win for elem "+elem.path+"...");
-		
-		var gui = new SessionUI(elem);
-		gui.create(ui.win);
+
 		ui.push_page(gui);
 
 	}

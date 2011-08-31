@@ -190,7 +190,7 @@ public class ListItemHandlerContact : ListItemHandler {
 		}
 		
 		logger.debug("ListItemHandlerContact", "Opening win for contact "+contact.id+"...");
-		
+		this.contact.start_conversation.begin();
 		/*BluezRemoteDeviceUI device_ui = new BluezRemoteDeviceUI(rdevice);
 		device_ui.create(ui.win);
 		ui.push_page(device_ui);*/

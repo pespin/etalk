@@ -13,17 +13,18 @@ namespace Et {
 
 		
 		public void add_session(ChannelMessages session) {
+				logger.debug("SessionManager", "Adding session "+session.path+" to list of sessions");
 				sessions.insert(session.path, session);
-				ui.refresh_page_with_id(PageID.LIST_SESSION);
+				this.session_added(session.path);
 		}
 
 		public void remove_session(string path) {
 				sessions.remove(path);
-				ui.refresh_page_with_id(PageID.LIST_SESSION);
+				this.session_removed(path);
 		}
 		
 		//returns null if not exists , otherwise the contact reference if exists
-		public unowned ChannelMessages? has_session(string path) {
+		public unowned ChannelMessages? get_session(string path) {
 			return sessions.lookup(path);
 		}
 		
@@ -32,15 +33,19 @@ namespace Et {
 		}
 		
 		public void show_sessions(ListSessionUI sui) {
-				
+				logger.debug("SessionManager", "UI requested to show sessions...");
 				HashTableIter<string,ChannelMessages> it = HashTableIter<string,ChannelMessages>(sessions);
 				unowned string? key;
 				unowned ChannelMessages? val;
 				while(it.next(out key, out val)) {
+					logger.debug("SessionManager", "sending session to UI: "+key);
 					sui.add_elem_to_ui(val);
 				}
 			
 		}
+		
+		public signal void session_added(string path);
+		public signal void session_removed(string path);
 
 	}
 
