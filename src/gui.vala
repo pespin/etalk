@@ -50,7 +50,7 @@ public class EtalkUI {
 	}
 	
 	public void pop_page(Page page) {
-		//stderr.printf("pop_page() started!\n");
+		//stderr.printf("pop_page(%s) started!\n", page.get_page_title());
 		//if( obj == pager.content_top_get() ) { //this segfaults...
 			pager.item_pop();
 			page_stack.remove(page);

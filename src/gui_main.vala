@@ -190,7 +190,7 @@ public class ListItemHandlerContact : ListItemHandler {
 		}
 		
 		logger.debug("ListItemHandlerContact", "Opening win for contact "+contact.id+"...");
-		if(ui.sui.show_session_ui(this.contact.handle)==false)
+		if(ui.sui.show_session_ui(this.contact)==false)
 			this.contact.start_conversation.begin();
 
 	}

@@ -20,7 +20,6 @@ public class ListSessionUI : Page {
 		//add vbox
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
-		//vbox.show();
 
 		//add list
 		li = new Elm.List(win);
@@ -68,19 +67,22 @@ public class ListSessionUI : Page {
 	}
 	
 	//returns true if the ui is already available, false if it can't
-	public bool show_session_ui(uint handle) {
-		unowned SessionUI? gui = get_session_ui_by_handle(handle);
+	public bool show_session_ui(Et.Contact contact) {
+		unowned SessionUI? gui = get_session_ui_by_contact(contact);
 		if(gui==null) return false;
 		ui.push_page(gui);
 		return true;
 	}
 	
-	private unowned SessionUI? get_session_ui_by_handle(uint handle) {
+	private unowned SessionUI? get_session_ui_by_contact(Et.Contact contact) {
 				var it = HashTableIter<string,ListItemHandlerSession>(elem_ui_list);
 				unowned string? key;
 				unowned ListItemHandlerSession? val;
 				while(it.next(out key, out val)) {
-					if(val.elem.dbus.target_handle==handle) return val.gui;
+					uint thandle = val.elem.dbus.target_handle;
+					if(thandle==0) { //unknown, lets compare using id
+						if(val.elem.dbus.target_id==contact.id) return val.gui;
+					} else if(val.elem.dbus.target_handle==contact.handle) return val.gui;
 				}
 			
 			return null;

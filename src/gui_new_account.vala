@@ -43,7 +43,6 @@ public class NewAccountUI : Page {
 		//add vbox
 		vbox = new Elm.Box(win);
 		vbox.size_hint_weight_set(1.0, 1.0);
-		vbox.show();
 		
 		sc = new Elm.Scroller(win);
 		sc.size_hint_weight_set(1.0, 1.0);
