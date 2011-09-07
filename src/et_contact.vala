@@ -50,6 +50,10 @@ namespace Et {
 		public async void start_conversation() {
 				this.connection.ensure_channel_text(this.id);
 		}
+		
+		public string get_unique_key() {
+				return this.connection.path+this.handle.to_string();
+		}
 
 		/*  debugging purpouses */
 		public string to_string() {

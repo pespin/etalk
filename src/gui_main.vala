@@ -8,11 +8,11 @@ public class MainUI : Page {
 		private Elm.Button bt_accounts;
 		private Elm.Button bt_sessions;
 
-		public HashTable<uint,ListItemHandlerContact> elem_ui_list; 
+		public HashTable<string,ListItemHandlerContact> elem_ui_list; 
 		
 		public MainUI() {
 				base();
-				elem_ui_list = new HashTable<uint,ListItemHandlerContact>(direct_hash, direct_equal);
+				elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
 		}
 		
 
@@ -74,20 +74,21 @@ public class MainUI : Page {
 		logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 		
 		//Little hack to not hang the UI while adding lots of stuff... :P
-		Ecore.MainLoop.iterate();
 		
 		var opener = new ListItemHandlerContact(win, contact);
 		opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		elem_ui_list.insert(contact.handle, (owned) opener);
-		this.li.go();
+		elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
+
 	}
 
-	public void remove_elem_from_ui(uint handle) {
+	public void remove_elem_from_ui(string key) {
 
-		logger.debug("MainUI", "Removing elem " + handle.to_string() + " from ui-list");
-		//Little hack to not hang the UI while removing lots of stuff... :P
-		Ecore.MainLoop.iterate();
-		elem_ui_list.remove(handle);
+		logger.debug("MainUI", "Removing elem " + key + " from ui-list");
+
+		elem_ui_list.remove(key);
+	}
+	
+	public void refresh_list() {
 		this.li.go();
 	}
 	
@@ -129,11 +130,11 @@ public class MainUI : Page {
 	
 	public async override void refresh_content() {
 
-		HashTableIter<uint,ListItemHandlerContact> it = HashTableIter<uint,ListItemHandlerContact>(elem_ui_list);
+		HashTableIter<string,ListItemHandlerContact> it = HashTableIter<string,ListItemHandlerContact>(elem_ui_list);
 		
-		unowned uint? handle;
+		unowned string? key;
 		unowned ListItemHandlerContact? handler;
-		while(it.next(out handle, out handler)) {
+		while(it.next(out key, out handler)) {
 			handler.refresh_content();
 		}
 		

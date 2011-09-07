@@ -118,13 +118,18 @@ namespace Et {
 					c.update_properties(hash_info_one);
 					ui.mui.add_elem_to_ui(c);
 				}
+				ui.mui.refresh_list();
 		}
 
 		public void remove_contacts_subset(uint[] handles) {
 			foreach(var handle in handles) {
-					contacts.remove(handle);
-					ui.mui.remove_elem_from_ui(handle);
+					unowned Contact? contact = contacts.lookup(handle);
+					if(contact!=null) {
+						contacts.remove(handle);
+						ui.mui.remove_elem_from_ui(contact.get_unique_key());
+					}
 			}
+			ui.mui.refresh_list();
 		}
 		
 		//returns null if not exists , otherwise the contact reference if exists
