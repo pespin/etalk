@@ -64,14 +64,6 @@ public class SettingsAccountUI : Page {
 		vbox_in.show();
 		
 		// NAME:
-		name = new EntryBox(win, vbox_in, "Account Name", "blabla");
-		name.show();
-		
-		//ADDRESS	
-		//address = new LabelBox(win, fr_general.box, "Address", ADAPTER.addr);
-		//address.show();
-		
-		// NAME:
 		name = new EntryBox(win, vbox_in, "Account Name", account.dbus.display_name);
 		name.show();
 		
