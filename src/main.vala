@@ -1,18 +1,27 @@
 
 
 async void etalk_init() {
-		/* Start ui */
-		ui = new EtalkUI();
-		/* INITIALIZE GLOBALS */
-		SM = new Et.SessionManager();
-		ACM = new Et.AccountManager();
-		ui.create();		
-		ACM.update_accounts();
-		/*foreach(var acc_path in ACM.accounts.get_keys()) {
 		
-			stderr.printf("init: %s\n", acc_path);
-			
-		} */
+	SETM = new Et.SettingsManager();
+	
+	/* Start ui */
+	ui = new EtalkUI();
+	/* INITIALIZE GLOBALS */
+	SM = new Et.SessionManager();
+	ACM = new Et.AccountManager();
+	ui.create();		
+	ACM.update_accounts();
+	/*foreach(var acc_path in ACM.accounts.get_keys()) {
+	
+		stderr.printf("init: %s\n", acc_path);
+		
+	} */
+	
+}
+
+void etalk_stop() {
+
+	SETM.save_current_settings();
 	
 }
 
@@ -73,6 +82,7 @@ int main(string[] args) {
     Elm.run();
     Elm.shutdown();
     
+    etalk_stop();
     
 #if _FSO_    
 	try {
