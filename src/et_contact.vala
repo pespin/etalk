@@ -54,6 +54,12 @@ namespace Et {
 		public string get_unique_key() {
 				return this.connection.path+this.handle.to_string();
 		}
+		
+		public bool is_online() {
+			Telepathy.ConnectionPresenceType p = (Telepathy.ConnectionPresenceType) this.presence.type;
+			return (Telepathy.ConnectionPresenceType.AVAILABLE <= p <= Telepathy.ConnectionPresenceType.BUSY);
+			
+		}
 
 		/*  debugging purpouses */
 		public string to_string() {

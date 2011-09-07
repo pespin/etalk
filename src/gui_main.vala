@@ -64,21 +64,24 @@ public class MainUI : Page {
 		hbox1.pack_end(bt_sessions);
 		bt_sessions.show();
 		bt_sessions.smart_callback_add( "clicked", cb_bt_sessions_clicked );
+		
+		SETM.notify["show-offline-contacts"].connect((s, p) => {
+									this.populate_list();
+		});
 	
 		return vbox;
 	}
 	
 	public void add_elem_to_ui(Et.Contact contact) {
 		
+		if(SETM.show_offline_contacts || contact.is_online()) {
+			
+			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
+			var opener = new ListItemHandlerContact(win, contact);
+			opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+			elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
 		
-		logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
-		
-		//Little hack to not hang the UI while adding lots of stuff... :P
-		
-		var opener = new ListItemHandlerContact(win, contact);
-		opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
-
+		}
 	}
 
 	public void remove_elem_from_ui(string key) {
@@ -92,6 +95,12 @@ public class MainUI : Page {
 		this.li.go();
 	}
 	
+	
+	public void populate_list() {
+		//li.clear();
+		elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
+		ACM.show_contacts();
+	}
 
 	private void cb_bt_settings_clicked() {
 		logger.debug("MainUI", "Accounts button pressed.");

@@ -201,7 +201,7 @@ namespace Et {
 		
 		public async void update_contacts() {
 			logger.debug("Connection", "Updating contacts info (connection.path="+path+")...");
-			if(contacts!=null) {
+			if(channels!=null) {
 				
 				HashTableIter<string,Channel> it = HashTableIter<string,Channel>(channels);
 				unowned string? path;
@@ -229,7 +229,7 @@ namespace Et {
 		
 		public async void remove_contacts() {
 			logger.debug("Connection", "Removing contacts (connection.path="+path+")...");
-			if(contacts!=null) {
+			if(channels!=null) {
 				
 				HashTableIter<string,Channel> it = HashTableIter<string,Channel>(channels);
 				unowned string? path;

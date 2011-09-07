@@ -45,14 +45,26 @@ namespace Et {
 		}
 		
 		
-		public void sig_account_removed(GLib.ObjectPath acc_path) {
+		public void show_contacts() {
+				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
+				unowned string? path;
+				unowned Account? acc;
+				while(it.next(out path, out acc)) {
+					if(acc==null || acc.connection.is_valid==false) continue;
+					acc.connection.update_contacts();
+				}
+			
+		}
+		
+		
+		private void sig_account_removed(GLib.ObjectPath acc_path) {
 			logger.debug("AccountManager",  "sig_account_removed ("+acc_path.to_string()+")");
 			accounts.remove(acc_path);
 			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
 			
 		}
 
-		public void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
+		private void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
 			logger.debug("AccountManager", "sig_account_validity_changed (valid = "+valid.to_string()+") ("+acc_path.to_string()+")");			
 			if(accounts.lookup(acc_path)==null) {
 				Account acc = new Account(acc_path);
