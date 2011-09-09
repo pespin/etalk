@@ -590,6 +590,19 @@ namespace Telepathy {
 		[DBus (name = "RemoveAccount")]
 		public abstract void remove_account(string Account_Id) throws DBusError, IOError;
 	}
+	
+	[DBus (name = "org.freedesktop.Telepathy.Connection.Interface.SimplePresence", timeout = 120000)]
+	public interface ConnectionInterfaceSimplePresence : GLib.Object {
+
+		[DBus (name = "SetPresence")]
+		public abstract void set_presence(string status, string status_message) throws DBusError, IOError;
+
+		[DBus (name = "GetPresences")]
+		public abstract HashTable<uint,Simple_Presence?> get_presences(uint[] contacts) throws DBusError, IOError;
+	
+		[DBUS (name = "PresencesChanged")]
+		public signal void presences_changed(HashTable<uint,Telepathy.Simple_Presence?> presence);
+	}
 
 	[DBus (name = "org.freedesktop.Telepathy.Connection.Interface.Avatars", timeout = 120000)]
 	public interface ConnectionInterfaceAvatars : GLib.Object {

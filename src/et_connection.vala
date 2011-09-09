@@ -6,10 +6,13 @@ namespace Et {
 		private Telepathy.Connection connection;
 		private Telepathy.ConnectionInterfaceRequests? _dbus_requests;
 		private Telepathy.ConnectionInterfaceContacts? _dbus_contacts;
+		private Telepathy.ConnectionInterfaceSimplePresence? _dbus_presence;
 
 		public Telepathy.Connection dbus { get { return connection; } }
 		public Telepathy.ConnectionInterfaceRequests? dbus_request { get { return _dbus_requests; } }
 		public Telepathy.ConnectionInterfaceContacts? dbus_contacts { get { return _dbus_contacts; } }
+		public Telepathy.ConnectionInterfaceSimplePresence? dbus_presence { get { return _dbus_presence; } }
+		
 		
 		public string path {get; private set;}
 		public string connection_manager {get; private set;}
@@ -60,6 +63,15 @@ namespace Et {
 			} catch ( IOError err ) {	
 				logger.error("Connection", "Could not create ConnectionInterfaceContacts with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this._dbus_contacts = null;
+				return;
+			}
+			
+			try {
+				_dbus_presence = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
+				_dbus_presence.presences_changed.connect(sig_presences_changed);
+			} catch ( IOError err ) {	
+				logger.error("Connection", "Could not create ConnectionInterfaceSimplePresence with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
+				this._dbus_presence = null;
 				return;
 			}
 			
@@ -303,7 +315,17 @@ namespace Et {
 			logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
 			if(this.is_valid==true) this.channels.remove(chremoved);
 			SM.remove_session(chremoved);
-		}		
+		}
+		
+		
+		private void sig_presences_changed(HashTable<uint,Telepathy.Simple_Presence?> presence) {
+			logger.debug("Connection", "Signal sig_presence_changed");
+			
+			presence.@foreach( (key, val) => {
+					logger.debug("Connection", "\t"+key.to_string()+" -> "+((Telepathy.ConnectionPresenceType) val.type).to_string() );
+				});
+			
+		}	
 
 
 	}
