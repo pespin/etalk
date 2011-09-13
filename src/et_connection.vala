@@ -275,9 +275,9 @@ namespace Et {
 			presence.@foreach( (key, val) => {
 					logger.debug("Connection", "\t"+key.to_string()+" -> "+((Telepathy.ConnectionPresenceType) val.type).to_string() );
 				});
-			
-		}	
-
+		
+			CM.presences_changed(this, presence);	
+		}
 
 	}
 

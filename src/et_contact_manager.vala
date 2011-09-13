@@ -50,6 +50,18 @@ namespace Et {
 			return hash.lookup(cnew.get_unique_key());
 			
 		}
+		public void presences_changed(Connection conn, HashTable<uint,Telepathy.Simple_Presence?> presence) {
+			
+			HashTableIter<uint,Telepathy.Simple_Presence?> it = HashTableIter<uint,Telepathy.Simple_Presence?>(presence);
+				unowned uint handle;
+				unowned Telepathy.Simple_Presence? pres;
+				while(it.next(out handle, out pres)) {
+					if(pres==null) continue;
+					unowned Contact? c = this.get_contact(conn, handle);
+					c.presence = pres;
+					//TODO: if contact was created, update its properties?
+				}
+		}
 		
 		private void add_contact(owned Contact c) {
 				this.hash.insert(c.get_unique_key(), (owned) c);

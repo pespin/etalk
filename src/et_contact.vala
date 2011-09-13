@@ -8,7 +8,7 @@ namespace Et {
 		public uint handle {get; private set;}
 		public string id {get; private set; default="unknown";}
 		public string alias {get; private set; default="unknown";}
-		public Telepathy.Simple_Presence presence {get; private set;}
+		public Telepathy.Simple_Presence presence {get; set;}
 		
 		public Contact(Connection connection, uint handle) {
 			this.handle = handle;
