@@ -7,6 +7,7 @@ async void etalk_init() {
 	/* Start ui */
 	ui = new EtalkUI();
 	/* INITIALIZE GLOBALS */
+	CM = new Et.ContactManager();
 	SM = new Et.SessionManager();
 	ACM = new Et.AccountManager();
 	ui.create();		

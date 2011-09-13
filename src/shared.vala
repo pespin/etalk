@@ -8,6 +8,7 @@ public Et.Logger logger;
 public Et.SettingsManager SETM;
 public Et.AccountManager ACM;
 public Et.SessionManager SM;
+public Et.ContactManager CM;
 public Et.ClientHandler CH;
 public EtalkUI ui;
 

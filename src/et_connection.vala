@@ -20,7 +20,7 @@ namespace Et {
 		
 		
 		private HashTable<string,Channel> channels;
-		private HashTable<uint,Contact> contacts;
+
 		
 		public Connection(string path, string connection_manager) {
 			
@@ -36,9 +36,7 @@ namespace Et {
 				return;
 			}
 			
-			channels = new HashTable<string,Channel>(str_hash, str_equal);
-			contacts = new HashTable<uint,Contact>(direct_hash, direct_equal);
-			
+			channels = new HashTable<string,Channel>(str_hash, str_equal);	
 		
 			try {
 				connection = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
@@ -97,11 +95,7 @@ namespace Et {
 			this.remove_contacts();
 			this.remove_channels();
 		}
-		
-		private void add_contact(owned Contact c) {
-				this.contacts.insert(c.handle, (owned) c);
-		}
-		
+
 		public void create_contacts(uint[] handles) {
 			
 				//foreach(var handle in handles) { stderr.printf("Handle: %u\n", handle); }
@@ -120,48 +114,8 @@ namespace Et {
 					return;
 				}
 				
-				foreach(var handle in handles) {
-					
-					unowned HashTable<string,Variant> hash_info_one = hash_info_all.lookup(handle);
-					unowned Contact c = this.get_contact(handle);
-					
-					if(hash_info_one==null) continue;
-					
-					c.update_properties(hash_info_one);
-					ui.mui.add_elem_to_ui(c);
-				}
-				ui.mui.refresh_list();
+				CM.add_contacts(this, handles, hash_info_all);
 		}
-
-		public void remove_contacts_subset(uint[] handles) {
-			foreach(var handle in handles) {
-					unowned Contact? contact = contacts.lookup(handle);
-					if(contact!=null) {
-						contacts.remove(handle);
-						ui.mui.remove_elem_from_ui(contact.get_unique_key());
-					}
-			}
-			ui.mui.refresh_list();
-		}
-		
-		//returns null if not exists , otherwise the contact reference if exists
-		public unowned Contact? has_contact(uint handle) {
-			return contacts.lookup(handle);
-		}
-		
-		
-		//if not exists, creates a new one and returns its reference
-		public unowned Contact? get_contact(uint handle) {
-			unowned Contact? c = this.has_contact(handle);
-			
-			if(c!=null) return c;
-			
-			Contact cnew = new Contact(handle, this);	
-			contacts.insert(handle, (owned) cnew);
-			return contacts.lookup(handle);
-			
-		}
-		
 		
 		public void ensure_channel(HashTable<string, GLib.Variant> params, out GLib.ObjectPath channel, out HashTable<string, GLib.Variant> properties) {
 			
@@ -262,7 +216,7 @@ namespace Et {
 			if(handless==null)
 				logger.error("Connection", "remove_contacts_channel("+chan.path+"): handless == NULL!!!");
 			else
-				this.remove_contacts_subset(handless);
+				CM.remove_contacts(this, handless);
 			
 		}
 		
@@ -288,9 +242,6 @@ namespace Et {
 			logger.debug("Connection", "Removing channels (connection.path="+path+")...");
 			channels = null;
 		}
-
-
-		/* TODO: connect to signals */
 
 
 		/* SIGNALS */

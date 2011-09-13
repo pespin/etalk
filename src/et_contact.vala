@@ -10,7 +10,7 @@ namespace Et {
 		public string alias {get; private set; default="unknown";}
 		public Telepathy.Simple_Presence presence {get; private set;}
 		
-		public Contact(uint handle, Connection connection) {
+		public Contact(Connection connection, uint handle) {
 			this.handle = handle;
 			this.connection = connection;
 			
@@ -53,6 +53,10 @@ namespace Et {
 		
 		public string get_unique_key() {
 				return this.connection.path+this.handle.to_string();
+		}
+		
+		public static string get_unique_key_ext(Connection conn, uint handle) {
+			return conn.path+handle.to_string();
 		}
 		
 		public bool is_online() {
