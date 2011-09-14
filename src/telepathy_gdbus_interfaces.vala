@@ -414,6 +414,15 @@ namespace Telepathy {
 		[DBus (name = "GetInterfaces")]
 		public abstract string[] get_interfaces() throws DBusError, IOError;
 	}
+	
+	[DBus (name = "org.freedesktop.Telepathy.Channel.Type.Text")]
+	public interface ChannelTypeText : GLib.Object {
+
+		[DBus (name = "AcknowledgePendingMessages")]
+		public abstract void ack_pending_messages(uint[] IDs) throws DBusError, IOError;
+
+		/* TODO: add properties */
+	}	
 
 
 	[DBus (name = "org.freedesktop.Telepathy.Channel.Interface.Group")]

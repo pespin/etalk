@@ -98,7 +98,8 @@ namespace Et {
 
 	public class ChannelMessages : Channel {
 
-		public Telepathy.ChannelInterfaceMessages dbus_ext { public get; private set; }
+		public Telepathy.ChannelInterfaceMessages dbus_ext_messages { public get; private set; }
+		public Telepathy.ChannelTypeText dbus_ext_text { public get; private set; }
 
 		public ChannelMessages(string path, string connection_manager, Connection connection) {
 	
@@ -107,12 +108,19 @@ namespace Et {
 			logger.info("ChannelMessages", "Creating new channel with path="+path+" and connection_manager="+connection_manager);
 
 			try {
-				dbus_ext = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
-				dbus_ext.message_sent.connect(sig_message_sent);
-				dbus_ext.message_received.connect(sig_message_received);
-				dbus_ext.pending_messages_removed.connect(sig_pending_messages_removed);
+				dbus_ext_messages = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
+				dbus_ext_messages.message_sent.connect(sig_message_sent);
+				dbus_ext_messages.message_received.connect(sig_message_received);
+				dbus_ext_messages.pending_messages_removed.connect(sig_pending_messages_removed);
 			} catch ( IOError err ) {
-				logger.error("ChannelMessages",  "Could not create ChannelMessages with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
+				logger.error("ChannelMessages",  "Could not create ChannelMessages [InterfaceMessages] with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
+				return;
+			}
+
+			try {
+				dbus_ext_text = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
+			} catch ( IOError err ) {
+				logger.error("ChannelMessages",  "Could not create ChannelMessages [TypeText] with path="+path+" and connection_manager="+connection_manager+" -> "+err.message);
 				return;
 			}
 			
@@ -127,6 +135,30 @@ namespace Et {
 
 		public override uint[] get_contact_handles() {
 			return new uint[0];
+		}
+		
+		public HashTable<string, Variant>[,] get_pending_messages() {
+			HashTable<string, Variant>[,] messages = dbus_ext_messages.pending_messages;
+			uint[] container = {};
+			for(int i = 0; i< messages.length[0]; i++) {
+				uint? id = (uint) messages[i,0].lookup("pending-message-id");	
+				if(id!=null) container += id;
+			}
+			
+			this.ack_messages(container);
+			return messages;
+			
+		}
+		
+		private void ack_messages(uint[] ids) {
+			logger.debug("ChannelMessages", "Sending ACK for messages:");
+			foreach(var id in ids) logger.debug("ChannelMessages", "\t "+id.to_string());
+			try {
+				dbus_ext_text.ack_pending_messages(ids);
+			} catch ( Error err ) {
+				logger.error("ChannelMessages",  "ack_pending_messages() failed -> "+err.message);
+			}			
+			
 		}
 
 		private void sig_message_sent(GLib.HashTable<string, Variant>[] content, uint flags, string message_token) {
@@ -153,6 +185,13 @@ namespace Et {
 				logger.debug("ChannelMessages", "---");
 			}
 			this.new_message(content);
+			
+			uint? id = (uint) content[0].lookup("pending-message-id");
+			if(id!=null) {
+				uint[] container = new uint[1];
+				container[0] = id;
+				this.ack_messages(container);
+			}
 		}
 
 		private void sig_pending_messages_removed(uint[] message_ids) {

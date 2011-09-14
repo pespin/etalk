@@ -57,7 +57,7 @@ public class SessionUI : Page {
 		path = new LabelBox(win, fr_general.box, "path", channel.path);
 		path.show();
 		
-		HashTable<string, Variant>[,] messages = channel.dbus_ext.pending_messages;
+		HashTable<string, Variant>[,] messages = channel.get_pending_messages();
 		for(int i = 0; i< messages.length[0]; i++) {
 			string? sender = (string) messages[i,0].lookup("message-sender-id");
 			string? content = (string) messages[i,1].lookup("content");
