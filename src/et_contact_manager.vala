@@ -58,9 +58,16 @@ namespace Et {
 				while(it.next(out handle, out pres)) {
 					if(pres==null) continue;
 					unowned Contact? c = this.get_contact(conn, handle);
-					c.presence = pres;
+					if(c==null) continue;
+					if(c.is_online()==false) { //if contact has become online...
+						c.presence = pres;
+						ui.mui.add_elem_to_ui(c);
+					} else {
+						c.presence = pres;
+					}
 					//TODO: if contact was created, update its properties?
 				}
+				ui.mui.refresh_list();
 		}
 		
 		private void add_contact(owned Contact c) {

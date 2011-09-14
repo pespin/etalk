@@ -74,7 +74,8 @@ public class MainUI : Page {
 	
 	public void add_elem_to_ui(Et.Contact contact) {
 		
-		if(SETM.show_offline_contacts || contact.is_online()) {
+		if(elem_ui_list.lookup(contact.get_unique_key())==null && 
+			(SETM.show_offline_contacts || contact.is_online()) ) {
 			
 			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 			var opener = new ListItemHandlerContact(win, contact);
@@ -162,6 +163,9 @@ public class ListItemHandlerContact : ListItemHandler {
 	public ListItemHandlerContact(Elm.Win win, Et.Contact contact) {
 		base(win);
 		this.contact = contact;
+		
+		contact.notify["presence"].connect(sig_presence_changed); 
+		
 		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
@@ -203,6 +207,18 @@ public class ListItemHandlerContact : ListItemHandler {
 		if(ui.sui.show_session_ui(this.contact)==false)
 			this.contact.start_conversation.begin();
 
+	}
+	
+	
+	private void sig_presence_changed() {
+		logger.debug("ListItemHandlerContact", "sig_presence_changed() called");
+		item.label_set(this.format_item_label());
+		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
+			ui.mui.remove_elem_from_ui(contact.get_unique_key());
+			ui.mui.refresh_list(); //FIXME: necessary?
+		} else {
+			item.label_set(this.format_item_label());
+		}
 	}
 	
 }
