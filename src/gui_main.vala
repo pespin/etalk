@@ -164,8 +164,8 @@ public class ListItemHandlerContact : ListItemHandler {
 		base(win);
 		this.contact = contact;
 		
-		contact.notify["presence"].connect(sig_presence_changed); 
-		
+		//contact.notify["presence"].connect(sig_presence_changed); 
+		contact.notify.connect(sig_property_changed);
 		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
@@ -209,8 +209,27 @@ public class ListItemHandlerContact : ListItemHandler {
 
 	}
 	
+	private void sig_property_changed(ParamSpec p) {
+		
+		switch(p.name) {
+			
+			case "presence":
+				presence_changed();
+				break;
+			
+			case "id":
+				item.label_set(this.format_item_label());
+				break;
+		
+			default:
+				logger.warning("ListItemHandlerContact", "property "+p.name+" changed but no action was done");
+				break;
+		}
+		
+	}
 	
-	private void sig_presence_changed() {
+	
+	private void presence_changed() {
 		logger.debug("ListItemHandlerContact", "sig_presence_changed() called");
 		item.label_set(this.format_item_label());
 		if(SETM.show_offline_contacts==false && contact.is_online()==false) {

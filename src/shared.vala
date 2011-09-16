@@ -50,6 +50,7 @@ namespace Et {
 	public enum LogLevel {
 			SILENT,
 			ERROR,
+			WARNING,
 			INFO,
 			DEBUG
 	}
@@ -72,6 +73,11 @@ namespace Et {
 		public void error(string area, string message) {
 			if(this.level >= LogLevel.ERROR)
 				stderr.printf("ERROR[%s]: %s\n", area, message);
+		}
+
+		public void warning(string area, string message) {
+			if(this.level >= LogLevel.WARNING)
+				stderr.printf("WARN[%s]: %s\n", area, message);
 		}
 		
 		public void info(string area, string message) {
