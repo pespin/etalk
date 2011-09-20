@@ -150,6 +150,14 @@ namespace Et {
 			
 		}
 		
+		public void close() {
+			try {
+				this.dbus.close();
+			} catch ( Error err ) {
+				logger.error("ChannelMessages",  "close() failed -> "+err.message);
+			}
+		}
+
 		private void ack_messages(uint[] ids) {
 			logger.debug("ChannelMessages", "Sending ACK for messages:");
 			foreach(var id in ids) logger.debug("ChannelMessages", "\t "+id.to_string());
