@@ -147,10 +147,11 @@ public class EtalkUI {
 public abstract class Page : Object {
 	
 	protected Elm.Box vbox;
-	public Elm.Button naviframe_back;
-	
+	public Elm.Button? naviframe_back;
+	public Elm.Button? naviframe_next;
 	public Page() {
 		vbox = null;
+		naviframe_next = null;
 	}
 	
 	public unowned Elm.Object? get_page() {
