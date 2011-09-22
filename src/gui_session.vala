@@ -47,6 +47,15 @@ public class SessionUI : Page {
 		sc.content_set(vbox_in);
 		vbox_in.show();
 		
+		naviframe_next = new Elm.Button(ui.pager);
+		naviframe_next.text_set("Close");
+		naviframe_next.size_hint_weight_set(1.0, 1.0);
+		naviframe_next.size_hint_align_set(-1.0, -1.0);
+		naviframe_next.smart_callback_add("clicked", () => {
+				channel.close();
+				this.close();
+			} );
+
 		
 		//HERE STARTS ALL THE OPTIONS LIST:
 		

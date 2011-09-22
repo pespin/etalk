@@ -52,10 +52,12 @@ namespace Et {
 		}
 		
 		public string get_unique_key() {
+				assert(this.connection.path!=null);
 				return this.connection.path+this.handle.to_string();
 		}
 		
 		public static string get_unique_key_ext(Connection conn, uint handle) {
+			assert(conn.path!=null);
 			return conn.path+handle.to_string();
 		}
 		
