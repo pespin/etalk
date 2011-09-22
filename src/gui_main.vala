@@ -182,7 +182,7 @@ public class ListItemHandlerContact : ListItemHandler {
 	}
 	
 	public override string format_item_label() {
-		return "[" + contact.presence.status + "] " + contact.id;
+		return "[" + contact.presence.status + "] " + contact.alias;
 	}
 	/*
 	private static Elm.Icon gen_icon(string name) {
@@ -217,7 +217,7 @@ public class ListItemHandlerContact : ListItemHandler {
 				presence_changed();
 				break;
 			
-			case "id":
+			case "alias":
 				item.label_set(this.format_item_label());
 				break;
 		
