@@ -364,7 +364,7 @@ public abstract class ListItemHandler : Object {
 	
 	public void go () { 
 		this.item.selected_set(false);
-		open_rdevice_page(); 
+		open_elem_page();
 	}
 	
 	public abstract void refresh_content();
@@ -384,7 +384,7 @@ public abstract class ListItemHandler : Object {
 		return ic;
 	}
 */
-	protected abstract void open_rdevice_page();
+	protected abstract void open_elem_page();
 	
 }
 

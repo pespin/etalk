@@ -162,7 +162,7 @@ public class ListItemHandlerSession : ListItemHandler {
 		return ic;
 	}
 */
-	protected override void open_rdevice_page() {
+	protected override void open_elem_page() {
 		
 		//if true, this means probably that elem.ref_count==0
 		if(this.elem==null) { 
