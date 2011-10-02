@@ -23,6 +23,23 @@ namespace Et {
 		}
 		
 		
+		~AccountManager() {
+			simple_presence_set_all(Telepathy.ConnectionPresenceType.OFFLINE, "Client exited.");
+		}
+
+		public void simple_presence_set_all(Telepathy.ConnectionPresenceType ptype, string? status_message=null, string? status=null) {
+
+			logger.debug("AccountManager", "Setting all accounts presence to "+Telepathy.ConnectionPresenceType.OFFLINE.to_string());
+
+			HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
+				unowned string? path;
+				unowned Account? acc;
+				while(it.next(out path, out acc)) {
+					acc.simple_presence_set(ptype, status_message, status);
+				}
+		}
+
+
 		public void update_accounts() {
 			foreach(var acc_path in acm.valid_accounts) {
 				logger.debug("AccountManager", "Account "+acc_path.to_string()+" requested");
@@ -31,8 +48,8 @@ namespace Et {
 			}
 			
 		}
-		
-		
+
+
 		public void show_accounts(ListAccountUI laui) {
 				
 				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
