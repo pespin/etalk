@@ -27,6 +27,26 @@ namespace Et {
 			
 		}
 		
+		
+		public void remove_all_contacts(string conn_path) {
+				HashTableIter<string,Contact> it = HashTableIter<string,Contact>(hash);
+				unowned string? key;
+				unowned Contact? c;
+				string[] key_container = { };
+				while(it.next(out key, out c)) {
+					if(key.has_prefix(conn_path)) {
+						key_container+=key;
+					 }
+				}
+				
+				foreach(var k in key_container) {
+					ui.mui.remove_elem_from_ui(k);
+					hash.remove(k);
+				}
+				
+				ui.mui.refresh_list();
+		}
+		
 		public void remove_contacts(Connection conn, uint[] handles) {
 			foreach(var handle in handles) {
 					remove_contact(conn, handle);

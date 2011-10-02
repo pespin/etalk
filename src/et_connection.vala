@@ -1,7 +1,11 @@
 namespace Et {
 
+	errordomain ConnectionError {
+		NO_HANDLES
+	}
 
 	public class Connection : GLib.Object {
+		
 		
 		private Telepathy.Connection connection;
 		private Telepathy.ConnectionInterfaceRequests? _dbus_requests;
@@ -200,10 +204,21 @@ namespace Et {
 				HashTableIter<string,Channel> it = HashTableIter<string,Channel>(channels);
 				unowned string? path;
 				unowned Channel? chan;
+				bool correct;
 				while(it.next(out path, out chan)) {
 					assert(chan!=null);
 					assert(chan.path!=null);
-					remove_contacts_channel(chan);
+					
+					try {
+						remove_contacts_channel(chan);
+					} catch (ConnectionError err) {
+						/* If we can't assure, all contacts from this conn have been erased from contact manager 
+						 * just erase them all in a dirty way ;) 
+						 */
+						logger.error("Connection", err.message);
+						 CM.remove_all_contacts(this.path);
+						 return;
+					}
 				}	
 					
 			} else {
@@ -211,13 +226,17 @@ namespace Et {
 			}	
 		}
 		
-		private void remove_contacts_channel(Channel chan) {
+		/* Sometimes when you try to get handles from a channel the property can be null/empty:
+		 * - The channel does not have this property
+		 * - The connection from this channel has been closed
+		 * If we couldn't get correct information from handles property, throw an exception to indicate it:
+		 * */
+		private void remove_contacts_channel(Channel chan) throws ConnectionError {
 			uint[]? handless = chan.get_contact_handles();
-			if(handless==null)
-				logger.error("Connection", "remove_contacts_channel("+chan.path+"): handless == NULL!!!");
-			else
+			if(handless==null) {
+				throw new ConnectionError.NO_HANDLES ("remove_contacts_channel("+chan.path+"): handless == NULL!!!");
+			} else
 				CM.remove_contacts(this, handless);
-			
 		}
 		
 		
