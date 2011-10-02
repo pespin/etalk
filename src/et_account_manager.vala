@@ -29,7 +29,7 @@ namespace Et {
 
 		public void simple_presence_set_all(Telepathy.ConnectionPresenceType ptype, string? status_message=null, string? status=null) {
 
-			logger.debug("AccountManager", "Setting all accounts presence to "+Telepathy.ConnectionPresenceType.OFFLINE.to_string());
+			logger.debug("AccountManager", "Setting all accounts presence to "+ptype.to_string());
 
 			HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
 				unowned string? path;
