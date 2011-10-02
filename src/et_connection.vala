@@ -96,6 +96,8 @@ namespace Et {
 			if(this.is_valid==false) return;
 			this.is_valid=false;
 			_dbus_requests.new_channels.disconnect(sig_new_channels);
+			_dbus_requests.channel_closed.disconnect(sig_channel_closed);
+			_dbus_presence.presences_changed.disconnect(sig_presences_changed);
 			this.remove_contacts();
 			this.remove_channels();
 		}
