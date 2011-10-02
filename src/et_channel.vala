@@ -150,6 +150,12 @@ namespace Et {
 			
 		}
 		
+		public void send_message(string message) {
+			
+			logger.debug("ChannelMessages", "message to be sent: "+message);
+			
+		}
+		
 		public void close() {
 			try {
 				this.dbus.close();
