@@ -154,6 +154,21 @@ namespace Et {
 			
 			logger.debug("ChannelMessages", "message to be sent: "+message);
 			
+			var msg = new HashTable<string, Variant>[2];
+			msg[0] = new HashTable<string, Variant>(str_hash, str_equal);
+			msg[1] = new HashTable<string, Variant>(str_hash, str_equal);
+			
+			msg[0].insert("message-type", 0); // = Channel_Text_Message_Type_Normal
+			
+			msg[1].insert("alternative", "main");
+			msg[1].insert("content-type", "text/plain");
+			msg[1].insert("content", message);
+			try {
+				var token = this.dbus_ext_messages.send_message(msg, 0);
+				logger.debug("ChannelMessages", "Messge sent, token = "+token);
+			} catch( Error err ) {
+				logger.error("ChannelMessages",  "send_message() failed -> "+err.message);
+			}
 		}
 		
 		public void close() {
@@ -185,6 +200,8 @@ namespace Et {
 				});
 				logger.debug("ChannelMessages", "---");
 			}
+			
+			this.new_message(content);
 
 		}
 		
