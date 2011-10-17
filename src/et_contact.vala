@@ -40,10 +40,7 @@ namespace Et {
 			
 			Variant v = properties.lookup(Telepathy.TOKEN_CONNECTION_INTERFACE_SIMPLE_PRESENCE_PRESENCE);
 			if(v!=null) {
-				VariantIter iter = v.iterator();
-				presence.type = (uint) iter.next_value();
-				presence.status = (string) iter.next_value();
-				presence.status_message = (string) iter.next_value();
+				presence = (Telepathy.Simple_Presence) v;
 			}
 		}
 
