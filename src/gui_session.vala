@@ -88,9 +88,11 @@ public class SessionUI : Page {
 		text.size_hint_align_set(-1.0, 0.0);
         text.size_hint_weight_set(1.0, 0.0);
         text.single_line_set(true);
+		text.scrollable_set(true);
 		text.entry_set("");
 		hbox_bottom.pack_end(text);
 		text.show();
+		text.smart_callback_add("activated", cb_bt_send_clicked);
 		
 		bt_send = new Elm.Button(win);
 		bt_send.text_set("Send");
