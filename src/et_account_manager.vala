@@ -23,7 +23,7 @@ namespace Et {
 		}
 		
 		
-		~AccountManager() {
+		public void stop() {
 			simple_presence_set_all(Telepathy.ConnectionPresenceType.OFFLINE, "Client exited.");
 		}
 

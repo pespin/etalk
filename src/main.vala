@@ -23,7 +23,7 @@ async void etalk_init() {
 void etalk_stop() {
 
 	SETM.save_current_settings();
-	
+	ACM.stop();
 }
 
 
