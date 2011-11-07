@@ -5,6 +5,7 @@ public class SettingsMainUI : Page {
 		private Elm.Box vbox_in;
 		
 		private Elm.Toggle tg_offline;
+		private Elm.Toggle tg_disconnect;
 
 		private Elm.Box hbox_presence;
 		private Elm.Label lb_presence;
@@ -51,6 +52,17 @@ public class SettingsMainUI : Page {
 		tg_offline.show();
 		tg_offline.smart_callback_add("changed", () => { 
 							SETM.show_offline_contacts = tg_offline.state_get();
+							});
+							
+		tg_disconnect = new Elm.Toggle(win);
+		tg_disconnect.text_set("Become offline when closing:");
+		tg_disconnect.states_labels_set("Yes", "No");
+		tg_disconnect.state_set(SETM.set_offline_on_close);
+		tg_disconnect.size_hint_align_set(-1.0, 0.0);
+		vbox_in.pack_end(tg_disconnect);
+		tg_disconnect.show();
+		tg_disconnect.smart_callback_add("changed", () => { 
+							SETM.set_offline_on_close = tg_disconnect.state_get();
 							});
 
 

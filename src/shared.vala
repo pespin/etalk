@@ -99,6 +99,7 @@ namespace Et {
 		private const string group_name = "etalk";
 		
 		public bool show_offline_contacts { get; set; default=false; }
+		public bool set_offline_on_close { get; set; default=true; }
 		
 		public SettingsManager() {
 			keyfile=null;
@@ -128,6 +129,12 @@ namespace Et {
 				logger.error("SettingsManager", "Could not load option \"show_offline_contacts\": "+err.message);	
 			}
 			
+			try {
+				set_offline_on_close = keyfile.get_boolean(group_name, "set_offline_on_close");
+			} catch (Error err) {
+				logger.error("SettingsManager", "Could not load option \"show_offline_contacts\": "+err.message);	
+			}
+			
 		}
 	
 	
@@ -146,6 +153,7 @@ namespace Et {
 				}
 				
 				keyfile.set_boolean(group_name, "show_offline_contacts", show_offline_contacts);
+				keyfile.set_boolean(group_name, "set_offline_on_close", set_offline_on_close);
 				
 				var str = keyfile.to_data (null);
                 

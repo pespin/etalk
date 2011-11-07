@@ -24,7 +24,8 @@ namespace Et {
 		
 		
 		public void stop() {
-			simple_presence_set_all(Telepathy.ConnectionPresenceType.OFFLINE, "Client exited.");
+			if(SETM.set_offline_on_close)
+				simple_presence_set_all(Telepathy.ConnectionPresenceType.OFFLINE, "Client exited.");
 		}
 
 		public void simple_presence_set_all(Telepathy.ConnectionPresenceType ptype, string? status_message=null, string? status=null) {
