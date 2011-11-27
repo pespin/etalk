@@ -1,6 +1,4 @@
 public class NewAccountUI : Page {
-	
-		Elm.Object[] gui_container;
 		
 		private FrameBox fr_general;
 		
@@ -11,14 +9,14 @@ public class NewAccountUI : Page {
 		private EntryBox server;
 		private EntryBox port;
 		private EntryBox password;
-		private Elm.Toggle encryption;
-		private Elm.Toggle registerr;
+		private unowned Elm.Toggle? encryption;
+		private unowned Elm.Toggle? registerr;
 			
-		private Elm.Scroller sc;
-		private Elm.Box vbox_in;
-		private Elm.Box hbox;
+		private unowned Elm.Scroller? sc;
+		private unowned Elm.Box? vbox_in;
+		private unowned Elm.Box? hbox;
 
-		private Elm.Button bt_ok;
+		private unowned Elm.Button? bt_ok;
 		
 	public NewAccountUI() {
 		base();
@@ -33,6 +31,8 @@ public class NewAccountUI : Page {
 			return "New Account"; 
 	}
 	
+	public override unowned Elm.Button? get_button_next() { return null; }
+	
 	public async override void refresh_content() {
 			logger.error("NewAccountUI", "NOT IMPLEMENTED: refresh_content() on NewAccountUI");
 	}
@@ -41,17 +41,17 @@ public class NewAccountUI : Page {
 	public unowned Elm.Object create(Elm.Win win) {
 		
 		//add vbox
-		vbox = new Elm.Box(win);
+		vbox = Elm.Box.add(win);
 		vbox.size_hint_weight_set(1.0, 1.0);
 		
-		sc = new Elm.Scroller(win);
+		sc = Elm.Scroller.add(win);
 		sc.size_hint_weight_set(1.0, 1.0);
 		sc.size_hint_align_set(-1.0, -1.0);
 		sc.bounce_set(false, true);
 		vbox.pack_end(sc);
 		sc.show();
 		
-		vbox_in = new Elm.Box(win);
+		vbox_in = Elm.Box.add(win);
 		vbox_in.size_hint_align_set(-1.0, -1.0);
 		vbox_in.size_hint_weight_set(1.0, 1.0);
 		sc.content_set(vbox_in);
@@ -85,7 +85,7 @@ public class NewAccountUI : Page {
 		password = new EntryBox(win, fr_general.box, "Password", "1234");
 		password.show();
 		
-		encryption = new Elm.Toggle(win);
+		encryption = Elm.Toggle.add(win);
 		encryption.text_set("Encryption:");
 		encryption.states_labels_set("Yes", "No");
 		encryption.state_set(false);
@@ -93,7 +93,7 @@ public class NewAccountUI : Page {
 		fr_general.box.pack_end(encryption);
 		encryption.show();
 		
-		registerr = new Elm.Toggle(win);
+		registerr = Elm.Toggle.add(win);
 		registerr.text_set("Register:");
 		registerr.states_labels_set("Yes", "No");
 		registerr.state_set(false);
@@ -103,15 +103,14 @@ public class NewAccountUI : Page {
 		
 		//BOTTOM:
 		
-		gui_container += (owned) hbox;
-		hbox = new Elm.Box(win);
+		hbox = Elm.Box.add(win);
 		hbox.horizontal_set(true);
 		hbox.size_hint_weight_set(1.0, 0.0);
 		hbox.size_hint_align_set(-1.0, 0.0);
 		vbox.pack_end(hbox);
 		hbox.show();
 		
-		bt_ok = new Elm.Button(win);
+		bt_ok = Elm.Button.add(win);
 		bt_ok.text_set("Create");
 		bt_ok.size_hint_weight_set(1.0, 1.0);
 		bt_ok.size_hint_align_set(-1.0, -1.0);

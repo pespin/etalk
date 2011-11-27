@@ -2,11 +2,11 @@ public class MainUI : Page {
 		
 		private unowned Elm.Win win;
 
-		public Elm.List li;
-		private Elm.Box hbox1;
-		private Elm.Button bt_settings;
-		private Elm.Button bt_accounts;
-		private Elm.Button bt_sessions;
+		public unowned Elm.List? li;
+		private unowned Elm.Box? hbox1;
+		private unowned Elm.Button? bt_settings;
+		private unowned Elm.Button? bt_accounts;
+		private unowned Elm.Button? bt_sessions;
 
 		public HashTable<string,ListItemHandlerContact> elem_ui_list; 
 		
@@ -21,12 +21,12 @@ public class MainUI : Page {
 		this.win = win;
 		
 		//add vbox
-		vbox = new Elm.Box(win);
+		vbox = Elm.Box.add(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 		vbox.show();
 
 		//add list
-		li = new Elm.List(win);
+		li = Elm.List.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
@@ -34,14 +34,14 @@ public class MainUI : Page {
 		li.show();
 	
 		//add button hbox1
-		hbox1 = new Elm.Box(win);
+		hbox1 = Elm.Box.add(win);
 		hbox1.horizontal_set(true);	
 		hbox1.size_hint_weight_set( 1.0, 0.0 );
 		hbox1.size_hint_align_set( -1.0, 0.0 );
 		vbox.pack_end(hbox1);
 		hbox1.show();
 
-		bt_settings = new Elm.Button(win);
+		bt_settings = Elm.Button.add(win);
 		bt_settings.text_set("Settings");
 		bt_settings.size_hint_weight_set( 1.0, 1.0 );
 		bt_settings.size_hint_align_set( -1.0, -1.0 );
@@ -49,7 +49,7 @@ public class MainUI : Page {
 		bt_settings.show();
 		bt_settings.smart_callback_add( "clicked", cb_bt_settings_clicked );
 	
-		bt_accounts = new Elm.Button(win);
+		bt_accounts = Elm.Button.add(win);
 		bt_accounts.text_set("Accounts");
 		bt_accounts.size_hint_weight_set( 1.0, 1.0 );
 		bt_accounts.size_hint_align_set( -1.0, -1.0 );
@@ -57,7 +57,7 @@ public class MainUI : Page {
 		bt_accounts.show();
 		bt_accounts.smart_callback_add( "clicked", cb_bt_accounts_clicked );
 	
-		bt_sessions = new Elm.Button(win);
+		bt_sessions = Elm.Button.add(win);
 		bt_sessions.text_set("Sessions");
 		bt_sessions.size_hint_weight_set( 1.0, 1.0 );
 		bt_sessions.size_hint_align_set( -1.0, -1.0 );
@@ -133,6 +133,8 @@ public class MainUI : Page {
 	public override PageID get_page_id() {
 		return PageID.MAIN;
 	}
+	
+	public override unowned Elm.Button? get_button_next() { return null; }
 	
 	public override string? get_page_title() {
 		return "Contact List"; 

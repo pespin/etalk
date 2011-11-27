@@ -2,7 +2,7 @@ public class ListSessionUI : Page {
 	
 		private unowned Elm.Win win;
 	
-		public Elm.List li;
+		public unowned Elm.List? li;
 		
 		public HashTable<string,ListItemHandlerSession> elem_ui_list; 
 
@@ -18,11 +18,11 @@ public class ListSessionUI : Page {
 		this.win = win;
 		
 		//add vbox
-		vbox = new Elm.Box(win);
+		vbox = Elm.Box.add(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 
 		//add list
-		li = new Elm.List(win);
+		li = Elm.List.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
@@ -111,6 +111,8 @@ public class ListSessionUI : Page {
 	public override string? get_page_title() {
 		return "Sessions List"; 
 	}
+	
+	public override unowned Elm.Button? get_button_next() { return null; }
 	
 	public async override void refresh_content() {
 		logger.debug("ListSessionUI", "refresh_content() called");			

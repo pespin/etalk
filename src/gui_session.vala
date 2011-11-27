@@ -9,11 +9,11 @@ public class SessionUI : Page {
 		//private LabelBox path;
 		//private FrameBox fr_general;
 		
-		private Elm.Box hbox_bottom;
-		private Elm.Entry text;
-		private Elm.Button bt_send;
+		private unowned Elm.Box? hbox_bottom;
+		private unowned Elm.Entry? text;
+		private unowned Elm.Button? bt_send;
 		
-		private Elm.Genlist genlist;
+		private unowned Elm.Genlist? genlist;
 		private Elm.GenlistItemClass itc;
 		
 		private HashTable<string, ChatText> messages;
@@ -47,18 +47,9 @@ public class SessionUI : Page {
 		return "Session"; 
 	}
 	
-	public async override void refresh_content() {
-	
-	}
-	
-	public unowned Elm.Object create(Elm.Win win) {
-		this.win = win;
+	public override unowned Elm.Button? get_button_next() {
 		
-		vbox = new Elm.Box(win);
-		vbox.size_hint_weight_set( 1.0, 1.0 );
-		
-		
-		naviframe_next = new Elm.Button(ui.pager);
+		naviframe_next = Elm.Button.add(ui.pager);
 		naviframe_next.text_set("Close");
 		naviframe_next.size_hint_weight_set(1.0, 1.0);
 		naviframe_next.size_hint_align_set(-1.0, -1.0);
@@ -66,8 +57,22 @@ public class SessionUI : Page {
 				channel.close();
 				this.close();
 			} );
+			
+		return naviframe_next;
 		
-		genlist = new Elm.Genlist(win);
+	}
+	
+	public async override void refresh_content() {
+	
+	}
+	
+	public unowned Elm.Object create(Elm.Win win) {
+		this.win = win;
+		
+		vbox = Elm.Box.add(win);
+		vbox.size_hint_weight_set( 1.0, 1.0 );
+		
+		genlist = Elm.Genlist.add(win);
 		genlist.scale_set(1.0);
 		genlist.size_hint_weight_set(1.0, 1.0);
 		genlist.size_hint_align_set(-1.0, -1.0);
@@ -76,14 +81,14 @@ public class SessionUI : Page {
 		genlist.show();
 		append_pending_messages();
 		
-		hbox_bottom = new Elm.Box(win);
+		hbox_bottom = Elm.Box.add(win);
 		hbox_bottom.horizontal_set(true);
 		hbox_bottom.size_hint_weight_set(1.0, 0.0);
         hbox_bottom.size_hint_align_set(-1.0, 0.0);
 		vbox.pack_end(hbox_bottom);
 		hbox_bottom.show();
 		
-		text = new Elm.Entry(win);
+		text = Elm.Entry.add(win);
 		text.size_hint_align_set(-1.0, 0.0);
         text.size_hint_weight_set(1.0, 0.0);
         text.single_line_set(true);
@@ -93,7 +98,7 @@ public class SessionUI : Page {
 		text.show();
 		text.smart_callback_add("activated", cb_bt_send_clicked);
 		
-		bt_send = new Elm.Button(win);
+		bt_send = Elm.Button.add(win);
 		bt_send.text_set("Send");
 		bt_send.size_hint_weight_set( 0.0, 0.0 );
 		bt_send.size_hint_align_set( -1.0, -1.0 );
@@ -119,7 +124,7 @@ public class SessionUI : Page {
 			} else{
 				var bubble = new ChatText(win, this, key);
 				bubble.content_set(sender, content);
-				unowned Elm.GenlistItem it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+				unowned Elm.GenlistItem? it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
 				this.messages.insert(key, (owned) bubble);
 				it.bring_in();
 			}
@@ -137,7 +142,7 @@ public class SessionUI : Page {
 	}
 
 
-	private static Elm.Object? genlist_get_content( Elm.Object obj, string part ) {
+	private static unowned Elm.Object? genlist_get_content( Elm.Object obj, string part ) {
 		logger.debug("SessionUI", "content function called!");
 		ChatText t = (ChatText) obj;
 		return t.get_content();
@@ -176,7 +181,7 @@ public class SessionUI : Page {
 			logger.debug("SessionUI", sender+": "+content+"\n");
 			var bubble = new ChatText(win, this, key);
 			bubble.content_set(sender, content);
-			unowned Elm.GenlistItem it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+			unowned Elm.GenlistItem? it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
 			messages.insert(key, (owned) bubble);
 			it.bring_in();
 		}
@@ -188,8 +193,8 @@ public class SessionUI : Page {
 
 private class ChatText : GLib.Object {
 	private unowned Elm.Win? win;
-	private Elm.Bubble bubble;
-	private Elm.Anchorblock label;
+	private unowned Elm.Bubble? bubble;
+	private unowned Elm.Anchorblock? label;
 	
 	public unowned SessionUI ui {get; private set;}
 	public string key {get; private set;}
@@ -208,13 +213,13 @@ private class ChatText : GLib.Object {
 		this.speaker = speaker;
 		this.message = message;
 		bubble = null;
-		bubble = new Elm.Bubble(win);
+		bubble = Elm.Bubble.add(win);
 		bubble.size_hint_weight_set( 1.0, 1.0 );
 		bubble.size_hint_align_set( -1.0, -1.0 );
 		bubble.text_set(speaker);
 		
 		label = null;
-		label = new Elm.Anchorblock(win);
+		label = Elm.Anchorblock.add(win);
 		label.text_set(message);
 		label.size_hint_weight_set( 1.0, 1.0 );
 		label.size_hint_align_set( -1.0, -1.0 );
@@ -227,21 +232,21 @@ private class ChatText : GLib.Object {
 		return "";
 	}
 	
-	public Elm.Object? get_content() {
+	public unowned Elm.Object? get_content() {
 		
-		bubble = new Elm.Bubble(win);
+		bubble = Elm.Bubble.add(win);
 		bubble.size_hint_weight_set( 1.0, 1.0 );
 		bubble.size_hint_align_set( -1.0, -1.0 );
 		bubble.text_set(speaker);
 		
-		label = new Elm.Anchorblock(win);
+		label = Elm.Anchorblock.add(win);
 		label.text_set(message);
 		label.size_hint_weight_set( 1.0, 1.0 );
 		label.size_hint_align_set( -1.0, -1.0 );
 		label.show();
 		bubble.content_set(label);
 		
-		return (owned) bubble;
+		return bubble;
 	}
 	
 

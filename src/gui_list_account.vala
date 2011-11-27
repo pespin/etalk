@@ -2,9 +2,9 @@ public class ListAccountUI : Page {
 		
 		private unowned Elm.Win win;
 
-		public Elm.List li;
-		private Elm.Box hbox1;
-		private Elm.Button bt_new;
+		public unowned Elm.List? li;
+		private unowned Elm.Box? hbox1;
+		private unowned Elm.Button? bt_new;
 
 		public HashTable<string,ListItemHandlerAccount> elem_ui_list; 
 		
@@ -19,11 +19,11 @@ public class ListAccountUI : Page {
 		this.win = win;
 		
 		//add vbox
-		vbox = new Elm.Box(win);
+		vbox = Elm.Box.add(win);
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 
 		//add list
-		li = new Elm.List(win);
+		li = Elm.List.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
@@ -31,14 +31,14 @@ public class ListAccountUI : Page {
 		li.show();
 	
 		//add button hbox1
-		hbox1 = new Elm.Box(win);
+		hbox1 = Elm.Box.add(win);
 		hbox1.horizontal_set(true);	
 		hbox1.size_hint_weight_set( 1.0, 0.0 );
 		hbox1.size_hint_align_set( -1.0, 0.0 );
 		vbox.pack_end(hbox1);
 		hbox1.show();
 
-		bt_new = new Elm.Button(win);
+		bt_new = Elm.Button.add(win);
 		bt_new.text_set("New Account");
 		bt_new.size_hint_weight_set(1.0, 1.0);
 		bt_new.size_hint_align_set(-1.0, -1.0);
@@ -88,6 +88,8 @@ public class ListAccountUI : Page {
 	public override string? get_page_title() {
 		return "Accounts List"; 
 	}
+	
+	public override unowned Elm.Button? get_button_next() { return null; }
 	
 	public async override void refresh_content() {
 			

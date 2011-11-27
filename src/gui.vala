@@ -4,9 +4,8 @@ public class EtalkUI {
 	
 		public Elm.Win win;
 		
-		public Elm.Naviframe pager;
-			
-		private Elm.Bg	bg;
+		public unowned Elm.Naviframe? pager;
+
 		public MainUI  mui;
 		public ListSessionUI sui;
 		public List<Page> page_stack;
@@ -23,14 +22,14 @@ public class EtalkUI {
 			win.title_set( "etalk" );
 			win.smart_callback_add( "delete,request", Elm.exit );
 			
-			bg = new Elm.Bg(win);
+			unowned Elm.Bg? bg = Elm.Bg.add(win);
 			bg.size_hint_weight_set( 1.0, 1.0 );
 			bg.show();
 			win.resize_object_add(bg);
 			
 			win.resize( DISPLAY_WIDTH, DISPLAY_HEIGHT );
 			
-			pager = new Elm.Naviframe( win );
+			pager = Elm.Naviframe.add( win );
 			win.resize_object_add( pager );
 			pager.size_hint_weight_set( 1.0, 1.0 );
 			pager.content_preserve_on_pop_set(true);
@@ -67,12 +66,6 @@ public class EtalkUI {
 
 	public void push_page(owned Page obj) {
 		
-		obj.naviframe_back = new Elm.Button(ui.pager);
-		obj.naviframe_back.text_set("Back");
-		obj.naviframe_back.size_hint_weight_set(1.0, 1.0);
-		obj.naviframe_back.size_hint_align_set(-1.0, -1.0);
-		obj.naviframe_back.smart_callback_add("clicked", obj.close);
-		
 		unowned Elm.Object? page = obj.get_page();
 		if(page!=null) {
 			
@@ -80,7 +73,7 @@ public class EtalkUI {
 			if(title!=null)
 				win.title_set("Etalk - "+title);
 				
-			pager.item_push(title, (owned) obj.naviframe_back, (owned) obj.naviframe_next, page, null);
+			pager.item_push(title, obj.get_button_back(), obj.get_button_next(), page, null);
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
@@ -146,11 +139,12 @@ public class EtalkUI {
 /* PAGE: all UIs inherit from this, and is used by EtalkUI */
 public abstract class Page : Object {
 	
-	protected Elm.Box vbox;
-	public Elm.Button? naviframe_back;
-	public Elm.Button? naviframe_next;
+	protected unowned Elm.Box? vbox;
+	public unowned Elm.Button? naviframe_back;
+	public unowned Elm.Button? naviframe_next;
 	public Page() {
 		vbox = null;
+		naviframe_back = null;
 		naviframe_next = null;
 	}
 	
@@ -168,51 +162,62 @@ public abstract class Page : Object {
 	
 	public abstract string? get_page_title();
 	
+	public unowned Elm.Button? get_button_back(){
+		
+		naviframe_back = Elm.Button.add(ui.pager);
+		naviframe_back.text_set("Back");
+		naviframe_back.size_hint_weight_set(1.0, 1.0);
+		naviframe_back.size_hint_align_set(-1.0, -1.0);
+		naviframe_back.smart_callback_add("clicked", this.close);
+		return naviframe_back;
+	}
+	public abstract unowned Elm.Button? get_button_next();
+	
 }
 
 
 	/* PIN DIALOG */
 public class DialogUI : Object {	
 	
-	Elm.Win inwin;
-	Elm.Box vbox;
-	Elm.Box vbox_in;
-	Elm.Anchorblock lb;
-	Elm.Button bt_ok;
-	Elm.Scroller sc;
-	
 	public void create(string text) {
 		this.ref(); //let it be unless someone presses the kill button
+		
+		unowned Elm.Win? inwin;
+		unowned Elm.Box? vbox;
+		unowned Elm.Box? vbox_in;
+		unowned Elm.Anchorblock? lb;
+		unowned Elm.Button? bt_ok;
+		unowned Elm.Scroller? sc;
 		
 		inwin = ui.win.inwin_add();
 		inwin.show();
 		
-		vbox = new Elm.Box(ui.win);
+		vbox = Elm.Box.add(ui.win);
 		inwin.inwin_content_set(vbox);
 		vbox.show();
 		
-		sc = new Elm.Scroller(ui.win);
+		sc = Elm.Scroller.add(ui.win);
 		sc.size_hint_weight_set(1.0, 1.0);
 		sc.size_hint_align_set(-1.0, -1.0);
 		sc.bounce_set(false, true);
 		vbox.pack_end(sc);
 		sc.show();
 		
-		vbox_in = new Elm.Box(ui.win);
+		vbox_in = Elm.Box.add(ui.win);
 		vbox_in.size_hint_align_set(-1.0, -1.0);
 		vbox_in.size_hint_weight_set(1.0, 1.0);
 		sc.content_set(vbox_in);
 		vbox_in.show();
 		
 		// add a label
-		lb = new Elm.Anchorblock(ui.win);
+		lb = Elm.Anchorblock.add(ui.win);
 		lb.text_set(text);
 		lb.size_hint_weight_set(1.0, 1.0);
 		lb.size_hint_align_set(-1.0, -1.0);
 		vbox_in.pack_end(lb);
 		lb.show();
 		
-		bt_ok = new Elm.Button(ui.win);
+		bt_ok = Elm.Button.add(ui.win);
 		bt_ok.text_set("Ok");
 		bt_ok.size_hint_align_set(-1.0, -1.0);
 		bt_ok.size_hint_weight_set(1.0, 0.0);
@@ -234,22 +239,22 @@ public class DialogUI : Object {
 
 public class LabelBox {
 	
-	private Elm.Label lb;
-	private Elm.Label val;
-	private Elm.Box box;
+	private unowned Elm.Label? lb;
+	private unowned Elm.Label? val;
+	private unowned Elm.Box? box;
 	
 	public LabelBox(Elm.Win win, Elm.Box parent, string label, string Value) {
 		
-		box = new Elm.Box(win);
+		box = Elm.Box.add(win);
 		box.horizontal_set(true);
 		box.size_hint_align_set(0.0, 0.0);	
 		parent.pack_end(box);
 		
-		lb = new Elm.Label(win);
+		lb = Elm.Label.add(win);
 		lb.text_set("<b>"+label+":</b>");
 		box.pack_end(lb);
 		
-		val = new Elm.Label(win);
+		val = Elm.Label.add(win);
 		val.text_set(Value);
 		box.pack_end(val);
 		
@@ -272,30 +277,30 @@ public class LabelBox {
 
 public class EntryBox {
 	
-	private Elm.Label lb;
-	public Elm.Entry val;
-	private Elm.Frame fr;
-	private Elm.Box box;
+	private unowned Elm.Label? lb;
+	public unowned Elm.Entry? val;
+	private unowned Elm.Frame? fr;
+	private unowned Elm.Box? box;
 	
 	public EntryBox(Elm.Win win, Elm.Box parent, string label, string Value) {
 		
-		box = new Elm.Box(win);
+		box = Elm.Box.add(win);
 		box.horizontal_set(true);
 		box.size_hint_weight_set(1.0, 0.0);
         box.size_hint_align_set(-1.0, 0.0);
 		parent.pack_end(box);
 		
-		lb = new Elm.Label(win);
+		lb = Elm.Label.add(win);
 		lb.text_set("<b>"+label+":</b>");
 		box.pack_end(lb);
 		
-		fr = new Elm.Frame(win);
+		fr = Elm.Frame.add(win);
         fr.size_hint_align_set(-1.0, 0.0);
         fr.size_hint_weight_set(1.0, 0.0);
         fr.style_set("outdent_top");
         box.pack_end(fr);
 		
-		val = new Elm.Entry(win);
+		val = Elm.Entry.add(win);
 		val.size_hint_align_set(-1.0, 0.0);
         val.size_hint_weight_set(1.0, 0.0);
         val.single_line_set(true);
@@ -324,18 +329,18 @@ public class EntryBox {
 
 public class FrameBox {
 	
-	public Elm.Frame fr;
-	public Elm.Box box;
+	public unowned Elm.Frame? fr;
+	public unowned Elm.Box? box;
 	
 	public FrameBox(Elm.Win win, Elm.Box parent, string label) {
 		
-		fr = new Elm.Frame(win);
+		fr = Elm.Frame.add(win);
 		fr.text_set(label);
         fr.size_hint_align_set(-1.0, 0.0);
         fr.size_hint_weight_set(1.0, 0.0);
         parent.pack_end(fr);
 		
-		box = new Elm.Box(win);
+		box = Elm.Box.add(win);
 		box.size_hint_weight_set(1.0, 0.0);
         box.size_hint_align_set(-1.0, 0.0);
 		fr.content_set(box);
@@ -352,8 +357,8 @@ public class FrameBox {
 
 public abstract class ListItemHandler : Object {
 	
-	public Elm.ListItem item;
-	public Elm.Icon icon;
+	public unowned Elm.ListItem? item;
+	public unowned Elm.Icon? icon;
 	public static unowned Elm.Win win;
 	
 	
