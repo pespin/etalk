@@ -68,7 +68,10 @@ public class MainUI : Page {
 		SETM.notify["show-offline-contacts"].connect((s, p) => {
 									this.populate_list();
 		});
-	
+		
+		CM.contact_added.connect(add_elem_to_ui);
+		CM.contact_removed.connect(remove_elem_from_ui);
+		
 		return vbox;
 	}
 	

@@ -20,7 +20,8 @@ namespace Et {
 					if(hash_info_one==null) continue;
 					
 					c.update_properties(hash_info_one);
-					ui.mui.add_elem_to_ui(c);
+					//ui.mui.add_elem_to_ui(c);
+					this.contact_added(c);
 				}
 				
 				ui.mui.refresh_list();
@@ -97,11 +98,13 @@ namespace Et {
 		private void remove_contact(Connection conn, uint handle) {
 			string key = Contact.get_unique_key_ext(conn,handle);
 			unowned Contact? contact = hash.lookup(key);
-					if(contact!=null) {
-						hash.remove(key);
-						ui.mui.remove_elem_from_ui(key);
-					}
+					if(contact!=null) hash.remove(key);
+					this.contact_removed(key);
 		}
+		
+		
+		public signal void contact_added(Contact c);
+		public signal void contact_removed(string key);
 
 	}
 
