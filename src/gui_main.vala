@@ -2,7 +2,9 @@ public class MainUI : Page {
 		
 		private unowned Elm.Win win;
 
-		public unowned Elm.List? li;
+		private unowned Elm.Genlist? li;
+		private Elm.GenlistItemClass itc;
+		
 		private unowned Elm.Box? hbox1;
 		private unowned Elm.Button? bt_settings;
 		private unowned Elm.Button? bt_accounts;
@@ -11,8 +13,15 @@ public class MainUI : Page {
 		public HashTable<string,ListItemHandlerContact> elem_ui_list; 
 		
 		public MainUI() {
-				base();
-				elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
+			base();
+			elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
+
+			itc.item_style = "default";
+			itc.func.label_get = genlist_get_label;
+			itc.func.content_get = genlist_get_content;
+			itc.func.state_get = genlist_get_state;
+			itc.func.del = genlist_del_item;
+		
 		}
 		
 
@@ -26,10 +35,11 @@ public class MainUI : Page {
 		vbox.show();
 
 		//add list
-		li = Elm.List.add(win);
+		li = Elm.Genlist.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
+		li.no_select_mode_set(false);
 		vbox.pack_end(li);
 		li.show();
 	
@@ -81,8 +91,9 @@ public class MainUI : Page {
 			(SETM.show_offline_contacts || contact.is_online()) ) {
 			
 			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
-			var opener = new ListItemHandlerContact(win, contact);
-			opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+			var opener = new ListItemHandlerContact(win, this, contact);
+			opener.genitem = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+				
 			elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
 		
 		}
@@ -96,12 +107,12 @@ public class MainUI : Page {
 	}
 	
 	public void refresh_list() {
-		this.li.go();
+		//this.li.go();
 	}
 	
 	
 	public void populate_list() {
-		//li.clear();
+		li.clear();
 		elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
 		ACM.show_contacts();
 	}
@@ -145,31 +156,63 @@ public class MainUI : Page {
 	
 	public async override void refresh_content() {
 
-		HashTableIter<string,ListItemHandlerContact> it = HashTableIter<string,ListItemHandlerContact>(elem_ui_list);
+		/*HashTableIter<string,ListItemHandlerContact> it = HashTableIter<string,ListItemHandlerContact>(elem_ui_list);
 		
 		unowned string? key;
 		unowned ListItemHandlerContact? handler;
 		while(it.next(out key, out handler)) {
 			handler.refresh_content();
-		}
+		}*/
 		
-		li.go();
+		//li.go();
 		
 	}
+	
+	
+		/* Genlist stuff */
+
+	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
+		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
+		ListItemHandlerContact handler = (ListItemHandlerContact) data;
+		return handler.format_item_label();
+	}
+
+
+	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
+		logger.debug("SessionUI", "content function called!");
+		ListItemHandlerContact handler = (ListItemHandlerContact) data;
+		return null;
+	}
+
+	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
+		//logger.debug("SessionUI", "state function called!");
+		return false;
+	}
+
+	private static void genlist_del_item(void *data, Elm.Object obj ) {
+		logger.debug("SessionUI", "DELETE function called!");
+	}
+	
+	public void onSelectedItem( Evas.Object obj, void* event_info)
+    {
+       logger.debug("SessionUI", "HEY!!!! ITEM SELECTED!");
+       
+    }
 
 }
 
 
 public class ListItemHandlerContact : ListItemHandler {
 	
+	public MainUI mainui;
 	public Et.Contact contact;
+	public unowned Elm.GenlistItem? genitem;
 	
-	
-	public ListItemHandlerContact(Elm.Win win, Et.Contact contact) {
+	public ListItemHandlerContact(Elm.Win win, MainUI mainui, Et.Contact contact) {
 		base(win);
+		this.mainui = mainui;
 		this.contact = contact;
 		
-		//contact.notify["presence"].connect(sig_presence_changed); 
 		contact.notify.connect(sig_property_changed);
 		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
@@ -181,25 +224,12 @@ public class ListItemHandlerContact : ListItemHandler {
 	}
 	
 	public override void refresh_content() {
-		/*item.label_set(format_item_label(rdevice));
-		icon = gen_icon(rdevice.online ? "online" : "offline" );
-		item.icon_set(icon);*/
 	}
 	
 	public override string format_item_label() {
 		return "[" + contact.presence.status + "] " + contact.alias;
 	}
-	/*
-	private static Elm.Icon gen_icon(string name) {
-		
-		var ic = new Elm.Icon(win);
-		ic.file_set(Path.build_filename(IMAGESDIR,name+".png"));
-		ic.scale_set(true, true);
-		ic.fill_outside_set(true);
-		ic.show();
-		return ic;
-	}
-*/
+
 	protected override void open_elem_page() {
 		
 		//if true, this means probably that contact.ref_count==0
@@ -223,7 +253,7 @@ public class ListItemHandlerContact : ListItemHandler {
 				break;
 			
 			case "alias":
-				item.label_set(this.format_item_label());
+				//genitem.label_set(this.format_item_label());
 				break;
 		
 			default:
@@ -236,12 +266,12 @@ public class ListItemHandlerContact : ListItemHandler {
 	
 	private void presence_changed() {
 		logger.debug("ListItemHandlerContact", "sig_presence_changed() called");
-		item.label_set(this.format_item_label());
+		//genitem.label_set(this.format_item_label());
 		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
 			ui.mui.remove_elem_from_ui(contact.get_unique_key());
 			ui.mui.refresh_list(); //FIXME: necessary?
 		} else {
-			item.label_set(this.format_item_label());
+			//genitem.label_set(this.format_item_label());
 		}
 	}
 	
