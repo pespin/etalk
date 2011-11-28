@@ -135,25 +135,25 @@ public class SessionUI : Page {
 	
 	/* Genlist stuff */
 
-	private static string genlist_get_label( Elm.Object obj, string part ) {
+	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
 		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
-		ChatText t = (ChatText) obj;
+		ChatText t = (ChatText) data;
 		return t.get_label();
 	}
 
 
-	private static unowned Elm.Object? genlist_get_content( Elm.Object obj, string part ) {
+	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
 		logger.debug("SessionUI", "content function called!");
-		ChatText t = (ChatText) obj;
+		ChatText t = (ChatText) data;
 		return t.get_content();
 	}
 
-	private static bool genlist_get_state( Elm.Object obj, string part ) {
+	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
 		logger.debug("SessionUI", "state function called!");
 		return false;
 	}
 
-	private static void genlist_del_item( Elm.Object obj ) {
+	private static void genlist_del_item(void *data, Elm.Object obj ) {
 		logger.debug("SessionUI", "DELETE function called!");
 	}
 	
