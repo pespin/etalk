@@ -87,12 +87,13 @@ public class MainUI : Page {
 	
 	public void add_elem_to_ui(Et.Contact contact) {
 		
+		//TODO: have to look into this, the logic doesn't seem right: (storing+showing content)
 		if(elem_ui_list.lookup(contact.get_unique_key())==null && 
 			(SETM.show_offline_contacts || contact.is_online()) ) {
 			
 			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 			var opener = new ListItemHandlerContact(win, this, contact);
-			opener.genitem = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+			opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
 				
 			elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
 		
@@ -102,19 +103,19 @@ public class MainUI : Page {
 	public void remove_elem_from_ui(string key) {
 
 		logger.debug("MainUI", "Removing elem " + key + " from ui-list");
-
-		elem_ui_list.remove(key);
-	}
-	
-	public void refresh_list() {
-		//this.li.go();
+		
+		unowned ListItemHandlerContact? elem = elem_ui_list.lookup(key);
+		if(elem!=null) {
+			elem.item.del();
+			elem_ui_list.remove(key);
+		}
 	}
 	
 	
 	public void populate_list() {
 		li.clear();
 		elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
-		ACM.show_contacts();
+		ACM.fetch_contacts();
 	}
 
 	private void cb_bt_settings_clicked() {
@@ -192,12 +193,6 @@ public class MainUI : Page {
 	private static void genlist_del_item(void *data, Elm.Object obj ) {
 		logger.debug("SessionUI", "DELETE function called!");
 	}
-	
-	public void onSelectedItem( Evas.Object obj, void* event_info)
-    {
-       logger.debug("SessionUI", "HEY!!!! ITEM SELECTED!");
-       
-    }
 
 }
 
@@ -206,7 +201,6 @@ public class ListItemHandlerContact : ListItemHandler {
 	
 	public MainUI mainui;
 	public Et.Contact contact;
-	public unowned Elm.GenlistItem? genitem;
 	
 	public ListItemHandlerContact(Elm.Win win, MainUI mainui, Et.Contact contact) {
 		base(win);
@@ -214,16 +208,12 @@ public class ListItemHandlerContact : ListItemHandler {
 		this.contact = contact;
 		
 		contact.notify.connect(sig_property_changed);
-		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
 	
 	public new void go () { 
 		logger.debug("ListItemHandlerContact", "pressed... HANDLE=" + this.contact.handle.to_string() + "\t ID="+this.contact.id); 
 		base.go(); 
-	}
-	
-	public override void refresh_content() {
 	}
 	
 	public override string format_item_label() {
@@ -253,7 +243,7 @@ public class ListItemHandlerContact : ListItemHandler {
 				break;
 			
 			case "alias":
-				//genitem.label_set(this.format_item_label());
+				//item.label_set(this.format_item_label());
 				break;
 		
 			default:
@@ -261,17 +251,19 @@ public class ListItemHandlerContact : ListItemHandler {
 				break;
 		}
 		
+		this.refresh_content();
+		
 	}
 	
 	
 	private void presence_changed() {
 		logger.debug("ListItemHandlerContact", "sig_presence_changed() called");
-		//genitem.label_set(this.format_item_label());
+		//item.label_set(this.format_item_label());
 		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
 			ui.mui.remove_elem_from_ui(contact.get_unique_key());
-			ui.mui.refresh_list(); //FIXME: necessary?
+			//ui.mui.refresh_list(); //FIXME: necessary?
 		} else {
-			//genitem.label_set(this.format_item_label());
+			//item.label_set(this.format_item_label());
 		}
 	}
 	

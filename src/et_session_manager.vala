@@ -30,20 +30,10 @@ namespace Et {
 		}
 		
 		
-		public List<unowned ChannelMessages> get_sessions() {
-				return sessions.get_values();
-		}
-		
-		public void show_sessions(ListSessionUI sui) {
+		public List<weak ChannelMessages> get_sessions() {
 				logger.debug("SessionManager", "UI requested to show sessions...");
-				HashTableIter<string,ChannelMessages> it = HashTableIter<string,ChannelMessages>(sessions);
-				unowned string? key;
-				unowned ChannelMessages? val;
-				while(it.next(out key, out val)) {
-					logger.debug("SessionManager", "sending session to UI: "+key);
-					sui.add_elem_to_ui(val);
-				}
-			
+				
+				return sessions.get_values();
 		}
 		
 		public signal void session_added(string path);

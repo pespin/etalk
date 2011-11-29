@@ -23,8 +23,6 @@ namespace Et {
 					//ui.mui.add_elem_to_ui(c);
 					this.contact_added(c);
 				}
-				
-				ui.mui.refresh_list();
 			
 		}
 		
@@ -44,15 +42,13 @@ namespace Et {
 					ui.mui.remove_elem_from_ui(k);
 					hash.remove(k);
 				}
-				
-				ui.mui.refresh_list();
+
 		}
 		
 		public void remove_contacts(Connection conn, uint[] handles) {
 			foreach(var handle in handles) {
 					remove_contact(conn, handle);
 			}
-			ui.mui.refresh_list();
 		}		
 				//returns null if not exists , otherwise the contact reference if exists
 		public unowned Contact? has_contact(Connection conn, uint handle) {
@@ -88,7 +84,6 @@ namespace Et {
 					}
 					//TODO: if contact was created, update its properties?
 				}
-				ui.mui.refresh_list();
 		}
 		
 		private void add_contact(owned Contact c) {

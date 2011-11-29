@@ -2,18 +2,25 @@ public class ListAccountUI : Page {
 		
 		private unowned Elm.Win win;
 
-		public unowned Elm.List? li;
+		private Elm.GenlistItemClass itc;
+		private unowned Elm.Genlist? li;
 		private unowned Elm.Box? hbox1;
 		private unowned Elm.Button? bt_new;
 
 		public HashTable<string,ListItemHandlerAccount> elem_ui_list; 
 		
 		public ListAccountUI() {
-				base();
-				elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
+			base();
+			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
+	
+			itc.item_style = "default";
+			itc.func.label_get = genlist_get_label;
+			itc.func.content_get = genlist_get_content;
+			itc.func.state_get = genlist_get_state;
+			itc.func.del = genlist_del_item;
+	
 		}
 		
-
 	public unowned Elm.Object create(Elm.Win win) {
 		
 		this.win = win;
@@ -23,12 +30,14 @@ public class ListAccountUI : Page {
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 
 		//add list
-		li = Elm.List.add(win);
+		li = Elm.Genlist.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
-		vbox.pack_end(li);;
+		li.no_select_mode_set(false);
+		vbox.pack_end(li);
 		li.show();
+	
 	
 		//add button hbox1
 		hbox1 = Elm.Box.add(win);
@@ -47,14 +56,21 @@ public class ListAccountUI : Page {
 		bt_new.smart_callback_add( "clicked", cb_bt_new_clicked);
 	
 		this.populate_list();
+		
+		ACM.account_updated.connect(add_elem_to_ui);
+		ACM.account_removed.connect(remove_elem_from_ui);
 	
 		return vbox;
 	}
 	
 	
 	private void populate_list() {
+			li.clear();
 			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
-			ACM.show_accounts(this);
+			List<weak Et.Account> list = ACM.get_accounts();
+			foreach(var elem in list) {
+				add_elem_to_ui(elem);
+			}
 	}
 	
 	public void add_elem_to_ui(Et.Account account) {
@@ -66,9 +82,10 @@ public class ListAccountUI : Page {
 		Ecore.MainLoop.iterate();
 		
 		var opener = new ListItemHandlerAccount(win, account);
-		opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+		//opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+		opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+				
 		elem_ui_list.insert(account.path, (owned) opener);
-		this.li.go();
 	}
 
 	public void remove_elem_from_ui(string path) {
@@ -76,8 +93,12 @@ public class ListAccountUI : Page {
 		logger.debug("ListAccountUI", "Removing elem " + path + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
-		elem_ui_list.remove(path);
-		this.li.go();
+		unowned ListItemHandlerAccount? elem = elem_ui_list.lookup(path);
+		if(elem!=null) {
+			elem.item.del();
+			elem_ui_list.remove(path);
+		}
+
 	}
 	
 
@@ -93,11 +114,11 @@ public class ListAccountUI : Page {
 	
 	public async override void refresh_content() {
 			
-		this.populate_list();
+		//this.populate_list();
 		
 	}
 	
-	
+	/* CALLBACKS */
 	
 	
 	private void cb_bt_new_clicked() {
@@ -107,6 +128,30 @@ public class ListAccountUI : Page {
 		accui.create(ui.win);
 		ui.push_page(accui);
 		
+	}
+	
+	/* Genlist stuff */
+
+	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
+		logger.debug("AccountUI", "HEY!!!! LABEL CALLED!");
+		ListItemHandlerAccount handler = (ListItemHandlerAccount) data;
+		return handler.format_item_label();
+	}
+
+
+	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
+		logger.debug("AccountUI", "content function called!");
+		ListItemHandlerAccount handler = (ListItemHandlerAccount) data;
+		return null;
+	}
+
+	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
+		//logger.debug("AccountUI", "state function called!");
+		return false;
+	}
+
+	private static void genlist_del_item(void *data, Elm.Object obj ) {
+		logger.debug("AccountUI", "DELETE function called!");
 	}
 	
 	
@@ -122,7 +167,6 @@ public class ListItemHandlerAccount : ListItemHandler {
 	public ListItemHandlerAccount(Elm.Win win, Et.Account account) {
 		base(win);
 		this.account = account;
-		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
 	
@@ -131,26 +175,10 @@ public class ListItemHandlerAccount : ListItemHandler {
 		base.go(); 
 	}
 	
-	public override void refresh_content() {
-		/*item.label_set(format_item_label(rdevice));
-		icon = gen_icon(rdevice.online ? "online" : "offline" );
-		item.icon_set(icon);*/
-	}
-	
 	public override string format_item_label() {
 		return "[" + account.dbus.display_name + "]";
 	}
-	/*
-	private static Elm.Icon gen_icon(string name) {
-		
-		var ic = new Elm.Icon(win);
-		ic.file_set(Path.build_filename(IMAGESDIR,name+".png"));
-		ic.scale_set(true, true);
-		ic.fill_outside_set(true);
-		ic.show();
-		return ic;
-	}
-*/
+
 	protected override void open_elem_page() {
 		
 		//if true, this means probably that account.ref_count==0

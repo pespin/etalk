@@ -1,15 +1,22 @@
 public class ListSessionUI : Page {
 	
 		private unowned Elm.Win win;
-	
-		public unowned Elm.List? li;
+
+		private Elm.GenlistItemClass itc;
+		private unowned Elm.Genlist? li;
 		
 		public HashTable<string,ListItemHandlerSession> elem_ui_list; 
 
 		
 		public ListSessionUI() {
-				base();
-				elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
+			base();
+			elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
+		
+			itc.item_style = "default";
+			itc.func.label_get = genlist_get_label;
+			itc.func.content_get = genlist_get_content;
+			itc.func.state_get = genlist_get_state;
+			itc.func.del = genlist_del_item;
 		}
 		
 
@@ -22,10 +29,11 @@ public class ListSessionUI : Page {
 		vbox.size_hint_weight_set( 1.0, 1.0 );
 
 		//add list
-		li = Elm.List.add(win);
+		li = Elm.Genlist.add(win);
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
+		li.no_select_mode_set(false);
 		vbox.pack_end(li);
 		li.show();
 	
@@ -39,8 +47,12 @@ public class ListSessionUI : Page {
 	
 	
 	private void populate_list() {
+			li.clear();
 			elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
-			SM.show_sessions(this);
+			List<weak Et.ChannelMessages> list = SM.get_sessions();
+			foreach(var elem in list) {
+				add_elem_to_ui(elem);
+			}
 	}
 	
 	public void add_elem_to_ui(Et.ChannelMessages elem) {
@@ -52,9 +64,11 @@ public class ListSessionUI : Page {
 		Ecore.MainLoop.iterate();
 		
 		var opener = new ListItemHandlerSession(win, elem);
-		opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+		//opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
+		opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+
 		elem_ui_list.insert(elem.path, (owned) opener);
-		this.li.go();
+
 	}
 
 	public void remove_elem_from_ui(string path) {
@@ -62,8 +76,12 @@ public class ListSessionUI : Page {
 		logger.debug("ListSessionUI", "Removing elem " + path + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
-		elem_ui_list.remove(path);
-		this.li.go();
+		unowned ListItemHandlerSession? elem = elem_ui_list.lookup(path);
+		if(elem!=null) {
+			elem.item.del();
+			elem_ui_list.remove(path);
+		}
+
 	}
 	
 	//returns true if the ui is already available, false if it can't
@@ -116,8 +134,33 @@ public class ListSessionUI : Page {
 	
 	public async override void refresh_content() {
 		logger.debug("ListSessionUI", "refresh_content() called");			
-		this.populate_list();
+		//this.populate_list();
 		
+	}
+	
+	
+	/* Genlist stuff */
+
+	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
+		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
+		ListItemHandlerSession handler = (ListItemHandlerSession) data;
+		return handler.format_item_label();
+	}
+
+
+	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
+		logger.debug("SessionUI", "content function called!");
+		ListItemHandlerSession handler = (ListItemHandlerSession) data;
+		return null;
+	}
+
+	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
+		//logger.debug("SessionUI", "state function called!");
+		return false;
+	}
+
+	private static void genlist_del_item(void *data, Elm.Object obj ) {
+		logger.debug("SessionUI", "DELETE function called!");
 	}
 	
 	
@@ -135,7 +178,6 @@ public class ListItemHandlerSession : ListItemHandler {
 		this.elem = elem;
 		this.gui = new SessionUI(elem);
 		gui.create(ui.win);
-		//this.icon = gen_icon(rdevice.icon+"-"+(rdevice.online ? "online" : "offline") );
 	}
 	
 	
@@ -144,26 +186,10 @@ public class ListItemHandlerSession : ListItemHandler {
 		base.go(); 
 	}
 	
-	public override void refresh_content() {
-		/*item.label_set(format_item_label(rdevice));
-		icon = gen_icon(rdevice.online ? "online" : "offline" );
-		item.icon_set(icon);*/
-	}
-	
 	public override string format_item_label() {
 		return "[" + elem.dbus.target_handle.to_string() + "] "+elem.dbus.target_id;
 	}
-	/*
-	private static Elm.Icon gen_icon(string name) {
-		
-		var ic = new Elm.Icon(win);
-		ic.file_set(Path.build_filename(IMAGESDIR,name+".png"));
-		ic.scale_set(true, true);
-		ic.fill_outside_set(true);
-		ic.show();
-		return ic;
-	}
-*/
+	
 	protected override void open_elem_page() {
 		
 		//if true, this means probably that elem.ref_count==0

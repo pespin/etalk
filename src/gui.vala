@@ -357,13 +357,17 @@ public class FrameBox {
 
 public abstract class ListItemHandler : Object {
 	
-	public unowned Elm.ListItem? item;
-	public unowned Elm.Icon? icon;
+	public unowned Elm.GenlistItem? item;
+	//public unowned Elm.Icon? icon;
 	public static unowned Elm.Win win;
 	
 	
 	public ListItemHandler(Elm.Win win) {
 		this.win = win;
+	}
+	
+	public void refresh_content() {
+		this.item.update();
 	}
 	
 	
@@ -372,23 +376,8 @@ public abstract class ListItemHandler : Object {
 		open_elem_page();
 	}
 	
-	public abstract void refresh_content();
-		/*item.label_set(format_item_label(rdevice));
-		icon = gen_icon(rdevice.online ? "online" : "offline" );
-		item.icon_set(icon);*/
-	
 	public abstract string format_item_label();
-	/*
-	private static Elm.Icon gen_icon(string name) {
-		
-		var ic = new Elm.Icon(win);
-		ic.file_set(Path.build_filename(IMAGESDIR,name+".png"));
-		ic.scale_set(true, true);
-		ic.fill_outside_set(true);
-		ic.show();
-		return ic;
-	}
-*/
+
 	protected abstract void open_elem_page();
 	
 }

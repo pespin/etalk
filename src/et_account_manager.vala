@@ -51,19 +51,12 @@ namespace Et {
 		}
 
 
-		public void show_accounts(ListAccountUI laui) {
-				
-				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
-				unowned string? path;
-				unowned Account? acc;
-				while(it.next(out path, out acc)) {
-					laui.add_elem_to_ui(acc);
-				}
-			
+		public List<weak Account> get_accounts() {
+				return accounts.get_values();
 		}
 		
 		
-		public void show_contacts() {
+		public void fetch_contacts() {
 				HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
 				unowned string? path;
 				unowned Account? acc;
@@ -78,8 +71,7 @@ namespace Et {
 		private void sig_account_removed(GLib.ObjectPath acc_path) {
 			logger.debug("AccountManager",  "sig_account_removed ("+acc_path.to_string()+")");
 			accounts.remove(acc_path);
-			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
-			
+			this.account_removed(acc_path.to_string());
 		}
 
 		private void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
@@ -89,8 +81,12 @@ namespace Et {
 				accounts.insert(acc_path, (owned) acc);
 			}
 			
-			ui.refresh_page_with_id(PageID.LIST_ACCOUNT);
+			this.account_updated(accounts.lookup(acc_path));
+			
 		}
+		
+		public signal void account_updated(Account c);
+		public signal void account_removed(string key);
 		
 	}
 
