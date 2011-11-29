@@ -21,22 +21,14 @@ public class NewAccountUI : Page {
 	public NewAccountUI() {
 		base();
 	}
-		
-		
-	public override PageID get_page_id() {
-		return PageID.NEW_ACCOUNT;
-	}
+
 	
 	public override string? get_page_title() {
 			return "New Account"; 
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
-	
-	public async override void refresh_content() {
-			logger.error("NewAccountUI", "NOT IMPLEMENTED: refresh_content() on NewAccountUI");
-	}
-	
+
 	
 	public unowned Elm.Object create(Elm.Win win) {
 		

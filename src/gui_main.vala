@@ -143,30 +143,12 @@ public class MainUI : Page {
 		ui.push_page(ui.sui);
 		
 	}
-	
 
-	public override PageID get_page_id() {
-		return PageID.MAIN;
-	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
 	
 	public override string? get_page_title() {
 		return "Contact List"; 
-	}
-	
-	public async override void refresh_content() {
-
-		/*HashTableIter<string,ListItemHandlerContact> it = HashTableIter<string,ListItemHandlerContact>(elem_ui_list);
-		
-		unowned string? key;
-		unowned ListItemHandlerContact? handler;
-		while(it.next(out key, out handler)) {
-			handler.refresh_content();
-		}*/
-		
-		//li.go();
-		
 	}
 	
 	

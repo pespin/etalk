@@ -11,19 +11,13 @@ public class SettingsMainUI : Page {
 		private unowned Elm.Label? lb_presence;
 		private unowned Elm.Hoversel? presence;
 		private CbPresenceTypeAll[] hoversel_container;
-		
-	public override PageID get_page_id() {
-		return PageID.SETTINGS_MAIN;
-	}
+
 	
 	public override string? get_page_title() {
 			return "General Settings"; 
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
-	
-	public async override void refresh_content() {
-	}
 	
 	
 	public unowned Elm.Object create(Elm.Win win) {

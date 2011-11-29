@@ -23,26 +23,12 @@ public class SettingsAccountUI : Page {
 		base();
 		this.account = account;
 	}
-		
-		
-	public override PageID get_page_id() {
-		return PageID.SETTINGS_ACCOUNT;
-	}
+
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
 	
 	public override string? get_page_title() {
 			return "Account settings"; 
-	}
-	
-	public async override void refresh_content() {
-		name.val_set(account.dbus.display_name);
-		nickname.val_set(account.dbus.nickname);
-		tg_valid.state_set(account.dbus.valid);
-		tg_enabled.state_set(account.dbus.enabled);
-		cstatus.val_set(account.connection_status);
-		presence.text_set(account.current_connection_presence);
-		service.val_set(account.dbus.service);
 	}
 	
 	
@@ -158,7 +144,19 @@ public class SettingsAccountUI : Page {
 											this.close();
 											} );
 
+		account.account_updated.connect(content_refresh);
+
 		return vbox;
+	}
+	
+	private void content_refresh() {
+		name.val_set(account.dbus.display_name);
+		nickname.val_set(account.dbus.nickname);
+		tg_valid.state_set(account.dbus.valid);
+		tg_enabled.state_set(account.dbus.enabled);
+		cstatus.val_set(account.connection_status);
+		presence.text_set(account.current_connection_presence);
+		service.val_set(account.dbus.service);
 	}
 	
 }

@@ -38,11 +38,7 @@ public class SessionUI : Page {
 		channel.new_message.connect(sig_new_message);
 	}
 		
-		
-	public override PageID get_page_id() {
-		return PageID.SESSION;
-	}
-	
+
 	public override string? get_page_title() {
 		return "Session"; 
 	}
@@ -61,10 +57,7 @@ public class SessionUI : Page {
 		return naviframe_next;
 		
 	}
-	
-	public async override void refresh_content() {
-	
-	}
+
 	
 	public unowned Elm.Object create(Elm.Win win) {
 		this.win = win;

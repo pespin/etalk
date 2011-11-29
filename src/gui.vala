@@ -82,43 +82,6 @@ public class EtalkUI {
 	}
 	
 	
-	public void refresh_page_with_id(PageID id) {
-		
-		//first handle special cases: main and sessions UI are there,
-		// even if they are not in the stack
-		switch(id) {
-			case PageID.LIST_SESSION:
-				ui.sui.refresh_content();
-				break;
-			
-			case PageID.MAIN:
-				ui.sui.refresh_content();
-				break;
-			
-			default:
-				List<Page> l = get_page_by_id(id);
-				foreach(var p in l) {
-					p.refresh_content();
-				}
-				break;
-		}
-	}
-	
-	private List<Page> get_page_by_id(PageID id) {
-		
-		unowned List<Page> l = page_stack;
-		List<Page> ret = new List<Page>();
-		
-		while(l!=null) {
-			//stderr.printf("iterating over page: "+l.data.get_page_id()+"\n");
-			if( id == l.data.get_page_id() )
-				ret.prepend(l.data);
-			l = l.next;
-		} 
-		
-		return ret;
-	}
-	
 	private string? get_last_title() {
 		
 		string title;
@@ -155,10 +118,6 @@ public abstract class Page : Object {
 	public void close() {
 		ui.pop_page(this);
 	}
-	
-	public async abstract void refresh_content();
-	
-	public abstract PageID get_page_id();
 	
 	public abstract string? get_page_title();
 	

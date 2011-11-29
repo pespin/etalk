@@ -121,22 +121,13 @@ public class ListSessionUI : Page {
 	private void sig_session_removed(string path) {
 		this.remove_elem_from_ui(path);
 	}
-
-	public override PageID get_page_id() {
-		return PageID.LIST_SESSION;
-	}
 	
 	public override string? get_page_title() {
 		return "Sessions List"; 
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
-	
-	public async override void refresh_content() {
-		logger.debug("ListSessionUI", "refresh_content() called");			
-		//this.populate_list();
-		
-	}
+
 	
 	
 	/* Genlist stuff */

@@ -100,23 +100,13 @@ public class ListAccountUI : Page {
 		}
 
 	}
-	
 
-	public override PageID get_page_id() {
-		return PageID.LIST_ACCOUNT;
-	}
 	
 	public override string? get_page_title() {
 		return "Accounts List"; 
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
-	
-	public async override void refresh_content() {
-			
-		//this.populate_list();
-		
-	}
 	
 	/* CALLBACKS */
 	

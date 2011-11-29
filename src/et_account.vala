@@ -113,9 +113,12 @@ namespace Et {
 				this.close_connection();
 			}
 			
-			ui.refresh_page_with_id(PageID.SETTINGS_ACCOUNT);
-			
+			this.account_updated();
 		}
+		
+		/* Signals */
+		
+		public signal void account_updated();
 
 	}
 
