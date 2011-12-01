@@ -14,7 +14,7 @@ public class ListAccountUI : Page {
 			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
 	
 			itc.item_style = "default";
-			itc.func.label_get = genlist_get_label;
+			itc.func.text_get = genlist_get_text;
 			itc.func.content_get = genlist_get_content;
 			itc.func.state_get = genlist_get_state;
 			itc.func.del = genlist_del_item;
@@ -122,7 +122,7 @@ public class ListAccountUI : Page {
 	
 	/* Genlist stuff */
 
-	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
+	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
 		logger.debug("AccountUI", "HEY!!!! LABEL CALLED!");
 		ListItemHandlerAccount handler = (ListItemHandlerAccount) data;
 		return handler.format_item_label();

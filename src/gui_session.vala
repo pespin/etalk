@@ -27,7 +27,7 @@ public class SessionUI : Page {
 		
 		//itc.item_style = "default";
 		itc.item_style = "icon_top_text_bottom";
-		itc.func.label_get = genlist_get_label;
+		itc.func.text_get = genlist_get_text;
         itc.func.content_get = genlist_get_content;
         itc.func.state_get = genlist_get_state;
         itc.func.del = genlist_del_item;
@@ -128,7 +128,7 @@ public class SessionUI : Page {
 	
 	/* Genlist stuff */
 
-	private static string genlist_get_label(void *data, Elm.Object obj, string part ) {
+	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
 		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
 		ChatText t = (ChatText) data;
 		return t.get_label();
