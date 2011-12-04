@@ -93,7 +93,7 @@ public class MainUI : Page {
 			
 			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 			var opener = new ListItemHandlerContact(win, this, contact);
-			opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+			opener.item = li.item_sorted_insert(ref itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
 				
 			elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
 		
@@ -155,25 +155,32 @@ public class MainUI : Page {
 		/* Genlist stuff */
 
 	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
-		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
+		logger.debug("MainUI", "HEY!!!! LABEL CALLED!");
 		ListItemHandlerContact handler = (ListItemHandlerContact) data;
 		return handler.format_item_label();
 	}
 
 
 	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
-		logger.debug("SessionUI", "content function called!");
+		logger.debug("MainUI", "content function called!");
 		ListItemHandlerContact handler = (ListItemHandlerContact) data;
 		return null;
 	}
 
 	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
-		//logger.debug("SessionUI", "state function called!");
+		//logger.debug("MainUI", "state function called!");
 		return false;
 	}
 
 	private static void genlist_del_item(void *data, Elm.Object obj ) {
-		logger.debug("SessionUI", "DELETE function called!");
+		logger.debug("MainUI", "DELETE function called!");
+	}
+
+	private static int genlist_compare(void* data1, void* data2) {
+		ListItemHandlerContact handler1 = (ListItemHandlerContact) data1;
+		ListItemHandlerContact handler2 = (ListItemHandlerContact) data2;
+		//logger.debug("MainUI", handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
+		return handler1.contact.alias.ascii_casecmp(handler2.contact.alias);
 	}
 
 }
