@@ -64,8 +64,7 @@ public class ListSessionUI : Page {
 		Ecore.MainLoop.iterate();
 		
 		var opener = new ListItemHandlerSession(win, elem);
-		//opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+		opener.item = li.item_sorted_insert(ref itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
 
 		elem_ui_list.insert(elem.path, (owned) opener);
 
@@ -154,7 +153,14 @@ public class ListSessionUI : Page {
 		logger.debug("SessionUI", "DELETE function called!");
 	}
 	
-	
+	private static int genlist_compare(void* data1, void* data2) {
+		ListItemHandlerSession handler1 = (ListItemHandlerSession) data1;
+		ListItemHandlerSession handler2 = (ListItemHandlerSession) data2;
+		//logger.debug("MainUI", handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
+		return handler1.elem.dbus.target_id.ascii_casecmp(handler2.elem.dbus.target_id);
+	}
+
+
 }
 
 
