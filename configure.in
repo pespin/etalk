@@ -21,6 +21,8 @@ PKG_CHECK_MODULES(ETALK,	glib-2.0 >= 2.26.1
 							gio-2.0
 							elementary
 							eina
+							ecore
+							evas
 							dbus-1)
 AC_SUBST(TELEPATHY_CFLAGS)	
 AC_SUBST(ETALK_LIBS)
