@@ -9,8 +9,8 @@ public class NewAccountUI : Page {
 		private EntryBox server;
 		private EntryBox port;
 		private EntryBox password;
-		private unowned Elm.Toggle? encryption;
-		private unowned Elm.Toggle? registerr;
+		private unowned Elm.Check? encryption;
+		private unowned Elm.Check? registerr;
 			
 		private unowned Elm.Scroller? sc;
 		private unowned Elm.Box? vbox_in;
@@ -77,17 +77,21 @@ public class NewAccountUI : Page {
 		password = new EntryBox(win, fr_general.box, "Password", "1234");
 		password.show();
 		
-		encryption = Elm.Toggle.add(win);
+		encryption = Elm.Check.add(win);
+		encryption.style_set("toggle");
 		encryption.text_set("Encryption:");
-		encryption.states_labels_set("Yes", "No");
+		encryption.part_text_set("on", "Yes");
+		encryption.part_text_set("off", "No");
 		encryption.state_set(false);
 		encryption.size_hint_align_set(-1.0, 0.0);
 		fr_general.box.pack_end(encryption);
 		encryption.show();
 		
-		registerr = Elm.Toggle.add(win);
+		registerr = Elm.Check.add(win);
+		registerr.style_set("toggle");
 		registerr.text_set("Register:");
-		registerr.states_labels_set("Yes", "No");
+		registerr.part_text_set("on", "Yes");
+		registerr.part_text_set("off", "No");
 		registerr.state_set(false);
 		registerr.size_hint_align_set(-1.0, 0.0);
 		fr_general.box.pack_end(registerr);

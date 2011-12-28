@@ -11,8 +11,8 @@ public class SettingsAccountUI : Page {
 		private EntryBox nickname;
 		private LabelBox cstatus;
 		private EntryBox service;
-		private unowned Elm.Toggle? tg_valid;
-		private unowned Elm.Toggle? tg_enabled;
+		private unowned Elm.Check? tg_valid;
+		private unowned Elm.Check? tg_enabled;
 		private unowned Elm.Box? hbox_presence;
 		private unowned Elm.Label? lb_presence;
 		private unowned Elm.Hoversel? presence;
@@ -66,18 +66,22 @@ public class SettingsAccountUI : Page {
 							account.dbus.nickname = nickname.val_get();
 													});
 													
-		tg_valid = Elm.Toggle.add(win);
+		tg_valid = Elm.Check.add(win);
+		tg_valid.style_set("toggle");
 		tg_valid.text_set("Valid:");
-		tg_valid.states_labels_set("Yes", "No");
+		tg_valid.part_text_set("on", "Yes");
+		tg_valid.part_text_set("off", "No");
 		tg_valid.state_set(account.dbus.valid);
 		tg_valid.disabled_set(true);
 		tg_valid.size_hint_align_set(-1.0, 0.0);
 		vbox_in.pack_end(tg_valid);
 		tg_valid.show();
 		
-		tg_enabled = Elm.Toggle.add(win);
+		tg_enabled = Elm.Check.add(win);
+		tg_enabled.style_set("toggle");
 		tg_enabled.text_set("Enabled:");
-		tg_enabled.states_labels_set("Yes", "No");
+		tg_enabled.part_text_set("on", "Yes");
+		tg_enabled.part_text_set("off", "No");
 		tg_enabled.state_set(account.dbus.enabled);
 		tg_enabled.size_hint_align_set(-1.0, 0.0);
 		vbox_in.pack_end(tg_enabled);

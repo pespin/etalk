@@ -4,8 +4,8 @@ public class SettingsMainUI : Page {
 		private unowned Elm.Scroller? sc;
 		private unowned Elm.Box? vbox_in;
 		
-		private unowned Elm.Toggle? tg_offline;
-		private unowned Elm.Toggle? tg_disconnect;
+		private unowned Elm.Check? tg_offline;
+		private unowned Elm.Check? tg_disconnect;
 
 		private unowned Elm.Box? hbox_presence;
 		private unowned Elm.Label? lb_presence;
@@ -39,9 +39,11 @@ public class SettingsMainUI : Page {
 		sc.content_set(vbox_in);
 		vbox_in.show();
 
-		tg_offline = Elm.Toggle.add(win);
+		tg_offline = Elm.Check.add(win);
+		tg_offline.style_set("toggle");
 		tg_offline.text_set("Offline Contacts:");
-		tg_offline.states_labels_set("Show", "Hide");
+		tg_offline.part_text_set("on", "Show");
+		tg_offline.part_text_set("off", "Hide");
 		tg_offline.state_set(SETM.show_offline_contacts);
 		tg_offline.size_hint_align_set(-1.0, 0.0);
 		vbox_in.pack_end(tg_offline);
@@ -50,9 +52,11 @@ public class SettingsMainUI : Page {
 							SETM.show_offline_contacts = tg_offline.state_get();
 							});
 							
-		tg_disconnect = Elm.Toggle.add(win);
+		tg_disconnect = Elm.Check.add(win);
+		tg_disconnect.style_set("toggle");
 		tg_disconnect.text_set("Become offline when closing:");
-		tg_disconnect.states_labels_set("Yes", "No");
+		tg_disconnect.part_text_set("on", "Yes");
+		tg_disconnect.part_text_set("off", "No");
 		tg_disconnect.state_set(SETM.set_offline_on_close);
 		tg_disconnect.size_hint_align_set(-1.0, 0.0);
 		vbox_in.pack_end(tg_disconnect);
