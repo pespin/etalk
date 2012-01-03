@@ -232,15 +232,13 @@ public class ListItemHandlerContact : ListItemHandler {
 				break;
 			
 			case "alias":
-				//item.label_set(this.format_item_label());
+				this.refresh_content();
 				break;
 		
 			default:
 				logger.warning("ListItemHandlerContact", "property "+p.name+" changed but no action was done");
 				break;
 		}
-		
-		this.refresh_content();
 		
 	}
 	
@@ -252,7 +250,7 @@ public class ListItemHandlerContact : ListItemHandler {
 			ui.mui.remove_elem_from_ui(contact.get_unique_key());
 			//ui.mui.refresh_list(); //FIXME: necessary?
 		} else {
-			//item.label_set(this.format_item_label());
+			this.refresh_content();
 		}
 	}
 	

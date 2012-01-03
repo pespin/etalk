@@ -32,15 +32,12 @@ public class SessionUI : Page {
         itc.func.state_get = genlist_get_state;
         itc.func.del = genlist_del_item;
 		
-		
-		
-		
 		channel.new_message.connect(sig_new_message);
 	}
 		
 
 	public override string? get_page_title() {
-		return "Session"; 
+		return "Session with "+channel.dbus.target_id;
 	}
 	
 	public override unowned Elm.Button? get_button_next() {
