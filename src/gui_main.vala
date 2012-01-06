@@ -87,28 +87,32 @@ public class MainUI : Page {
 	
 	public void add_elem_to_ui(Et.Contact contact) {
 		
-		//TODO: have to look into this, the logic doesn't seem right: (storing+showing content)
-		if(elem_ui_list.lookup(contact.get_unique_key())==null && 
-			(SETM.show_offline_contacts || contact.is_online()) ) {
-			
-			logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
-			var opener = new ListItemHandlerContact(win, this, contact);
-			opener.item = li.item_sorted_insert(ref itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
-				
-			elem_ui_list.insert(contact.get_unique_key(), (owned) opener);
-		
+		if(elem_ui_list.lookup(contact.get_unique_key())!=null) {
+			logger.warning("MainUI", "Trying to add elem to UI which is already in the UI list!");
+			return;
 		}
+		
+		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
+			logger.debug("MainUI", "Not adding contact " + contact.id + " to UI list because it's offline and show_offline_contacts==false" );
+			return;
+		}
+
+		logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
+		var opener = new ListItemHandlerContact(win, this, contact);
+		string key = contact.get_unique_key();
+		elem_ui_list.insert(key, opener);
+		var opener_hash = elem_ui_list.lookup(key);
+		opener_hash.item = li.item_sorted_insert(ref itc, opener_hash, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener_hash.go);
+
 	}
 
 	public void remove_elem_from_ui(string key) {
 
 		logger.debug("MainUI", "Removing elem " + key + " from ui-list");
 		
-		unowned ListItemHandlerContact? elem = elem_ui_list.lookup(key);
-		if(elem!=null) {
-			elem.item.del();
-			elem_ui_list.remove(key);
-		}
+		ListItemHandlerContact elem = elem_ui_list.lookup(key);
+		elem.item.del();
+		elem_ui_list.remove(key);
 	}
 	
 	
@@ -163,7 +167,6 @@ public class MainUI : Page {
 
 	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
 		logger.debug("MainUI", "content function called!");
-		ListItemHandlerContact handler = (ListItemHandlerContact) data;
 		return null;
 	}
 
@@ -177,6 +180,10 @@ public class MainUI : Page {
 	}
 
 	private static int genlist_compare(void* data1, void* data2) {
+		if(data1==null || data2==null) {
+			logger.error("MainUI", "Error on genlist_compare method: one of the data pointers is null!!!");
+			return 0;
+		}
 		ListItemHandlerContact handler1 = (ListItemHandlerContact) data1;
 		ListItemHandlerContact handler2 = (ListItemHandlerContact) data2;
 		//logger.debug("MainUI", handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
@@ -245,10 +252,8 @@ public class ListItemHandlerContact : ListItemHandler {
 	
 	private void presence_changed() {
 		logger.debug("ListItemHandlerContact", "sig_presence_changed() called");
-		//item.label_set(this.format_item_label());
 		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
 			ui.mui.remove_elem_from_ui(contact.get_unique_key());
-			//ui.mui.refresh_list(); //FIXME: necessary?
 		} else {
 			this.refresh_content();
 		}
