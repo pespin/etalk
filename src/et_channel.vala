@@ -30,6 +30,7 @@ namespace Et {
 		//returns Members in Group channels
 		public abstract uint[] get_contact_handles();
 		
+		public abstract bool is_session();
 		
 		
 		public static Channel? new_from_type(string path, string connection_manager, Connection connection, string type) {
@@ -84,6 +85,10 @@ namespace Et {
 		public override uint[] get_contact_handles() {
 			return this.channelext.members;
 		}
+		
+		public override bool is_session() {
+			return false;
+		}
 			
 		public void sig_members_changed(string message, uint[] added, uint[] removed, uint[] local_pending, uint[] remote_pending, uint actor, uint reason) {
 					
@@ -135,6 +140,10 @@ namespace Et {
 
 		public override uint[] get_contact_handles() {
 			return new uint[0];
+		}
+
+		public override bool is_session() {
+			return true;
 		}
 		
 		public HashTable<string, Variant>[,] get_pending_messages() {

@@ -251,7 +251,7 @@ namespace Et {
 				logger.debug("Connection",  "update_channels(): adding channel "+chinfo.path.to_string()+" to hash table");
 				Channel ch = Channel.new_from_type(chinfo.path, this.connection_manager, this, (string) chinfo.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType"));
 				if(ch==null) 
-					logger.error("Connection",  "unknown type for channel "+chinfo.path.to_string()+". new_from_type() returned NULL");
+					logger.warning("Connection",  "unknown type for channel "+chinfo.path.to_string()+". new_from_type() returned NULL");
 				else
 					channels.insert(ch.path, (owned) ch);
 				
@@ -285,8 +285,12 @@ namespace Et {
 		
 		private void sig_channel_closed(GLib.ObjectPath chremoved) {
 			logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
-			if(this.is_valid==true) this.channels.remove(chremoved);
-			SM.remove_session(chremoved);
+			if(this.is_valid==false) return;
+			unowned Channel? ch = this.channels.lookup(chremoved);
+			if(ch==null) return;
+			bool is_session = ch.is_session();
+			this.channels.remove(chremoved);
+			if(is_session) SM.remove_session(chremoved);
 		}
 		
 		
