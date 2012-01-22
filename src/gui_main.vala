@@ -110,7 +110,9 @@ public class MainUI : Page {
 
 		logger.debug("MainUI", "Removing elem " + key + " from ui-list");
 		
-		ListItemHandlerContact elem = elem_ui_list.lookup(key);
+		ListItemHandlerContact? elem = elem_ui_list.lookup(key);
+		if(elem==null) return;
+
 		elem.item.del();
 		elem_ui_list.remove(key);
 	}
