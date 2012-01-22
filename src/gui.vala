@@ -40,8 +40,9 @@ public class EtalkUI {
 			unowned Elm.Object page;
 			page = mui.create(win);
 			win.title_set("Etalk - "+mui.get_page_title());
-			pager.item_push(mui.get_page_title(), null, null, page, null);
-
+			unowned Elm.NaviframeItem? nitem;
+			nitem = pager.item_push(mui.get_page_title(), null, null, page, null);
+			nitem.data_set(mui);
 			sui.create(win);
 			
 			win.show();
@@ -53,12 +54,10 @@ public class EtalkUI {
 		//if( obj == pager.content_top_get() ) { //this segfaults...
 			pager.item_pop();
 			page_stack.remove(page);
-			
-			string? last_title = get_last_title();
-			if(last_title != null)
-				win.title_set("Etalk - "+last_title);
-			else
-				win.title_set("Etalk - "+mui.get_page_title());
+
+			Page top_page = (Page) pager.top_item_get().data_get();
+			win.title_set("Etalk - "+top_page.get_page_title());
+			top_page.on_appear();
 		//}
 		//stderr.printf("pop_page() finished!\n");
 	}
@@ -72,30 +71,15 @@ public class EtalkUI {
 			string title = obj.get_page_title();
 			if(title!=null)
 				win.title_set("Etalk - "+title);
-				
-			pager.item_push(title, obj.get_button_back(), obj.get_button_next(), page, null);
+			unowned Elm.NaviframeItem? nitem;
+			nitem = pager.item_push(title, obj.get_button_back(), obj.get_button_next(), page, null);
+			nitem.data_set(obj);
 			obj.on_appear();
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
 		
 		page_stack.prepend((owned) obj);
-	}
-	
-	
-	private string? get_last_title() {
-		
-		string title;
-		unowned List<Page> l = page_stack;
-		
-		while(l!=null) {
-			title = l.data.get_page_title();
-			if(title!=null) return title;
-			l = l.next;
-		} 
-		
-		return null;
-		
 	}
 
 }
