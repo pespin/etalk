@@ -5,7 +5,7 @@ namespace Et {
 	}
 
 	public class Connection : GLib.Object {
-		
+		private static const string DOMAIN = "Connection";		
 		
 		private Telepathy.Connection connection;
 		private Telepathy.ConnectionInterfaceRequests? _dbus_requests;
@@ -31,12 +31,12 @@ namespace Et {
 			this.path = path;
 			this.connection_manager = connection_manager;
 			
-			logger.info("Connection", "Creating new connection with path="+path+" and connection_manager="+connection_manager);
+			logger.info(DOMAIN, "Creating new connection with path="+path+" and connection_manager="+connection_manager);
 		}
 
 		public void init() {
 			if(path=="/") {
-				logger.error("Connection", "Incorrect path \"/\"");
+				logger.error(DOMAIN, "Incorrect path \"/\"");
 				return;
 			}
 			
@@ -45,7 +45,7 @@ namespace Et {
 			try {
 				connection = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 			} catch ( IOError err ) {	
-				logger.error("Connection", "Could not create Connection with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
+				logger.error(DOMAIN, "Could not create Connection with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this.connection = null;
 				return;
 			}
@@ -55,7 +55,7 @@ namespace Et {
 				_dbus_requests.new_channels.connect(sig_new_channels);
 				_dbus_requests.channel_closed.connect(sig_channel_closed);
 			} catch ( IOError err ) {	
-				logger.error("Connection", "Could not create ConnectionInterfaceRequests with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
+				logger.error(DOMAIN, "Could not create ConnectionInterfaceRequests with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this._dbus_requests = null;
 				return;
 			}
@@ -63,7 +63,7 @@ namespace Et {
 			try {
 				_dbus_contacts = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 			} catch ( IOError err ) {	
-				logger.error("Connection", "Could not create ConnectionInterfaceContacts with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
+				logger.error(DOMAIN, "Could not create ConnectionInterfaceContacts with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this._dbus_contacts = null;
 				return;
 			}
@@ -72,7 +72,7 @@ namespace Et {
 				_dbus_presence = Bus.get_proxy_sync (BusType.SESSION, connection_manager, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 				_dbus_presence.presences_changed.connect(sig_presences_changed);
 			} catch ( IOError err ) {	
-				logger.error("Connection", "Could not create ConnectionInterfaceSimplePresence with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
+				logger.error(DOMAIN, "Could not create ConnectionInterfaceSimplePresence with path="+path+" and connection_manager="+connection_manager+" --> "+err.message);
 				this._dbus_presence = null;
 				return;
 			}
@@ -87,7 +87,7 @@ namespace Et {
 
 		~Connection() {
 
-			logger.debug("Connection", "Destructor for "+this.path+" called");
+			logger.debug(DOMAIN, "Destructor for "+this.path+" called");
 			if(this.is_valid) this.invalidate();
 		}
 
@@ -116,7 +116,7 @@ namespace Et {
 				try {
 					hash_info_all = this._dbus_contacts.get_contact_attributes(handles, interfaces, true);
 				} catch (Error err) {
-					logger.error("Connection", "get_contact_attributes() error on Contacts interface: "+err.message);
+					logger.error(DOMAIN, "get_contact_attributes() error on Contacts interface: "+err.message);
 					return;
 				}
 				
@@ -126,7 +126,7 @@ namespace Et {
 		public void ensure_channel(HashTable<string, GLib.Variant> params, out GLib.ObjectPath channel, out HashTable<string, GLib.Variant> properties) {
 			
 			if(this.is_valid==false) {
-				logger.error("Connection", "ensure_channel() called in non valid connection");
+				logger.error(DOMAIN, "ensure_channel() called in non valid connection");
 				return;
 			}
 			
@@ -134,7 +134,7 @@ namespace Et {
 			try { //TODO: make it async:
 				_dbus_requests.ensure_channel(params, out yours, out channel, out properties);
 			} catch (Error err) {
-				logger.error("Connection", "ensure_channel(): "+err.message);
+				logger.error(DOMAIN, "ensure_channel(): "+err.message);
 			} 
 		}
 		
@@ -172,7 +172,7 @@ namespace Et {
 		
 		
 		public async void update_contacts() {
-			logger.debug("Connection", "Updating contacts info (connection.path="+path+")...");
+			logger.debug(DOMAIN, "Updating contacts info (connection.path="+path+")...");
 			if(channels!=null) {
 				
 				HashTableIter<string,Channel> it = HashTableIter<string,Channel>(channels);
@@ -186,21 +186,21 @@ namespace Et {
 	
 					
 			} else {
-				logger.error("Connection" ,"Updating contacts info error: No Contacts interface on connection "+path);
+				logger.error(DOMAIN ,"Updating contacts info error: No Contacts interface on connection "+path);
 			}
 		}
 		
 		private void update_contacts_channel(Channel chan) {
 			uint[]? handless = chan.get_contact_handles();
 			if(handless==null)
-				logger.error("Connection", "update_contacts_channel("+chan.path+"): handless == NULL!!!");
+				logger.error(DOMAIN, "update_contacts_channel("+chan.path+"): handless == NULL!!!");
 			else
 				this.create_contacts(handless);
 		}
 		
 		
 		public async void remove_contacts() {
-			logger.debug("Connection", "Removing contacts (connection.path="+path+")...");
+			logger.debug(DOMAIN, "Removing contacts (connection.path="+path+")...");
 			if(channels!=null) {
 				
 				HashTableIter<string,Channel> it = HashTableIter<string,Channel>(channels);
@@ -217,14 +217,14 @@ namespace Et {
 						/* If we can't assure, all contacts from this conn have been erased from contact manager 
 						 * just erase them all in a dirty way ;) 
 						 */
-						logger.error("Connection", err.message);
+						logger.error(DOMAIN, err.message);
 						 CM.remove_all_contacts(this.path);
 						 return;
 					}
 				}	
 					
 			} else {
-				logger.error("Connection", "Removing contacts info error: No Contacts interface on connection"+path);
+				logger.error(DOMAIN, "Removing contacts info error: No Contacts interface on connection"+path);
 			}	
 		}
 		
@@ -248,10 +248,10 @@ namespace Et {
 				
 				var ret = channels.lookup(chinfo.path);
 				if(ret!=null) continue;
-				logger.debug("Connection",  "update_channels(): adding channel "+chinfo.path.to_string()+" to hash table");
+				logger.debug(DOMAIN,  "update_channels(): adding channel "+chinfo.path.to_string()+" to hash table");
 				Channel ch = Channel.new_from_type(chinfo.path, this.connection_manager, this, (string) chinfo.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType"));
 				if(ch==null) 
-					logger.warning("Connection",  "unknown type for channel "+chinfo.path.to_string()+". new_from_type() returned NULL");
+					logger.warning(DOMAIN,  "unknown type for channel "+chinfo.path.to_string()+". new_from_type() returned NULL");
 				else
 					channels.insert(ch.path, (owned) ch);
 				
@@ -260,7 +260,7 @@ namespace Et {
 		}
 		
 		public void remove_channels() {
-			logger.debug("Connection", "Removing channels (connection.path="+path+")...");
+			logger.debug(DOMAIN, "Removing channels (connection.path="+path+")...");
 			channels = null;
 		}
 
@@ -271,11 +271,11 @@ namespace Et {
 			/*Each dictionary MUST contain the keys org.freedesktop.Telepathy.Channel.ChannelType, org.freedesktop.Telepathy.Channel.TargetHandleType, org.freedesktop.Telepathy.Channel.TargetHandle, org.freedesktop.Telepathy.Channel.TargetID and org.freedesktop.Telepathy.Channel.Requested. 
 			 * */
 				foreach(var ch_info in channel_list) {
-					logger.debug("Connection", "Signal sig_new_channels: new channel "+ch_info.path.to_string()+" created");
+					logger.debug(DOMAIN, "Signal sig_new_channels: new channel "+ch_info.path.to_string()+" created");
 					string ch_type = (string) ch_info.properties.lookup("org.freedesktop.Telepathy.Channel.ChannelType");
 					Channel? ch = Channel.new_from_type(ch_info.path, this.connection_manager, this, ch_type);
 					if(ch==null) {
-						logger.error("Connection",  "unknown type for channel "+ch_info.path.to_string()+". new_from_type() returned NULL");
+						logger.error(DOMAIN,  "unknown type for channel "+ch_info.path.to_string()+". new_from_type() returned NULL");
 					} else {
 						channels.insert(ch_info.path, (owned) ch);
 						this.update_contacts_channel(channels.lookup(ch_info.path));
@@ -284,7 +284,7 @@ namespace Et {
 		}
 		
 		private void sig_channel_closed(GLib.ObjectPath chremoved) {
-			logger.debug("Connection", "Signal sig_channel_closed: "+chremoved.to_string());
+			logger.debug(DOMAIN, "Signal sig_channel_closed: "+chremoved.to_string());
 			if(this.is_valid==false) return;
 			unowned Channel? ch = this.channels.lookup(chremoved);
 			if(ch==null) return;
@@ -295,10 +295,10 @@ namespace Et {
 		
 		
 		private void sig_presences_changed(HashTable<uint,Telepathy.Simple_Presence?> presence) {
-			logger.debug("Connection", "Signal sig_presence_changed");
+			logger.debug(DOMAIN, "Signal sig_presence_changed");
 			
 			presence.@foreach( (key, val) => {
-					logger.debug("Connection", "\t"+key.to_string()+" -> "+((Telepathy.ConnectionPresenceType) val.type).to_string() );
+					logger.debug(DOMAIN, "\t"+key.to_string()+" -> "+((Telepathy.ConnectionPresenceType) val.type).to_string() );
 				});
 		
 			CM.presences_changed(this, presence);	

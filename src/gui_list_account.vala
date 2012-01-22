@@ -1,5 +1,6 @@
 public class ListAccountUI : Page {
-		
+		private static const string DOMAIN = "ListAccountUI";
+
 		private unowned Elm.Win win;
 
 		private Elm.GenlistItemClass itc;
@@ -76,7 +77,7 @@ public class ListAccountUI : Page {
 	public void add_elem_to_ui(Et.Account account) {
 		
 		
-		logger.debug("ListAccountUI", "Adding element " + account.path + " to ui-list");
+		logger.debug(DOMAIN, "Adding element " + account.path + " to ui-list");
 		
 		//Little hack to not hang the UI while adding lots of stuff... :P
 		Ecore.MainLoop.iterate();
@@ -90,7 +91,7 @@ public class ListAccountUI : Page {
 
 	public void remove_elem_from_ui(string path) {
 
-		logger.debug("ListAccountUI", "Removing elem " + path + " from ui-list");
+		logger.debug(DOMAIN, "Removing elem " + path + " from ui-list");
 		//Little hack to not hang the UI while removing lots of stuff... :P
 		Ecore.MainLoop.iterate();
 		unowned ListItemHandlerAccount? elem = elem_ui_list.lookup(path);
@@ -107,12 +108,16 @@ public class ListAccountUI : Page {
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
+
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
+	}
 	
 	/* CALLBACKS */
 	
 	
 	private void cb_bt_new_clicked() {
-		logger.debug("ListAccountUI", "New Account button pressed.");
+		logger.debug(DOMAIN, "New Account button pressed.");
 		
 		var accui = new NewAccountUI();
 		accui.create(ui.win);
@@ -123,25 +128,25 @@ public class ListAccountUI : Page {
 	/* Genlist stuff */
 
 	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
-		logger.debug("AccountUI", "HEY!!!! LABEL CALLED!");
+		logger.debug("ListAccountUI", "HEY!!!! LABEL CALLED!");
 		ListItemHandlerAccount handler = (ListItemHandlerAccount) data;
 		return handler.format_item_label();
 	}
 
 
 	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
-		logger.debug("AccountUI", "content function called!");
+		logger.debug("ListAccountUI", "content function called!");
 		ListItemHandlerAccount handler = (ListItemHandlerAccount) data;
 		return null;
 	}
 
 	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
-		//logger.debug("AccountUI", "state function called!");
+		//logger.debug("ListAccountUI", "state function called!");
 		return false;
 	}
 
 	private static void genlist_del_item(void *data, Elm.Object obj ) {
-		logger.debug("AccountUI", "DELETE function called!");
+		logger.debug("ListAccountUI", "DELETE function called!");
 	}
 	
 	

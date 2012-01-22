@@ -1,4 +1,5 @@
 public class SessionUI : Page {
+		private static const string DOMAIN = "SessionUI";
 
 		private Et.ChannelMessages channel;
 		
@@ -53,6 +54,10 @@ public class SessionUI : Page {
 			
 		return naviframe_next;
 		
+	}
+
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
 	}
 
 	
@@ -110,7 +115,7 @@ public class SessionUI : Page {
 			string? key = (string) messages[i,0].lookup("message-token");
 			string? content = (string) messages[i,1].lookup("content");
 			if(sender==null || content==null || key==null) {
-				logger.error("SessionUI", "sender,key or content is NULL!");
+				logger.error(DOMAIN, "sender,key or content is NULL!");
 			} else{
 				var bubble = new ChatText(win, this, key);
 				bubble.content_set(sender, content);
@@ -126,30 +131,30 @@ public class SessionUI : Page {
 	/* Genlist stuff */
 
 	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
-		logger.debug("SessionUI", "HEY!!!! LABEL CALLED!");
+		logger.debug(DOMAIN, "HEY!!!! LABEL CALLED!");
 		ChatText t = (ChatText) data;
 		return t.get_label();
 	}
 
 
 	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
-		logger.debug("SessionUI", "content function called!");
+		logger.debug(DOMAIN, "content function called!");
 		ChatText t = (ChatText) data;
 		return t.get_content();
 	}
 
 	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
-		logger.debug("SessionUI", "state function called!");
+		logger.debug(DOMAIN, "state function called!");
 		return false;
 	}
 
 	private static void genlist_del_item(void *data, Elm.Object obj ) {
-		logger.debug("SessionUI", "DELETE function called!");
+		logger.debug(DOMAIN, "DELETE function called!");
 	}
 	
 	public void onSelectedItem( Evas.Object obj, void* event_info)
     {
-       logger.debug("SessionUI", "HEY!!!! ITEM SELECTED!");
+       logger.debug(DOMAIN, "HEY!!!! ITEM SELECTED!");
     }
 	
 	/* callbacks */
@@ -166,9 +171,9 @@ public class SessionUI : Page {
 		string? content = (string) message[1].lookup("content");
 		string? key = (string) message[0].lookup("message-token");
 		if(sender==null || content==null || key==null)
-			logger.error("SessionUI", "sender, token or content is NULL!");
+			logger.error(DOMAIN, "sender, token or content is NULL!");
 		else {
-			logger.debug("SessionUI", sender+": "+content+"\n");
+			logger.debug(DOMAIN, sender+": "+content+"\n");
 			var bubble = new ChatText(win, this, key);
 			bubble.content_set(sender, content);
 			unowned Elm.GenlistItem? it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);

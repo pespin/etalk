@@ -1,4 +1,5 @@
 public class SettingsAccountUI : Page {
+		private static const string DOMAIN = "SettingsAccountUI";
 
 		private Et.Account account;
 		
@@ -29,6 +30,10 @@ public class SettingsAccountUI : Page {
 	
 	public override string? get_page_title() {
 			return "Account settings"; 
+	}
+
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
 	}
 	
 	

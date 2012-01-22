@@ -1,6 +1,7 @@
 namespace Et {
 
 	public class AccountManager : GLib.Object {
+		private static const string DOMAIN = "AccountManager";
 
 		private Telepathy.AccountManager acm;
 
@@ -17,7 +18,7 @@ namespace Et {
 				acm.account_removed.connect(sig_account_removed);
 				acm.account_validity_changed.connect(sig_account_validity_changed);
 			} catch ( IOError err ) {	
-				logger.error("AccountManager", "Could not create AccountManager with path "+Telepathy.ACCOUNT_MANAGER_OBJECT_PATH+": "+err.message);
+				logger.error(DOMAIN, "Could not create AccountManager with path "+Telepathy.ACCOUNT_MANAGER_OBJECT_PATH+": "+err.message);
 			}
 			
 		}
@@ -30,7 +31,7 @@ namespace Et {
 
 		public void simple_presence_set_all(Telepathy.ConnectionPresenceType ptype, string? status_message=null, string? status=null) {
 
-			logger.debug("AccountManager", "Setting all accounts presence to "+ptype.to_string());
+			logger.debug(DOMAIN, "Setting all accounts presence to "+ptype.to_string());
 
 			HashTableIter<string,Account> it = HashTableIter<string,Account>(accounts);
 				unowned string? path;
@@ -43,7 +44,7 @@ namespace Et {
 
 		public void update_accounts() {
 			foreach(var acc_path in acm.valid_accounts) {
-				logger.debug("AccountManager", "Account "+acc_path.to_string()+" requested");
+				logger.debug(DOMAIN, "Account "+acc_path.to_string()+" requested");
 				Account acc = new Account(acc_path);
 				accounts.insert(acc_path, (owned) acc);
 			}
@@ -69,13 +70,13 @@ namespace Et {
 		
 		
 		private void sig_account_removed(GLib.ObjectPath acc_path) {
-			logger.debug("AccountManager",  "sig_account_removed ("+acc_path.to_string()+")");
+			logger.debug(DOMAIN,  "sig_account_removed ("+acc_path.to_string()+")");
 			accounts.remove(acc_path);
 			this.account_removed(acc_path.to_string());
 		}
 
 		private void sig_account_validity_changed(GLib.ObjectPath acc_path, bool valid) {
-			logger.debug("AccountManager", "sig_account_validity_changed (valid = "+valid.to_string()+") ("+acc_path.to_string()+")");			
+			logger.debug(DOMAIN, "sig_account_validity_changed (valid = "+valid.to_string()+") ("+acc_path.to_string()+")");			
 			if(accounts.lookup(acc_path)==null) {
 				Account acc = new Account(acc_path);
 				accounts.insert(acc_path, (owned) acc);

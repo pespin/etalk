@@ -2,6 +2,7 @@ namespace Et {
 
 
 	public class Contact : GLib.Object {
+		private static const string DOMAIN = "Contact";
 		
 		public unowned Connection connection {get; private set;}
 		
@@ -20,7 +21,7 @@ namespace Et {
 			presence.status="";
 			presence.status_message="";
 		
-			logger.debug("Contact", "Creating new contact with handle="+handle.to_string()+" and connection.path="+connection.path);
+			logger.debug(DOMAIN, "Creating new contact with handle="+handle.to_string()+" and connection.path="+connection.path);
 		
 		}
 		

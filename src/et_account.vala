@@ -1,6 +1,7 @@
 namespace Et {
 
 	public class Account : GLib.Object {
+		private static const string DOMAIN = "Account";
 		
 		private Telepathy.Account account;
 
@@ -37,15 +38,15 @@ namespace Et {
 			try {
 				account = Bus.get_proxy_sync (BusType.SESSION, Telepathy.ACCOUNT_MANAGER_BUS_NAME, path, DBusProxyFlags.DO_NOT_LOAD_PROPERTIES);
 			} catch ( IOError err ) {	
-				logger.error("Account", "Could not create Account with path "+path+": "+err.message);
+				logger.error(DOMAIN, "Could not create Account with path "+path+": "+err.message);
 			}
 
-			logger.debug("Account", "connection_manager = "+this.connection_manager);
+			logger.debug(DOMAIN, "connection_manager = "+this.connection_manager);
 			
 			
 			//autoconnect if the account is configured this way:
 			if(this.dbus.enabled) {
-				logger.debug("Account", "autoconnecting "+path);
+				logger.debug(DOMAIN, "autoconnecting "+path);
 				this.dbus.requested_presence = this.dbus.automatic_presence;
 			}
 			
@@ -82,7 +83,7 @@ namespace Et {
 		}
 		
 		private void close_connection() {
-			logger.debug("Account",  "closing connection");
+			logger.debug(DOMAIN,  "closing connection");
 			this.connection.invalidate();
 		}
 		
@@ -93,7 +94,7 @@ namespace Et {
 		private void sig_account_property_changed(GLib.HashTable<string, GLib.Variant> properties) {
 			
 			properties.@foreach( (key, val) => {
-				logger.debug("Account", "\t{ key: "+key+", value:  "+val.print(true)+" }");
+				logger.debug(DOMAIN, "\t{ key: "+key+", value:  "+val.print(true)+" }");
 			});
 			
 			unowned Variant? e = properties.lookup("Enabled");

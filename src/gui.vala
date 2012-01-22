@@ -74,6 +74,7 @@ public class EtalkUI {
 				win.title_set("Etalk - "+title);
 				
 			pager.item_push(title, obj.get_button_back(), obj.get_button_next(), page, null);
+			obj.on_appear();
 		
 		} else 
 			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
@@ -111,6 +112,10 @@ public abstract class Page : Object {
 		naviframe_next = null;
 	}
 	
+	~Page() {
+		logger.debug("Page", "Page destructor called");
+	}
+	
 	public unowned Elm.Object? get_page() {
 		return vbox;
 	}
@@ -131,6 +136,9 @@ public abstract class Page : Object {
 		return naviframe_back;
 	}
 	public abstract unowned Elm.Button? get_button_next();
+
+	//This method is called by the pager on the page which is on top (is ivisible to the user therefore).
+	public abstract void on_appear();
 	
 }
 

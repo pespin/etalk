@@ -1,5 +1,5 @@
 public class SettingsMainUI : Page {
-
+		private static const string DOMAIN = "SettingsMainUI";
 
 		private unowned Elm.Scroller? sc;
 		private unowned Elm.Box? vbox_in;
@@ -18,7 +18,10 @@ public class SettingsMainUI : Page {
 	}
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
-	
+
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
+	}	
 	
 	public unowned Elm.Object create(Elm.Win win) {
 

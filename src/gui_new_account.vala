@@ -1,5 +1,6 @@
 public class NewAccountUI : Page {
-		
+		private static const string DOMAIN = "NewAccountUI";
+	
 		private FrameBox fr_general;
 		
 		private EntryBox display_name;
@@ -29,6 +30,9 @@ public class NewAccountUI : Page {
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
 
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
+	}
 	
 	public unowned Elm.Object create(Elm.Win win) {
 		
@@ -133,7 +137,7 @@ public class NewAccountUI : Page {
 		try {
 			ACM.dbus.create_account(cmanager.val_get(), protocol.val_get(), display_name.val_get(), parameters, properties);
 		} catch (Error err) {
-			logger.error("NewAccountUI", "CreateAccount() failed: "+err.message);
+			logger.error(DOMAIN, "CreateAccount() failed: "+err.message);
 		}
 		this.close();
 	}

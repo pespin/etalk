@@ -1,4 +1,5 @@
 public class ListSessionUI : Page {
+		private static const string DOMAIN = "ListSessionUI"; 
 	
 		private unowned Elm.Win win;
 
@@ -58,10 +59,7 @@ public class ListSessionUI : Page {
 	public void add_elem_to_ui(Et.ChannelMessages elem) {
 		
 		
-		logger.debug("ListSessionUI", "Adding element " + elem.path + " to ui-list");
-		
-		//Little hack to not hang the UI while adding lots of stuff... :P
-		Ecore.MainLoop.iterate();
+		logger.debug(DOMAIN, "Adding element " + elem.path + " to ui-list");
 		
 		var opener = new ListItemHandlerSession(win, elem);
 		opener.item = li.item_sorted_insert(ref itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
@@ -72,9 +70,8 @@ public class ListSessionUI : Page {
 
 	public void remove_elem_from_ui(string path) {
 
-		logger.debug("ListSessionUI", "Removing elem " + path + " from ui-list");
-		//Little hack to not hang the UI while removing lots of stuff... :P
-		Ecore.MainLoop.iterate();
+		logger.debug(DOMAIN, "Removing elem " + path + " from ui-list");
+
 		unowned ListItemHandlerSession? elem = elem_ui_list.lookup(path);
 		if(elem!=null) {
 			elem.item.del();
@@ -127,7 +124,9 @@ public class ListSessionUI : Page {
 	
 	public override unowned Elm.Button? get_button_next() { return null; }
 
-	
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
+	}
 	
 	/* Genlist stuff */
 

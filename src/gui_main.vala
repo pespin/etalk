@@ -1,4 +1,5 @@
 public class MainUI : Page {
+		private static const string DOMAIN = "MainUI";
 		
 		private unowned Elm.Win win;
 
@@ -88,16 +89,16 @@ public class MainUI : Page {
 	public void add_elem_to_ui(Et.Contact contact) {
 		
 		if(elem_ui_list.lookup(contact.get_unique_key())!=null) {
-			logger.warning("MainUI", "Trying to add elem to UI which is already in the UI list!");
+			logger.warning(DOMAIN, "Trying to add elem to UI which is already in the UI list!");
 			return;
 		}
 		
 		if(SETM.show_offline_contacts==false && contact.is_online()==false) {
-			logger.debug("MainUI", "Not adding contact " + contact.id + " to UI list because it's offline and show_offline_contacts==false" );
+			logger.debug(DOMAIN, "Not adding contact " + contact.id + " to UI list because it's offline and show_offline_contacts==false" );
 			return;
 		}
 
-		logger.debug("MainUI", "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
+		logger.debug(DOMAIN, "Adding element " + contact.id + " [" + contact.handle.to_string() + "] to ui-list");
 		var opener = new ListItemHandlerContact(win, this, contact);
 		string key = contact.get_unique_key();
 		elem_ui_list.insert(key, opener);
@@ -108,7 +109,7 @@ public class MainUI : Page {
 
 	public void remove_elem_from_ui(string key) {
 
-		logger.debug("MainUI", "Removing elem " + key + " from ui-list");
+		logger.debug(DOMAIN, "Removing elem " + key + " from ui-list");
 		
 		ListItemHandlerContact? elem = elem_ui_list.lookup(key);
 		if(elem==null) return;
@@ -125,7 +126,7 @@ public class MainUI : Page {
 	}
 
 	private void cb_bt_settings_clicked() {
-		logger.debug("MainUI", "Accounts button pressed.");
+		logger.debug(DOMAIN, "Accounts button pressed.");
 		
 		var settingsui = new SettingsMainUI();
 		settingsui.create(ui.win);
@@ -135,7 +136,7 @@ public class MainUI : Page {
 
 
 	private void cb_bt_accounts_clicked() {
-		logger.debug("MainUI", "Accounts button pressed.");
+		logger.debug(DOMAIN, "Accounts button pressed.");
 		
 		var accounts_list = new ListAccountUI();
 		accounts_list.create(ui.win);
@@ -144,7 +145,7 @@ public class MainUI : Page {
 	}
 	
 	private void cb_bt_sessions_clicked() {
-		logger.debug("MainUI", "Sessions button pressed.");
+		logger.debug(DOMAIN, "Sessions button pressed.");
 
 		ui.push_page(ui.sui);
 		
@@ -156,39 +157,43 @@ public class MainUI : Page {
 	public override string? get_page_title() {
 		return "Contact List"; 
 	}
+
+	public override void on_appear() {
+			logger.debug(DOMAIN, "page is visible!");
+	}
 	
 	
 		/* Genlist stuff */
 
 	private static string genlist_get_text(void *data, Elm.Object obj, string part ) {
-		logger.debug("MainUI", "HEY!!!! LABEL CALLED!");
+		logger.debug(DOMAIN, "HEY!!!! LABEL CALLED!");
 		ListItemHandlerContact handler = (ListItemHandlerContact) data;
 		return handler.format_item_label();
 	}
 
 
 	private static unowned Elm.Object? genlist_get_content(void *data, Elm.Object obj, string part ) {
-		logger.debug("MainUI", "content function called!");
+		logger.debug(DOMAIN, "content function called!");
 		return null;
 	}
 
 	private static bool genlist_get_state(void *data, Elm.Object obj, string part ) {
-		//logger.debug("MainUI", "state function called!");
+		//logger.debug(DOMAIN, "state function called!");
 		return false;
 	}
 
 	private static void genlist_del_item(void *data, Elm.Object obj ) {
-		logger.debug("MainUI", "DELETE function called!");
+		logger.debug(DOMAIN, "DELETE function called!");
 	}
 
 	private static int genlist_compare(void* data1, void* data2) {
 		if(data1==null || data2==null) {
-			logger.error("MainUI", "Error on genlist_compare method: one of the data pointers is null!!!");
+			logger.error(DOMAIN, "Error on genlist_compare method: one of the data pointers is null!!!");
 			return 0;
 		}
 		ListItemHandlerContact handler1 = (ListItemHandlerContact) data1;
 		ListItemHandlerContact handler2 = (ListItemHandlerContact) data2;
-		//logger.debug("MainUI", handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
+		//logger.debug(DOMAIN, handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
 		return handler1.contact.alias.ascii_casecmp(handler2.contact.alias);
 	}
 
