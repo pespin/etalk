@@ -1,7 +1,8 @@
 
 
 public class EtalkUI {
-	
+		private static const string DOMAIN = "EtalkUI";
+
 		public Elm.Win win;
 		
 		public unowned Elm.Naviframe? pager;
@@ -50,16 +51,16 @@ public class EtalkUI {
 	}
 	
 	public void pop_page(Page page) {
-		//stderr.printf("pop_page(%s) started!\n", page.get_page_title());
-		//if( obj == pager.content_top_get() ) { //this segfaults...
-			pager.item_pop();
-			page_stack.remove(page);
+		if(page!=pager.top_item_get().data_get()) {
+			logger.error(DOMAIN, "Trying to pop page which is not on top of the stack!");
+			return;
+		}
+		pager.item_pop();
+		page_stack.remove(page);
 
-			Page top_page = (Page) pager.top_item_get().data_get();
-			win.title_set("Etalk - "+top_page.get_page_title());
-			top_page.on_appear();
-		//}
-		//stderr.printf("pop_page() finished!\n");
+		Page top_page = (Page) pager.top_item_get().data_get();
+		win.title_set("Etalk - "+top_page.get_page_title());
+		top_page.on_appear();
 	}
 
 
@@ -77,7 +78,7 @@ public class EtalkUI {
 			obj.on_appear();
 		
 		} else 
-			logger.error("EtalkUI", "push_page(): pager.content_push(NULL)!!!");
+			logger.error(DOMAIN, "push_page(): pager.content_push(NULL)!!!");
 		
 		page_stack.prepend((owned) obj);
 	}
