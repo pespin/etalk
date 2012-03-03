@@ -16,7 +16,8 @@ public class MainUI : Page {
 		public MainUI() {
 			base();
 			elem_ui_list = new HashTable<string,ListItemHandlerContact>(str_hash, str_equal);
-
+			
+			itc = new Elm.GenlistItemClass();
 			itc.item_style = "default";
 			itc.func.text_get = genlist_get_text;
 			itc.func.content_get = genlist_get_content;
@@ -103,7 +104,7 @@ public class MainUI : Page {
 		string key = contact.get_unique_key();
 		elem_ui_list.insert(key, opener);
 		var opener_hash = elem_ui_list.lookup(key);
-		opener_hash.item = li.item_sorted_insert(ref itc, opener_hash, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener_hash.go);
+		opener_hash.item = li.item_sorted_insert(itc, opener_hash, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener_hash.go);
 
 	}
 

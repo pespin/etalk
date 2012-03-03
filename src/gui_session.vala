@@ -27,6 +27,7 @@ public class SessionUI : Page {
 		
 		
 		//itc.item_style = "default";
+		itc = new Elm.GenlistItemClass();
 		itc.item_style = "icon_top_text_bottom";
 		itc.func.text_get = genlist_get_text;
         itc.func.content_get = genlist_get_content;
@@ -119,7 +120,7 @@ public class SessionUI : Page {
 			} else{
 				var bubble = new ChatText(win, this, key);
 				bubble.content_set(sender, content);
-				unowned Elm.GenlistItem? it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+				unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
 				this.messages.insert(key, (owned) bubble);
 				it.bring_in();
 			}
@@ -176,7 +177,7 @@ public class SessionUI : Page {
 			logger.debug(DOMAIN, sender+": "+content+"\n");
 			var bubble = new ChatText(win, this, key);
 			bubble.content_set(sender, content);
-			unowned Elm.GenlistItem? it = genlist.item_append(ref itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+			unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
 			messages.insert(key, (owned) bubble);
 			it.bring_in();
 		}

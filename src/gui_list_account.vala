@@ -13,7 +13,8 @@ public class ListAccountUI : Page {
 		public ListAccountUI() {
 			base();
 			elem_ui_list = new HashTable<string,ListItemHandlerAccount>(str_hash, str_equal);
-	
+			
+			itc = new Elm.GenlistItemClass();
 			itc.item_style = "default";
 			itc.func.text_get = genlist_get_text;
 			itc.func.content_get = genlist_get_content;
@@ -84,7 +85,7 @@ public class ListAccountUI : Page {
 		
 		var opener = new ListItemHandlerAccount(win, account);
 		//opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		opener.item = li.item_append(ref itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+		opener.item = li.item_append(itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
 				
 		elem_ui_list.insert(account.path, (owned) opener);
 	}

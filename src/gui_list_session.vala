@@ -13,6 +13,7 @@ public class ListSessionUI : Page {
 			base();
 			elem_ui_list = new HashTable<string,ListItemHandlerSession>(str_hash, str_equal);
 		
+			itc = new Elm.GenlistItemClass();
 			itc.item_style = "default";
 			itc.func.text_get = genlist_get_text;
 			itc.func.content_get = genlist_get_content;
@@ -62,7 +63,7 @@ public class ListSessionUI : Page {
 		logger.debug(DOMAIN, "Adding element " + elem.path + " to ui-list");
 		
 		var opener = new ListItemHandlerSession(win, elem);
-		opener.item = li.item_sorted_insert(ref itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
+		opener.item = li.item_sorted_insert(itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
 
 		elem_ui_list.insert(elem.path, (owned) opener);
 
