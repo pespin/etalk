@@ -41,7 +41,7 @@ public class MainUI : Page {
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
-		li.no_select_mode_set(false);
+		//li.no_select_mode_set(false);
 		vbox.pack_end(li);
 		li.show();
 	
@@ -104,7 +104,7 @@ public class MainUI : Page {
 		string key = contact.get_unique_key();
 		elem_ui_list.insert(key, opener);
 		var opener_hash = elem_ui_list.lookup(key);
-		opener_hash.item = li.item_sorted_insert(itc, opener_hash, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener_hash.go);
+		opener_hash.item = li.item_sorted_insert(itc, opener_hash, null, Elm.GenlistItemType.NONE, genlist_compare, opener_hash.go);
 
 	}
 

@@ -137,7 +137,7 @@ public class DialogUI : Object {
 		unowned Elm.Win? inwin;
 		unowned Elm.Box? vbox;
 		unowned Elm.Box? vbox_in;
-		unowned Elm.Anchorblock? lb;
+		unowned Elm.Label? lb;
 		unowned Elm.Button? bt_ok;
 		unowned Elm.Scroller? sc;
 		
@@ -162,7 +162,7 @@ public class DialogUI : Object {
 		vbox_in.show();
 		
 		// add a label
-		lb = Elm.Anchorblock.add(ui.win);
+		lb = Elm.Label.add(ui.win);
 		lb.text_set(text);
 		lb.size_hint_weight_set(1.0, 1.0);
 		lb.size_hint_align_set(-1.0, -1.0);

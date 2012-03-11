@@ -72,7 +72,7 @@ public class SessionUI : Page {
 		genlist.scale_set(1.0);
 		genlist.size_hint_weight_set(1.0, 1.0);
 		genlist.size_hint_align_set(-1.0, -1.0);
-		genlist.no_select_mode_set(true);
+		//genlist.no_select_mode_set(true);
 		vbox.pack_end(genlist);
 		genlist.show();
 		append_pending_messages();
@@ -120,7 +120,7 @@ public class SessionUI : Page {
 			} else{
 				var bubble = new ChatText(win, this, key);
 				bubble.content_set(sender, content);
-				unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+				unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemType.NONE, onSelectedItem);
 				this.messages.insert(key, (owned) bubble);
 				it.bring_in();
 			}
@@ -177,7 +177,7 @@ public class SessionUI : Page {
 			logger.debug(DOMAIN, sender+": "+content+"\n");
 			var bubble = new ChatText(win, this, key);
 			bubble.content_set(sender, content);
-			unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemFlags.NONE, onSelectedItem);
+			unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemType.NONE, onSelectedItem);
 			messages.insert(key, (owned) bubble);
 			it.bring_in();
 		}
@@ -190,7 +190,7 @@ public class SessionUI : Page {
 private class ChatText : GLib.Object {
 	private unowned Elm.Win? win;
 	private unowned Elm.Bubble? bubble;
-	private unowned Elm.Anchorblock? label;
+	private unowned Elm.Label? label;
 	
 	public unowned SessionUI ui {get; private set;}
 	public string key {get; private set;}
@@ -215,7 +215,7 @@ private class ChatText : GLib.Object {
 		bubble.text_set(speaker);
 		
 		label = null;
-		label = Elm.Anchorblock.add(win);
+		label = Elm.Label.add(win);
 		label.text_set(message);
 		label.size_hint_weight_set( 1.0, 1.0 );
 		label.size_hint_align_set( -1.0, -1.0 );
@@ -235,7 +235,7 @@ private class ChatText : GLib.Object {
 		bubble.size_hint_align_set( -1.0, -1.0 );
 		bubble.text_set(speaker);
 		
-		label = Elm.Anchorblock.add(win);
+		label = Elm.Label.add(win);
 		label.text_set(message);
 		label.size_hint_weight_set( 1.0, 1.0 );
 		label.size_hint_align_set( -1.0, -1.0 );

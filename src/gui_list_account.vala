@@ -36,7 +36,7 @@ public class ListAccountUI : Page {
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
-		li.no_select_mode_set(false);
+		//li.no_select_mode_set(false);
 		vbox.pack_end(li);
 		li.show();
 	
@@ -85,7 +85,7 @@ public class ListAccountUI : Page {
 		
 		var opener = new ListItemHandlerAccount(win, account);
 		//opener.item = this.li.append(opener.format_item_label(), null, null, opener.go);
-		opener.item = li.item_append(itc, opener, null, Elm.GenlistItemFlags.NONE, opener.go);
+		opener.item = li.item_append(itc, opener, null, Elm.GenlistItemType.NONE, opener.go);
 				
 		elem_ui_list.insert(account.path, (owned) opener);
 	}

@@ -35,7 +35,7 @@ public class ListSessionUI : Page {
 		li.scale_set(1.0);
 		li.size_hint_weight_set(1.0, 1.0);
 		li.size_hint_align_set(-1.0, -1.0);
-		li.no_select_mode_set(false);
+		//li.no_select_mode_set(false);
 		vbox.pack_end(li);
 		li.show();
 	
@@ -63,7 +63,7 @@ public class ListSessionUI : Page {
 		logger.debug(DOMAIN, "Adding element " + elem.path + " to ui-list");
 		
 		var opener = new ListItemHandlerSession(win, elem);
-		opener.item = li.item_sorted_insert(itc, opener, null, Elm.GenlistItemFlags.NONE, genlist_compare, opener.go);
+		opener.item = li.item_sorted_insert(itc, opener, null, Elm.GenlistItemType.NONE, genlist_compare, opener.go);
 
 		elem_ui_list.insert(elem.path, (owned) opener);
 
