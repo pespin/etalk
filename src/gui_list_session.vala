@@ -154,8 +154,10 @@ public class ListSessionUI : Page {
 	}
 	
 	private static int genlist_compare(void* data1, void* data2) {
-		ListItemHandlerSession handler1 = (ListItemHandlerSession) data1;
-		ListItemHandlerSession handler2 = (ListItemHandlerSession) data2;
+		unowned Elm.GenlistItem? it1 = (Elm.GenlistItem?) data1;
+        unowned Elm.GenlistItem? it2 = (Elm.GenlistItem?) data2;
+		ListItemHandlerSession handler1 = (ListItemHandlerSession) it1.data_get();
+		ListItemHandlerSession handler2 = (ListItemHandlerSession) it2.data_get();
 		//logger.debug("MainUI", handler1.contact.alias + " < " + handler2.contact.alias + " ? " + handler1.contact.alias.ascii_casecmp(handler2.contact.alias).to_string());
 		return handler1.elem.dbus.target_id.ascii_casecmp(handler2.elem.dbus.target_id);
 	}
