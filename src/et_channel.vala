@@ -156,7 +156,7 @@ namespace Et {
 				if(id!=null) container += id;
 			}
 			
-			this.ack_messages(container);
+			//this.ack_messages(container); //this is now done in UI
 			return messages;
 			
 		}
@@ -190,7 +190,7 @@ namespace Et {
 			}
 		}
 
-		private void ack_messages(uint[] ids) {
+		public void ack_messages(uint[] ids) {
 			logger.debug(DOMAIN, "Sending ACK for messages:");
 			foreach(var id in ids) logger.debug(DOMAIN, "\t "+id.to_string());
 			try {
@@ -228,12 +228,12 @@ namespace Et {
 			}
 			this.new_message(content);
 			
-			uint? id = (uint) content[0].lookup("pending-message-id");
-			if(id!=null) {
+			/*uint? id = (uint) content[0].lookup("pending-message-id");
+			if(id!=null) { //this is now done in UI
 				uint[] container = new uint[1];
 				container[0] = id;
 				this.ack_messages(container);
-			}
+			} */
 		}
 
 		private void sig_pending_messages_removed(uint[] message_ids) {

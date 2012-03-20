@@ -82,6 +82,12 @@ public class EtalkUI {
 		
 		page_stack.prepend((owned) obj);
 	}
+	
+	public bool page_is_visible( Page pg ) {
+		Page top_page = (Page) pager.top_item_get().data_get();
+		return top_page == pg;
+	}
+
 
 }
 
@@ -107,6 +113,10 @@ public abstract class Page : Object {
 	
 	public void close() {
 		ui.pop_page(this);
+	}
+	
+	public bool is_visible() {
+		return ui.page_is_visible(this);
 	}
 	
 	public abstract string? get_page_title();

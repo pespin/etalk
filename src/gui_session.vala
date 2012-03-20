@@ -18,6 +18,17 @@ public class SessionUI : Page {
 		private Elm.GenlistItemClass itc;
 		
 		private HashTable<string, ChatText> messages;
+		
+		//TODO: add locks around this list
+		private uint[] pending_acks;
+		
+		public uint unread_messages { 
+			get { 
+				//TODO: add locks here:
+				return pending_acks.length;
+			}
+			private set {}
+		}
 
 	public SessionUI(Et.ChannelMessages channel) {
 		base();
@@ -25,6 +36,7 @@ public class SessionUI : Page {
 		
 		messages = new HashTable<string,ChatText>(str_hash, str_equal);
 		
+		pending_acks = {};
 		
 		//itc.item_style = "default";
 		itc = new Elm.GenlistItemClass();
@@ -58,7 +70,10 @@ public class SessionUI : Page {
 	}
 
 	public override void on_appear() {
-			logger.debug(DOMAIN, "page is visible!");
+			logger.debug(DOMAIN, "page is visible! Acking pending messages:");
+			//TODO: add locks here:
+			channel.ack_messages(pending_acks);
+			pending_acks = {};
 	}
 
 	
@@ -72,7 +87,7 @@ public class SessionUI : Page {
 		genlist.scale_set(1.0);
 		genlist.size_hint_weight_set(1.0, 1.0);
 		genlist.size_hint_align_set(-1.0, -1.0);
-		//genlist.no_select_mode_set(true);
+		genlist.select_mode_set(Elm.Object.SelectMode.NONE);
 		vbox.pack_end(genlist);
 		genlist.show();
 		append_pending_messages();
@@ -109,22 +124,28 @@ public class SessionUI : Page {
 	
 	
 	public void append_pending_messages() {
-	
+		uint[] tmp_acks = {};
 		HashTable<string, Variant>[,] messages = channel.get_pending_messages();
 		for(int i = 0; i< messages.length[0]; i++) {
 			string? sender = (string) messages[i,0].lookup("message-sender-id");
 			string? key = (string) messages[i,0].lookup("message-token");
 			string? content = (string) messages[i,1].lookup("content");
+			uint? id = (uint) messages[i,0].lookup("pending-message-id");
 			if(sender==null || content==null || key==null) {
 				logger.error(DOMAIN, "sender,key or content is NULL!");
-			} else{
+			} else {
 				var bubble = new ChatText(win, this, key);
 				bubble.content_set(sender, content);
 				unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemType.NONE, onSelectedItem);
 				this.messages.insert(key, (owned) bubble);
 				it.bring_in();
+
+				if(this.is_visible()) tmp_acks += id;
+				else pending_acks += id; //TODO: add lock here
 			}
 		}
+		
+		channel.ack_messages(tmp_acks);
 		
 	}
 	
@@ -171,6 +192,7 @@ public class SessionUI : Page {
 		string? sender = (string) message[0].lookup("message-sender-id");
 		string? content = (string) message[1].lookup("content");
 		string? key = (string) message[0].lookup("message-token");
+		uint? id = (uint) message[0].lookup("pending-message-id");
 		if(sender==null || content==null || key==null)
 			logger.error(DOMAIN, "sender, token or content is NULL!");
 		else {
@@ -180,6 +202,12 @@ public class SessionUI : Page {
 			unowned Elm.GenlistItem? it = genlist.item_append(itc, (void*) bubble, null, Elm.GenlistItemType.NONE, onSelectedItem);
 			messages.insert(key, (owned) bubble);
 			it.bring_in();
+			
+			if(this.is_visible()) {
+				uint[] n = {};
+				n += id;
+				channel.ack_messages(n);
+			} else pending_acks += id; //TODO: add lock here
 		}
 	}
 
